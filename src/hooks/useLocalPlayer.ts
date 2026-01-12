@@ -36,6 +36,11 @@ export const useLocalPlayer = (enabled: boolean = true) => {
 
     // 用 ref 保存 handleNext 以避免闭包问题
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
+    // 用 ref 追踪播放状态，避免 handlePrev 依赖 isPlaying 导致不必要的重建
+    const isPlayingRef = useRef(isPlaying);
+    useEffect(() => {
+        isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
 
     // 切歌逻辑
     const handleNext = useCallback((isAuto: boolean = false) => {
@@ -63,7 +68,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
 
         setCurrentIndex(nextIndex);
-        setIsPlaying(true);
+        // 不调用 setIsPlaying，保持当前播放状态
     }, [playlist.length, playMode, currentIndex]);
 
     useEffect(() => {
@@ -251,11 +256,13 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         });
     }, []);
 
-    // 播放指定曲目
-    const playTrack = useCallback((index: number) => {
+    // 播放指定曲目（可选保持当前播放状态）
+    const playTrack = useCallback((index: number, keepPlayState: boolean = false) => {
         if (index >= 0 && index < playlist.length) {
             setCurrentIndex(index);
-            setIsPlaying(true);
+            if (!keepPlayState) {
+                setIsPlaying(true);
+            }
         }
     }, [playlist.length]);
 
@@ -278,7 +285,9 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         if (playMode === PlayMode.LOOP) {
             if (audioRef.current) {
                 audioRef.current.currentTime = 0;
-                audioRef.current.play();
+                if (isPlayingRef.current) {
+                    audioRef.current.play();
+                }
             }
             return;
         }
@@ -293,7 +302,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
 
         setCurrentIndex(prevIndex);
-        setIsPlaying(true);
+        // 不调用 setIsPlaying，保持当前播放状态
     }, [playlist.length, playMode, currentIndex]);
 
     // 进度跳转

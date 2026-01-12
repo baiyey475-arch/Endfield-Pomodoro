@@ -49,7 +49,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         }
 
         setCurrentIndex(nextIndex);
-        setIsPlaying(true);
+        // 不调用 setIsPlaying，保持当前播放状态
     }, [currentIndex, playMode, playlist.length]);
 
     useEffect(() => {
@@ -219,7 +219,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         }
 
         setCurrentIndex(prevIndex);
-        setIsPlaying(true);
+        // 不调用 setIsPlaying，保持当前播放状态
     };
 
     // 进度跳转
@@ -241,11 +241,13 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         });
     };
 
-    // 直接播放指定索引
-    const playTrack = (index: number) => {
+    // 直接播放指定索引（保持当前播放状态）
+    const playTrack = (index: number, keepPlayState: boolean = false) => {
         if (index >= 0 && index < playlist.length) {
             setCurrentIndex(index);
-            setIsPlaying(true);
+            if (!keepPlayState) {
+                setIsPlaying(true);
+            }
         }
     };
 

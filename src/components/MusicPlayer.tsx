@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useMusicData, type MusicTrack } from '../hooks/useMusicData';
 import { useOnlinePlayer } from '../hooks/useOnlinePlayer';
 import { PlayMode } from '../types';
@@ -22,6 +22,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ config, language, enabled = t
 
     const { audioList: metingData, loading: dataLoading, error: dataError } = useMusicData(config);
     const [isListOpen, setIsListOpen] = useState(false);
+    const itemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
 
     // 转换数据格式以适配 useOnlinePlayer
     const playlist = useMemo(() => {
@@ -35,6 +36,24 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ config, language, enabled = t
     }, [metingData]);
 
     const player = useOnlinePlayer(playlist, false, enabled);
+
+    // 当播放列表打开或当前索引变化时，滚动到当前项
+    useEffect(() => {
+        const scrollToCurrentItem = () => {
+            const itemEl = itemRefs.current.get(player.currentIndex);
+            if (itemEl) {
+                itemEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
+        if (isListOpen) {
+            // 使用 requestAnimationFrame 确保 DOM 已更新
+            const rafId = requestAnimationFrame(() => {
+                scrollToCurrentItem();
+            });
+            return () => cancelAnimationFrame(rafId);
+        }
+    }, [isListOpen, player.currentIndex]);
 
     // 映射 PlayMode 到 AudioMode
     const mapPlayMode = (mode: string): AudioMode => {
@@ -109,10 +128,15 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ config, language, enabled = t
                     <ul className="p-1 overflow-y-auto max-h-[calc(15rem-2.5rem)]" style={{ scrollbarGutter: 'stable' }}>
                         {playlist.map((song, index) => (
                             <li key={index}
+                                ref={(el) => {
+                                    if (el) itemRefs.current.set(index, el);
+                                    else itemRefs.current.delete(index);
+                                }}
                                 className={`flex items-center p-2 hover:bg-theme-highlight/10 cursor-pointer text-xs border-b border-theme-highlight/5 last:border-0 ${index === player.currentIndex ? 'text-theme-primary bg-theme-primary/5' : 'text-theme-text'}`}
                                 onClick={() => {
-                                    player.playTrack(index);
-                                    setIsListOpen(false);
+                                    // 保持当前播放状态：如果正在播放则继续播放，如果暂停则保持暂停
+                                    player.playTrack(index, true);
+                                    // 不关闭播放列表
                                 }}>
                                 <span className="w-6 text-theme-dim font-mono">{String(index + 1).padStart(2, '0')}</span>
                                 <span className="flex-1 truncate mr-2">{song.name}</span>
