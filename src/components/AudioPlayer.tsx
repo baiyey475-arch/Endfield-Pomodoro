@@ -17,7 +17,6 @@ const AudioPlayer: React.FC<{
 }> = ({ language, musicConfig, isOnline }) => {
     const t = useTranslation(language);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const listRef = useRef<HTMLDivElement>(null);
     const itemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
 
     // 音频源模式：'local' 本地文件 | 'online' 在线音乐
@@ -34,6 +33,11 @@ const AudioPlayer: React.FC<{
     useEffect(() => {
         itemRefs.current.clear();
     }, [audioSource]);
+
+    // 当播放列表数据变化时，清理 refs
+    useEffect(() => {
+        itemRefs.current.clear();
+    }, [localPlayer.playlist]);
 
     // 持久化音频源选择
     useEffect(() => {
@@ -60,28 +64,19 @@ const AudioPlayer: React.FC<{
 
     // 滚动播放列表到当前项居中
     const scrollToCurrentItem = () => {
-        const listEl = listRef.current;
         const itemEl = itemRefs.current.get(localPlayer.currentIndex);
-        if (!listEl || !itemEl) return;
-
-        // itemEl.offsetTop 是相对于 offsetParent (ul) 的，需要加上 ul 相对于滚动容器的偏移
-        const ulEl = itemEl.parentElement;
-        if (!ulEl) return;
-        
-        const itemOffsetTop = itemEl.offsetTop + ulEl.offsetTop;
-        const itemHeight = itemEl.offsetHeight;
-        const listHeight = listEl.clientHeight;
-
-        const targetScrollTop = itemOffsetTop - (listHeight / 2) + (itemHeight / 2);
-        listEl.scrollTo({ top: Math.max(0, targetScrollTop), behavior: 'smooth' });
+        if (itemEl) {
+            itemEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     };
 
     // 当播放列表打开或当前索引变化时，滚动到当前项
     useEffect(() => {
         if (showPlaylist && localPlayer.currentIndex >= 0) {
-            requestAnimationFrame(() => {
+            const rafId = requestAnimationFrame(() => {
                 scrollToCurrentItem();
             });
+            return () => cancelAnimationFrame(rafId);
         }
     }, [showPlaylist, localPlayer.currentIndex]);
 
@@ -202,7 +197,7 @@ const AudioPlayer: React.FC<{
                                     </button>
                                 </div>
 
-                                <div ref={listRef} className="overflow-y-auto p-2 custom-scrollbar flex-1 bg-black/20" style={{ scrollbarGutter: 'stable' }}>
+                                <div className="overflow-y-auto p-2 custom-scrollbar flex-1 bg-black/20" style={{ scrollbarGutter: 'stable' }}>
                                     {localPlayer.playlist.length === 0 ? (
                                         <div className="text-center p-8 text-theme-dim font-mono text-xs">{t('NO_TRACK')}</div>
                                     ) : (

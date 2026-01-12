@@ -63,7 +63,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
 
         setCurrentIndex(nextIndex);
-        setIsPlaying(true);
+        // 切歌时保持当前播放状态
     }, [playlist.length, playMode, currentIndex]);
 
     useEffect(() => {
@@ -280,7 +280,9 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         if (playMode === PlayMode.LOOP) {
             if (audioRef.current) {
                 audioRef.current.currentTime = 0;
-                audioRef.current.play();
+                if (isPlaying) {
+                    audioRef.current.play();
+                }
             }
             return;
         }
@@ -295,8 +297,8 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
 
         setCurrentIndex(prevIndex);
-        setIsPlaying(true);
-    }, [playlist.length, playMode, currentIndex]);
+        // 手动切歌时保持当前播放状态
+    }, [playlist.length, playMode, currentIndex, isPlaying]);
 
     // 进度跳转
     const seek = useCallback((time: number) => {

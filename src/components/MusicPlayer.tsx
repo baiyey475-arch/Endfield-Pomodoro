@@ -22,7 +22,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ config, language, enabled = t
 
     const { audioList: metingData, loading: dataLoading, error: dataError } = useMusicData(config);
     const [isListOpen, setIsListOpen] = useState(false);
-    const listRef = useRef<HTMLUListElement>(null);
     const itemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
 
     // 转换数据格式以适配 useOnlinePlayer
@@ -38,28 +37,26 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ config, language, enabled = t
 
     const player = useOnlinePlayer(playlist, false, enabled);
 
-    // 滚动播放列表到当前项居中
-    const scrollToCurrentItem = () => {
-        const listEl = listRef.current;
-        const itemEl = itemRefs.current.get(player.currentIndex);
-        if (!listEl || !itemEl) return;
-
-        const itemOffsetTop = itemEl.offsetTop;
-        const itemHeight = itemEl.offsetHeight;
-        const listHeight = listEl.clientHeight;
-
-        // 计算使当前项居中的滚动位置
-        const targetScrollTop = itemOffsetTop - (listHeight / 2) + (itemHeight / 2);
-        listEl.scrollTo({ top: Math.max(0, targetScrollTop), behavior: 'smooth' });
-    };
+    // 当播放列表数据变化时，清理 refs
+    useEffect(() => {
+        itemRefs.current.clear();
+    }, [metingData]);
 
     // 当播放列表打开或当前索引变化时，滚动到当前项
     useEffect(() => {
+        const scrollToCurrentItem = () => {
+            const itemEl = itemRefs.current.get(player.currentIndex);
+            if (itemEl) {
+                itemEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        };
+
         if (isListOpen) {
             // 使用 requestAnimationFrame 确保 DOM 已更新
-            requestAnimationFrame(() => {
+            const rafId = requestAnimationFrame(() => {
                 scrollToCurrentItem();
             });
+            return () => cancelAnimationFrame(rafId);
         }
     }, [isListOpen, player.currentIndex]);
 
@@ -133,7 +130,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ config, language, enabled = t
                         <span>{t('PLAYLIST_TITLE')} [{playlist.length}]</span>
                         <button onClick={() => setIsListOpen(false)} className="hover:text-theme-primary cursor-pointer"><i className="ri-close-line"></i></button>
                     </div>
-                    <ul ref={listRef} className="p-1 overflow-y-auto max-h-[calc(15rem-2.5rem)]" style={{ scrollbarGutter: 'stable' }}>
+                    <ul className="p-1 overflow-y-auto max-h-[calc(15rem-2.5rem)]" style={{ scrollbarGutter: 'stable' }}>
                         {playlist.map((song, index) => (
                             <li key={index}
                                 ref={(el) => {
