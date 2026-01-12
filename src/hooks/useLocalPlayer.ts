@@ -197,64 +197,66 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
     }, [enabled]);
 
-    // 添加文件到播放列表
+    // 添加文件到播放列表（渐进式加载：先显示文件名，后台更新元数据）
     const addFiles = useCallback(async (files: File[]) => {
-        const newTracks: LocalTrack[] = [];
-
-        for (const file of files) {
-            // 检查是否已存在相同文件
+        // 过滤重复文件
+        const uniqueFiles = files.filter(file => {
             const isDuplicate = playlistRef.current.some(track => 
                 track.file.name === file.name &&
                 track.file.size === file.size &&
                 track.file.lastModified === file.lastModified
             );
-            
             if (isDuplicate) {
                 console.warn(`Skip duplicate file: ${file.name}`);
-                continue;
             }
-            
-            const blobUrl = URL.createObjectURL(file);
-            let coverUrl: string | undefined;
-            let artist: string | undefined;
-            let title: string = file.name.replace(/\.[^/.]+$/, ''); // 默认使用去掉扩展名的文件名
+            return !isDuplicate;
+        });
 
-            try {
-                const metadata = await parseBlob(file);
-                const picture = metadata.common.picture?.[0];
-                if (picture) {
-                    const blob = new Blob([picture.data as BlobPart], { type: picture.format });
-                    coverUrl = URL.createObjectURL(blob);
-                }
-                // 提取艺术家和标题
-                artist = metadata.common.artist;
-                if (metadata.common.title) {
-                    title = metadata.common.title;
-                }
-            } catch (error) {
-                console.warn('Failed to extract metadata:', error);
-            }
+        if (uniqueFiles.length === 0) return;
 
-            // 生成基于文件特征的确定性 ID
-            const trackId = `${file.name}-${file.size}-${file.lastModified}`;
-            
-            newTracks.push({
-                id: trackId,
-                file,
-                name: title,
-                artist,
-                blobUrl,
-                coverUrl
-            });
-        }
+        // 第一步：立即用文件名创建列表项
+        const initialTracks: LocalTrack[] = uniqueFiles.map(file => ({
+            id: `${file.name}-${file.size}-${file.lastModified}`,
+            file,
+            name: file.name.replace(/\.[^/.]+$/, ''),
+            artist: undefined,
+            blobUrl: URL.createObjectURL(file),
+            coverUrl: undefined
+        }));
 
         setPlaylist(prev => {
-            const updated = [...prev, ...newTracks];
-            // 如果之前没有曲目，自动选中第一个
+            const updated = [...prev, ...initialTracks];
             if (prev.length === 0 && updated.length > 0) {
                 setCurrentIndex(0);
             }
             return updated;
+        });
+
+        // 第二步：后台并行解析元数据，逐个更新
+        uniqueFiles.forEach(async (file) => {
+            const trackId = `${file.name}-${file.size}-${file.lastModified}`;
+            
+            try {
+                const metadata = await parseBlob(file);
+                const title = metadata.common.title || file.name.replace(/\.[^/.]+$/, '');
+                const artist = metadata.common.artist;
+                const picture = metadata.common.picture?.[0];
+                let coverUrl: string | undefined;
+                
+                if (picture) {
+                    const blob = new Blob([picture.data as BlobPart], { type: picture.format });
+                    coverUrl = URL.createObjectURL(blob);
+                }
+
+                // 更新对应的 track
+                setPlaylist(prev => prev.map(track => 
+                    track.id === trackId 
+                        ? { ...track, name: title, artist, coverUrl }
+                        : track
+                ));
+            } catch (error) {
+                console.warn('Failed to extract metadata:', error);
+            }
         });
     }, []);
 
