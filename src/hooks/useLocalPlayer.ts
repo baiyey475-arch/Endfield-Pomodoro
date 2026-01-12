@@ -36,6 +36,11 @@ export const useLocalPlayer = (enabled: boolean = true) => {
 
     // 用 ref 保存 handleNext 以避免闭包问题
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
+    // 用 ref 追踪播放状态，避免 handlePrev 依赖 isPlaying 导致不必要的重建
+    const isPlayingRef = useRef(isPlaying);
+    useEffect(() => {
+        isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
 
     // 切歌逻辑
     const handleNext = useCallback((isAuto: boolean = false) => {
@@ -63,7 +68,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
 
         setCurrentIndex(nextIndex);
-        // 切歌时保持当前播放状态
+        // 不调用 setIsPlaying，保持当前播放状态
     }, [playlist.length, playMode, currentIndex]);
 
     useEffect(() => {
@@ -280,7 +285,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         if (playMode === PlayMode.LOOP) {
             if (audioRef.current) {
                 audioRef.current.currentTime = 0;
-                if (isPlaying) {
+                if (isPlayingRef.current) {
                     audioRef.current.play();
                 }
             }
@@ -297,8 +302,8 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
 
         setCurrentIndex(prevIndex);
-        // 手动切歌时保持当前播放状态
-    }, [playlist.length, playMode, currentIndex, isPlaying]);
+        // 不调用 setIsPlaying，保持当前播放状态
+    }, [playlist.length, playMode, currentIndex]);
 
     // 进度跳转
     const seek = useCallback((time: number) => {

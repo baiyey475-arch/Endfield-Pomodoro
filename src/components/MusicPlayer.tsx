@@ -37,11 +37,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ config, language, enabled = t
 
     const player = useOnlinePlayer(playlist, false, enabled);
 
-    // 当播放列表数据变化时，清理 refs
-    useEffect(() => {
-        itemRefs.current.clear();
-    }, [metingData]);
-
     // 当播放列表打开或当前索引变化时，滚动到当前项
     useEffect(() => {
         const scrollToCurrentItem = () => {

@@ -49,7 +49,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         }
 
         setCurrentIndex(nextIndex);
-        // 切歌时保持当前播放状态
+        // 不调用 setIsPlaying，保持当前播放状态
     }, [currentIndex, playMode, playlist.length]);
 
     useEffect(() => {
@@ -219,7 +219,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         }
 
         setCurrentIndex(prevIndex);
-        // 手动切歌时保持当前播放状态
+        // 不调用 setIsPlaying，保持当前播放状态
     };
 
     // 进度跳转

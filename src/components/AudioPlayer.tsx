@@ -29,15 +29,10 @@ const AudioPlayer: React.FC<{
     // 使用本地播放器 hook
     const localPlayer = useLocalPlayer(audioSource === 'local');
 
-    // 切换音频源时清理 itemRefs
+    // 切换音频源或播放列表变化时清理 itemRefs
     useEffect(() => {
         itemRefs.current.clear();
-    }, [audioSource]);
-
-    // 当播放列表数据变化时，清理 refs
-    useEffect(() => {
-        itemRefs.current.clear();
-    }, [localPlayer.playlist]);
+    }, [audioSource, localPlayer.playlist]);
 
     // 持久化音频源选择
     useEffect(() => {
@@ -62,19 +57,14 @@ const AudioPlayer: React.FC<{
 
     const [showPlaylist, setShowPlaylist] = useState(false);
 
-    // 滚动播放列表到当前项居中
-    const scrollToCurrentItem = () => {
-        const itemEl = itemRefs.current.get(localPlayer.currentIndex);
-        if (itemEl) {
-            itemEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    };
-
     // 当播放列表打开或当前索引变化时，滚动到当前项
     useEffect(() => {
         if (showPlaylist && localPlayer.currentIndex >= 0) {
             const rafId = requestAnimationFrame(() => {
-                scrollToCurrentItem();
+                const itemEl = itemRefs.current.get(localPlayer.currentIndex);
+                if (itemEl) {
+                    itemEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             });
             return () => cancelAnimationFrame(rafId);
         }
