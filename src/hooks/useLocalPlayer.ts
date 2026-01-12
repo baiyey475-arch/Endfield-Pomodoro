@@ -251,11 +251,13 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         });
     }, []);
 
-    // 播放指定曲目
-    const playTrack = useCallback((index: number) => {
+    // 播放指定曲目（可选保持当前播放状态）
+    const playTrack = useCallback((index: number, keepPlayState: boolean = false) => {
         if (index >= 0 && index < playlist.length) {
             setCurrentIndex(index);
-            setIsPlaying(true);
+            if (!keepPlayState) {
+                setIsPlaying(true);
+            }
         }
     }, [playlist.length]);
 

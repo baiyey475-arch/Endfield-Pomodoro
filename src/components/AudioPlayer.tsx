@@ -17,6 +17,8 @@ const AudioPlayer: React.FC<{
 }> = ({ language, musicConfig, isOnline }) => {
     const t = useTranslation(language);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const listRef = useRef<HTMLDivElement>(null);
+    const itemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
 
     // 音频源模式：'local' 本地文件 | 'online' 在线音乐
     // 优先从 localStorage 读取，如果没有则默认为 'online'
@@ -27,6 +29,11 @@ const AudioPlayer: React.FC<{
 
     // 使用本地播放器 hook
     const localPlayer = useLocalPlayer(audioSource === 'local');
+
+    // 切换音频源时清理 itemRefs
+    useEffect(() => {
+        itemRefs.current.clear();
+    }, [audioSource]);
 
     // 持久化音频源选择
     useEffect(() => {
@@ -50,6 +57,33 @@ const AudioPlayer: React.FC<{
     }, [isOnline, audioSource]);
 
     const [showPlaylist, setShowPlaylist] = useState(false);
+
+    // 滚动播放列表到当前项居中
+    const scrollToCurrentItem = () => {
+        const listEl = listRef.current;
+        const itemEl = itemRefs.current.get(localPlayer.currentIndex);
+        if (!listEl || !itemEl) return;
+
+        // itemEl.offsetTop 是相对于 offsetParent (ul) 的，需要加上 ul 相对于滚动容器的偏移
+        const ulEl = itemEl.parentElement;
+        if (!ulEl) return;
+        
+        const itemOffsetTop = itemEl.offsetTop + ulEl.offsetTop;
+        const itemHeight = itemEl.offsetHeight;
+        const listHeight = listEl.clientHeight;
+
+        const targetScrollTop = itemOffsetTop - (listHeight / 2) + (itemHeight / 2);
+        listEl.scrollTo({ top: Math.max(0, targetScrollTop), behavior: 'smooth' });
+    };
+
+    // 当播放列表打开或当前索引变化时，滚动到当前项
+    useEffect(() => {
+        if (showPlaylist && localPlayer.currentIndex >= 0) {
+            requestAnimationFrame(() => {
+                scrollToCurrentItem();
+            });
+        }
+    }, [showPlaylist, localPlayer.currentIndex]);
 
     // 网络恢复按钮回调
     const handleSwitchToOnline = useCallback(() => {
@@ -168,7 +202,7 @@ const AudioPlayer: React.FC<{
                                     </button>
                                 </div>
 
-                                <div className="overflow-y-auto p-2 custom-scrollbar flex-1 bg-black/20" style={{ scrollbarGutter: 'stable' }}>
+                                <div ref={listRef} className="overflow-y-auto p-2 custom-scrollbar flex-1 bg-black/20" style={{ scrollbarGutter: 'stable' }}>
                                     {localPlayer.playlist.length === 0 ? (
                                         <div className="text-center p-8 text-theme-dim font-mono text-xs">{t('NO_TRACK')}</div>
                                     ) : (
@@ -177,11 +211,15 @@ const AudioPlayer: React.FC<{
 
                                                 <li
                                                     key={track.id}
+                                                    ref={(el) => {
+                                                        if (el) itemRefs.current.set(idx, el);
+                                                        else itemRefs.current.delete(idx);
+                                                    }}
                                                     className={`flex items-start p-3 border border-transparent hover:bg-theme-highlight/20 hover:border-theme-highlight/50 transition-all duration-200 group ${idx === localPlayer.currentIndex ? 'bg-theme-primary/10 border-theme-primary/30' : ''}`}
                                                 >
                                                     <div
                                                         className="flex items-start flex-1 min-w-0 cursor-pointer"
-                                                        onClick={() => localPlayer.playTrack(idx)}
+                                                        onClick={() => localPlayer.playTrack(idx, true)}
                                                     >
                                                         <div className={`w-8 font-mono text-xs pt-0.5 flex-shrink-0 ${idx === localPlayer.currentIndex ? 'text-theme-primary font-bold' : 'text-theme-dim'}`}>
                                                             {(idx + 1).toString().padStart(2, '0')}
