@@ -49,7 +49,9 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         if (playMode === PlayMode.LOOP && isAuto) {
             if (audioRef.current) {
                 audioRef.current.currentTime = 0;
-                audioRef.current.play();
+                if (isPlayingRef.current) {
+                    audioRef.current.play();
+                }
             }
             return;
         }

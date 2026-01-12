@@ -206,6 +206,15 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     const handlePrev = () => {
         if (playlist.length === 0) return;
 
+        // LOOP 模式下，上一曲只重置进度
+        if (playMode === PlayMode.LOOP) {
+            if (audioRef.current) {
+                audioRef.current.currentTime = 0;
+                // 保持当前播放状态，不强制播放
+            }
+            return;
+        }
+
         let prevIndex = currentIndex;
 
         if (playMode === PlayMode.RANDOM) {
