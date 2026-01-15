@@ -23,7 +23,7 @@
 ### 🎵 音频控制终端 (Audio Terminal)
 - **双模式播放**:
   - **本地模式**: 支持导入现代浏览器支持的所有音频类型，具备进度与播放列表管理
-  - **在线模式**: 集成 MetingAPI，支持网易云/QQ音乐/酷狗等平台的歌单解析
+  - **在线模式**: 集成 MetingAPI，支持网易云音乐/QQ音乐等平台的歌单解析
 - **终端交互**: 支持基本信息、播放控制、封面展示及后台播放等功能
 
 ### 📋 任务与配置 (Mission & Config)
@@ -81,68 +81,14 @@
    pnpm preview
    ```
 
-## 📂 项目结构 (Project Structure)
-
-```text
-endfield-pomodoro/
-├── docs/                       # 文档目录
-├── public/                     # 公共静态资源目录
-├── src/                        # 源代码目录
-│   ├── assets/                 # 静态资源文件
-│   │   └── images/             # 图片资源
-│   ├── components/             # UI 组件库
-│   │   ├── themes/             # 主题效果组件
-│   │   │   ├── BackgroundEffects.tsx  # 各主题背景效果
-│   │   │   ├── ForegroundEffects.tsx  # 各主题前景效果
-│   │   │   └── index.ts               # 主题组件导出
-│   │   ├── ui/                 # 基础 UI 组件
-│   │   │   ├── Button.tsx      # 按钮组件
-│   │   │   ├── Input.tsx       # 输入框和选择框组件
-│   │   │   ├── Panel.tsx       # 面板组件
-│   │   │   └── index.ts        # UI 组件导出
-│   │   ├── AudioPlayer.tsx     # 本地音频播放器组件
-│   │   ├── Checkbox.tsx        # 复选框组件
-│   │   ├── CustomSelect.tsx    # 自定义下拉选择组件
-│   │   ├── MessageDisplay.tsx  # 消息显示组件
-│   │   ├── MikuDecorations.tsx # Miku 主题专属装饰组件
-│   │   ├── MusicPlayer.tsx     # 在线音乐播放器组件
-│   │   ├── PlayerInterface.tsx # 播放器UI界面组件
-│   │   ├── Pomodoro.tsx        # 番茄钟核心组件
-│   │   ├── PWAPrompt.tsx       # PWA 提示组件
-│   │   ├── SoundManager.tsx    # 音效管理器 (Web Audio API)
-│   │   ├── TaskManager.tsx     # 任务管理组件
-│   │   └── TerminalUI.tsx      # 主题层容器组件
-│   ├── config/                 # 配置文件
-│   │   ├── musicConfig.ts      # 音乐播放器默认配置
-│   │   └── themes.ts           # 主题颜色配置
-│   ├── hooks/                  # 自定义 Hooks
-│   │   ├── useFooterHeight.ts  # Footer 高度监听 Hook
-│   │   ├── useIsMobile.ts      # 移动设备检测 Hook
-│   │   ├── useLocalPlayer.ts   # 本地播放器逻辑 Hook
-│   │   ├── useMusicData.ts     # 音乐数据获取
-│   │   └── useOnlinePlayer.ts  # 在线播放器逻辑 Hook
-│   ├── utils/                  # 工具函数
-│   │   ├── i18n.ts             # 国际化配置（中英双语）
-│   │   └── musicApiAdapters.ts # 音乐 API 适配器
-│   ├── App.tsx                 # 主应用组件与布局
-│   ├── constants.ts            # 全局常量定义
-│   ├── index.css               # 全局样式与 Tailwind 引入
-│   ├── main.tsx                # 渲染入口
-│   ├── types.ts                # TypeScript 核心类型定义
-│   └── vite-env.d.ts           # Vite 环境类型定义
-├── index.html                  # HTML 入口文件
-```
-
 ## 🌐 国际化支持 (i18n)
 
-项目完全支持中英双语，所有UI文本均通过 `i18n.ts` 管理，包括：
+项目支持中英双语，所有UI文本均通过 `i18n.ts` 管理，包括：
 
 - 界面标签和按钮文本
 - 状态提示信息
 - 音乐平台和类型选项
 - 错误和加载提示
-
-切换语言后无需刷新页面，所有文本即时更新。
 
 ## 🎨 主题系统 (Theme System)
 
@@ -155,7 +101,7 @@ endfield-pomodoro/
 - 状态色 (--color-success, --color-error)
 - 特效色 (--color-secondary, --color-accent)
 
-所有主题配置存储在 `src/config/themes.ts` 中，可轻松扩展新主题。主题效果组件分离在 `src/components/themes/` 目录下，实现了背景和前景效果的模块化管理。
+所有主题配置存储在 `src/config/themes.ts` 中，主题效果组件分离在 `src/components/themes/` 目录下。
 
 ## 🔧 开发建议 (Development Tips)
 
@@ -203,28 +149,6 @@ export const defaultMusicConfig: MusicConfig = {
 // 音乐播放器默认音量（0.0 - 1.0）
 export const DEFAULT_MUSIC_VOLUME = 0.5;
 ```
-
-### 代码组织原则
-- **组件分层**: UI 基础组件 (`src/components/ui/`)、主题效果组件 (`src/components/themes/`)、业务组件分离
-- **配置集中**: 所有配置文件统一在 `src/config/` 目录下管理
-- **常量文件**: 所有常量统一在 `constants.ts` 中管理
-- **类型文件**: 所有 TypeScript 类型定义在 `types.ts` 中
-- **工具函数**: 纯函数放在 `utils/` 目录下
-- **自定义 Hooks**: 可复用的逻辑放在 `hooks/` 目录下
-
-### React Compiler 说明
-
-本项目启用了 React Compiler，会自动优化组件性能：
-- 自动记忆化组件输出，无需使用 `React.memo`
-- 自动缓存计算结果，无需使用 `useMemo`
-- 自动优化回调函数，无需使用 `useCallback`
-- 编译器配置位于 [vite.config.ts](./vite.config.ts) 中
-- 使用 React DevTools 可查看哪些组件被编译器优化
-
-**注意：** 虽然 React Compiler 提供了自动优化，但在以下场景中仍然保留了显式的 hooks 调用：
-- 当需要确保对象/函数引用稳定性时（如传递给子组件的 props）
-- 当涉及复杂的依赖关系时
-- 为了提高代码可读性和显式意图
 
 ## 🤝 贡献 (Contributing)
 
