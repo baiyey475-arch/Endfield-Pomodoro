@@ -54,8 +54,7 @@ const MikuHexPattern: React.FC<MikuHexPatternProps> = ({ mousePos }) => (
 // Miku 频谱条动画
 const MikuEqualizerBars = () => {
     const bars = Array.from({ length: 20 }, (_, i) => ({
-        id: i,
-        delay: Math.random() * -1
+        id: i
     }));
 
     return (
@@ -67,8 +66,8 @@ const MikuEqualizerBars = () => {
                         className="w-4 rounded-t-sm animate-equalizer"
                         style={{
                             backgroundColor: 'var(--color-primary)',
-                            animationDelay: `${bar.delay}s`
-                        }}
+                            '--bar-index': bar.id
+                        } as React.CSSProperties}
                     />
                 ))}
             </div>
@@ -79,6 +78,7 @@ const MikuEqualizerBars = () => {
                 }
                 .animate-equalizer {
                     animation: equalizer 1s infinite ease-in-out alternate;
+                    animation-delay: calc(var(--bar-index) * -0.12s);
                 }
             `}</style>
         </>
