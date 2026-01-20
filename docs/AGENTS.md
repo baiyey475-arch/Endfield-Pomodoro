@@ -22,12 +22,16 @@ endfield-pomodoro/
 │   │   ├── AudioPlayer.tsx     # Local audio player component
 │   │   ├── Checkbox.tsx        # Checkbox component
 │   │   ├── CustomSelect.tsx    # Custom dropdown component
+│   │   ├── Dashboard.tsx       # Dashboard layout component
+│   │   ├── FooterStats.tsx     # Footer stats component
+│   │   ├── HeaderBar.tsx       # Header bar component
 │   │   ├── MessageDisplay.tsx  # Message display component
 │   │   ├── MikuDecorations.tsx # Miku theme exclusive decoration component
 │   │   ├── MusicPlayer.tsx     # Online music player component
 │   │   ├── PlayerInterface.tsx # Player UI interface component
 │   │   ├── Pomodoro.tsx        # Pomodoro core component
 │   │   ├── PWAPrompt.tsx       # PWA prompt component
+│   │   ├── SettingsPanel.tsx   # Settings panel component
 │   │   ├── SoundManager.tsx    # Sound effect manager (Web Audio API)
 │   │   ├── TaskManager.tsx     # Task management component
 │   │   └── TerminalUI.tsx      # Theme layer container component
@@ -39,7 +43,8 @@ endfield-pomodoro/
 │   │   ├── useIsMobile.ts      # Mobile device detection Hook
 │   │   ├── useLocalPlayer.ts   # Local player logic Hook
 │   │   ├── useMusicData.ts     # Music data retrieval
-│   │   └── useOnlinePlayer.ts  # Online player logic Hook
+│   │   ├── useOnlinePlayer.ts  # Online player logic Hook
+│   │   └── useSessionStats.ts  # Session stats logic Hook
 │   ├── utils/                  # Utility functions
 │   │   ├── i18n.ts             # Internationalization configuration (Chinese/English)
 │   │   └── musicApiAdapters.ts # Music API adapters
