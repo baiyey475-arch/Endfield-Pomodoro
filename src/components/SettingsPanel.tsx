@@ -1,0 +1,222 @@
+import React from 'react';
+import type { Settings } from '../types';
+import { Language, ThemePreset } from '../types';
+import { Panel, Input, Button } from './ui';
+import { CustomSelect } from './CustomSelect';
+import { Checkbox } from './Checkbox';
+import { useTranslation } from '../utils/i18n';
+
+type SettingsPanelProps = {
+  settings: Settings;
+  tempMusicConfig: Settings['musicConfig'];
+  onSettingsChange: React.Dispatch<React.SetStateAction<Settings>>;
+  onMusicConfigChange: (key: keyof Settings['musicConfig'], value: string) => void;
+  onApplyMusicConfig: () => void;
+  onResetMusicConfig: () => void;
+  t: ReturnType<typeof useTranslation>;
+};
+
+const getMusicPlatformOptions = (t: ReturnType<typeof useTranslation>) => [
+  { value: 'netease', label: t('PLATFORM_NETEASE') },
+  { value: 'tencent', label: t('PLATFORM_TENCENT') },
+  { value: 'kugou', label: t('PLATFORM_KUGOU') },
+  { value: 'baidu', label: t('PLATFORM_BAIDU') },
+  { value: 'kuwo', label: t('PLATFORM_KUWO') }
+];
+
+const getMusicTypeOptions = (t: ReturnType<typeof useTranslation>) => [
+  { value: 'playlist', label: t('TYPE_PLAYLIST') }
+];
+
+const SettingsPanel: React.FC<SettingsPanelProps> = ({
+  settings,
+  tempMusicConfig,
+  onSettingsChange,
+  onMusicConfigChange,
+  onApplyMusicConfig,
+  onResetMusicConfig,
+  t
+}) => {
+  return (
+    <div className="max-w-4xl mx-auto w-full pt-6 px-2">
+      <Panel title={t('SYSTEM_CONFIG')} className="p-4 md:p-8 backdrop-blur-xl bg-theme-surface/80 mt-2">
+        <div className="space-y-10">
+          <div className="space-y-4">
+            <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+              <span>{t('CYCLE_PARAMETERS')}</span>
+              <span className="text-[10px] opacity-50">CONFIG_SECTOR_01</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('WORK_DURATION')}</label>
+                <Input
+                  type="number"
+                  value={settings.workDuration}
+                  onChange={(e) => onSettingsChange({ ...settings, workDuration: Number(e.target.value) })}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('SHORT_BREAK_DURATION')}</label>
+                <Input
+                  type="number"
+                  value={settings.shortBreakDuration}
+                  onChange={(e) => onSettingsChange({ ...settings, shortBreakDuration: Number(e.target.value) })}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('LONG_BREAK_DURATION')}</label>
+                <Input
+                  type="number"
+                  value={settings.longBreakDuration}
+                  onChange={(e) => onSettingsChange({ ...settings, longBreakDuration: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+              <span>{t('INTERFACE_CUSTOMIZATION')}</span>
+              <span className="text-[10px] opacity-50">CONFIG_SECTOR_02</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('LANGUAGE')}</label>
+                <CustomSelect
+                  value={settings.language}
+                  options={[
+                    { value: Language.EN, label: 'ENGLISH (US)' },
+                    { value: Language.CN, label: '简体中文 (CN)' }
+                  ]}
+                  onChange={(value) => onSettingsChange({ ...settings, language: value as Language })}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('THEME')}</label>
+                <CustomSelect
+                  value={settings.theme}
+                  options={[
+                    { value: ThemePreset.ORIGIN, label: t('THEME_ORIGIN') },
+                    { value: ThemePreset.AZURE, label: t('THEME_AZURE') },
+                    { value: ThemePreset.NEON, label: t('THEME_NEON') },
+                    { value: ThemePreset.MATRIX, label: t('THEME_MATRIX') },
+                    { value: ThemePreset.TACTICAL, label: t('THEME_TACTICAL') },
+                    { value: ThemePreset.ROYAL, label: t('THEME_ROYAL') },
+                    { value: ThemePreset.INDUSTRIAL, label: t('THEME_INDUSTRIAL') },
+                    { value: ThemePreset.LABORATORY, label: t('THEME_LABORATORY') },
+                    { value: ThemePreset.MIKU, label: t('THEME_MIKU') }
+                  ]}
+                  onChange={(value) => onSettingsChange({ ...settings, theme: value as ThemePreset })}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+              <span>{t('AUTOMATION_FEEDBACK')}</span>
+              <span className="text-[10px] opacity-50">CONFIG_SECTOR_03</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Checkbox
+                checked={settings.autoStartBreaks}
+                onChange={(checked) => onSettingsChange({ ...settings, autoStartBreaks: checked })}
+                label={t('AUTO_START_BREAK')}
+              />
+              <Checkbox
+                checked={settings.autoStartWork}
+                onChange={(checked) => onSettingsChange({ ...settings, autoStartWork: checked })}
+                label={t('AUTO_START_WORK')}
+              />
+              <Checkbox
+                checked={settings.soundEnabled}
+                onChange={(checked) => onSettingsChange({ ...settings, soundEnabled: checked })}
+                label={t('AUDIO_FEEDBACK')}
+              />
+              <Checkbox
+                checked={settings.notificationsEnabled}
+                onChange={async (checked) => {
+                  if (!checked || !('Notification' in window)) {
+                    onSettingsChange(prev => ({ ...prev, notificationsEnabled: false }));
+                    return;
+                  }
+
+                  let permission = Notification.permission;
+                  if (permission === 'default') {
+                    try {
+                      permission = await Notification.requestPermission();
+                    } catch (err) {
+                      console.error('Failed to request notification permission', err);
+                      permission = 'denied';
+                    }
+                  }
+
+                  if (permission === 'denied') {
+                    alert(t('NOTIFICATION_PERMISSION_DENIED'));
+                  }
+
+                  onSettingsChange(prev => ({ ...prev, notificationsEnabled: permission === 'granted' }));
+                }}
+                label={t('NOTIFICATIONS_ENABLED')}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+              <span>{t('ONLINE_MUSIC_CONFIG')}</span>
+              <span className="text-[10px] opacity-50">CONFIG_SECTOR_04</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('PLATFORM')}</label>
+                <CustomSelect
+                  value={tempMusicConfig.server}
+                  options={getMusicPlatformOptions(t)}
+                  onChange={(value) => onMusicConfigChange('server', value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('TYPE')}</label>
+                <CustomSelect
+                  value={tempMusicConfig.type}
+                  options={getMusicTypeOptions(t)}
+                  onChange={(value) => onMusicConfigChange('type', value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('ID')}</label>
+                <Input
+                  type="text"
+                  value={tempMusicConfig.id}
+                  onChange={(e) => onMusicConfigChange('id', e.target.value)}
+                  placeholder={t('ENTER_ID_PLACEHOLDER')}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 pt-2">
+              <Button
+                variant="ghost"
+                onClick={onResetMusicConfig}
+                className="px-4 py-1.5 text-xs font-mono tracking-wider"
+                title={t('RESET_MUSIC_CONFIG')}
+                aria-label={t('RESET_MUSIC_CONFIG')}
+              >
+                <i className="ri-refresh-line text-base"></i>
+              </Button>
+              <Button
+                variant="primary"
+                onClick={onApplyMusicConfig}
+                className="px-6 py-1.5 text-xs font-mono tracking-wider"
+              >
+                {t('APPLY_SETTINGS')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Panel>
+    </div>
+  );
+};
+
+export default SettingsPanel;

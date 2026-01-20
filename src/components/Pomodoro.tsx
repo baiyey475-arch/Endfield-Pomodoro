@@ -40,10 +40,10 @@ const Pomodoro: React.FC<PomodoroProps> = ({ settings, sessionCount, onSessionsU
   const [timeLeft, setTimeLeft] = useState<number>(() => settings.workDuration * SECONDS_PER_MINUTE);
   const [isActive, setIsActive] = useState<boolean>(false);
 
-  // 从 localStorage 恢复计时器（仅在挂载时执行）
+  // 从 sessionStorage 恢复计时器（仅在挂载时执行）
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEYS.TIMER);
+      const raw = sessionStorage.getItem(STORAGE_KEYS.TIMER);
       if (!raw) return;
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return;
@@ -87,29 +87,26 @@ const Pomodoro: React.FC<PomodoroProps> = ({ settings, sessionCount, onSessionsU
         }
       }
     } catch (err) {
-      // 解析失败时记录错误，便于调试
-      console.error('Failed to parse timer payload from localStorage', err);
+      console.error('Failed to parse timer payload from sessionStorage', err);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 将计时器状态持久化到 localStorage（mode / timeLeft / isActive 变化时更新）
+  // 将计时器状态持久化到 sessionStorage（mode / timeLeft / isActive 变化时更新）
   useEffect(() => {
     try {
       const payload: TimerPayload = { mode, timeLeft, isActive };
       if (isActive) {
-        // 计算当前会话的起始时间戳，便于刷新后继续计时
         const total = getTotalTime();
         const elapsed = total - timeLeft;
         payload.startTs = Date.now() - elapsed * MS_PER_SECOND;
       }
-      localStorage.setItem(STORAGE_KEYS.TIMER, JSON.stringify(payload));
+      sessionStorage.setItem(STORAGE_KEYS.TIMER, JSON.stringify(payload));
     } catch (err) {
-      // 持久化失败时记录错误但不影响运行
       if (err instanceof Error && err.name === 'QuotaExceededError') {
-        console.warn('localStorage quota exceeded, timer state will not persist');
+        console.warn('sessionStorage quota exceeded, timer state will not persist');
       } else {
-        console.error('Failed to persist timer payload to localStorage', err);
+        console.error('Failed to persist timer payload to sessionStorage', err);
       }
     }
     // 依赖包括 settings 的周期性参数，防止 totalTime 变化导致不一致
@@ -117,7 +114,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({ settings, sessionCount, onSessionsU
   }, [mode, timeLeft, isActive, settings.workDuration, settings.shortBreakDuration, settings.longBreakDuration]);
 
   useEffect(() => {
-    // 如果刚刚从 localStorage 恢复到当前 mode，跳过本次 reset（避免覆盖恢复的剩余时间/运行状态）
+    // 如果刚刚从 sessionStorage 恢复到当前 mode，跳过本次 reset（避免覆盖恢复的剩余时间/运行状态）
     if (restoredModeRef.current && restoredModeRef.current === mode) {
       restoredModeRef.current = null;
       return;

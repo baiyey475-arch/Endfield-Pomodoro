@@ -1,9 +1,10 @@
 /**
- * LocalStorage 存储键常量
- * 用于统一管理所有本地存储的键名，避免拼写错误
- * 
+ * 存储键常量（localStorage / sessionStorage）
+ * 用于统一管理所有存储的键名，避免拼写错误
+ *
  * 使用位置：
- * - App.tsx: 所有键
+ * - App.tsx: SETTINGS / SESSIONS / TOTAL_SECONDS
+ * - Pomodoro.tsx: TIMER
  * - AudioPlayer.tsx: AUDIO_SOURCE
  */
 export const STORAGE_KEYS = {

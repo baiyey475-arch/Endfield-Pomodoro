@@ -32,6 +32,12 @@ export const ThemePreset = {
 } as const;
 export type ThemePreset = typeof ThemePreset[keyof typeof ThemePreset];
 
+export const View = {
+  DASHBOARD: 'DASHBOARD',
+  SETTINGS: 'SETTINGS'
+} as const;
+export type View = typeof View[keyof typeof View];
+
 export const AudioMode = {
   SEQUENTIAL: 'SEQUENTIAL',
   SHUFFLE: 'SHUFFLE',
