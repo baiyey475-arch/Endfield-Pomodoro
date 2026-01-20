@@ -21,7 +21,7 @@ export const useSessionStats = (workDuration: number): UseSessionStatsResult => 
   const [sessionCount, setSessionCount] = useState(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEYS.SESSIONS);
-      return saved ? Number(saved) | 0 : 0;
+      return saved ? (Math.floor(Number(saved)) || 0) : 0;
     } catch {
       return 0;
     }
@@ -29,7 +29,7 @@ export const useSessionStats = (workDuration: number): UseSessionStatsResult => 
   const [accumulatedSeconds, setAccumulatedSeconds] = useState(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEYS.TOTAL_SECONDS);
-      return saved ? (Number(saved) || 0) : 0;
+      return saved ? (Math.floor(Number(saved)) || 0) : 0;
     } catch {
       return 0;
     }

@@ -84,7 +84,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ currentView, onViewChange, now, i
 
           <div className="hidden md:flex flex-col items-end text-[10px] font-mono text-theme-dim border-l border-theme-highlight/30 pl-6">
             <span className="text-theme-primary text-base leading-none tracking-widest">{now.toLocaleTimeString('en-US', { hour12: false })}</span>
-            <span className="opacity-70">{now.toISOString().split('T')[0]}</span>
+            <span className="opacity-70">{now.toLocaleDateString()}</span>
           </div>
         </div>
       </div>

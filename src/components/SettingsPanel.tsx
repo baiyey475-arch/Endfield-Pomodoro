@@ -51,6 +51,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('WORK_DURATION')}</label>
                 <Input
                   type="number"
+                  min={1}
                   value={settings.workDuration}
                   onChange={(e) => onSettingsChange({ ...settings, workDuration: Number(e.target.value) })}
                 />
@@ -59,6 +60,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('SHORT_BREAK_DURATION')}</label>
                 <Input
                   type="number"
+                  min={1}
                   value={settings.shortBreakDuration}
                   onChange={(e) => onSettingsChange({ ...settings, shortBreakDuration: Number(e.target.value) })}
                 />
@@ -67,6 +69,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">{t('LONG_BREAK_DURATION')}</label>
                 <Input
                   type="number"
+                  min={1}
                   value={settings.longBreakDuration}
                   onChange={(e) => onSettingsChange({ ...settings, longBreakDuration: Number(e.target.value) })}
                 />
