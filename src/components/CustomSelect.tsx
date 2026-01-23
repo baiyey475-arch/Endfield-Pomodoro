@@ -37,6 +37,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({ value, options, onCh
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        title={selectedOption?.label || value}
         className="w-full bg-theme-highlight/20 border border-theme-highlight text-theme-text font-mono text-sm px-4 h-form-control focus:outline-none focus:border-theme-primary hover:bg-theme-highlight/10 transition-all duration-300 flex items-center justify-between group cursor-pointer"
       >
         <span className="truncate">{selectedOption?.label || value}</span>

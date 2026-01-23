@@ -82,7 +82,7 @@ export const THEMES: Record<ThemePreset, Record<string, string>> = {
         '--color-surface': '#d4d4d4',
         '--color-highlight': '#a3a3a3',
         '--color-primary': '#f97316',
-        '--color-secondary': '#f6ff00',
+        '--color-secondary': '#feff42',
         '--color-accent': '#ffd1f6',
         '--color-text': '#141414',
         '--color-dim': '#7a7a7a',
