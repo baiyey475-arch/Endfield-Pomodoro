@@ -179,7 +179,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   onChange={(value) => onMusicConfigChange('server', value)}
                 />
                 <div className="mt-2 text-sm text-theme-primary font-mono inline-flex items-center gap-1 px-2 py-1 border border-theme-highlight/80 bg-theme-surface/20">
-                  <i className="ri-alarm-warning-line text-sm"></i>
+                  <i className="ri-alarm-warning-line text-sm" aria-hidden="true"></i>
                   <span>{t('PLATFORM_NOTICE')}</span>
                 </div>
               </div>
