@@ -40,7 +40,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         if (stored === PlayMode.SEQUENCE || stored === PlayMode.LOOP || stored === PlayMode.RANDOM) {
             return stored;
         }
-        return PlayMode.SEQUENCE;
+        return PlayMode.RANDOM;
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
