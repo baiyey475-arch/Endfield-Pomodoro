@@ -40,7 +40,6 @@ export const useShuffle = (
             // 非随机模式，清空状态
             setShuffledIndices([]);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- 故意排除 currentIndex，避免每首歌都重洗
     }, [playlistLength, playMode]);
 
     /**

@@ -9,14 +9,14 @@ interface TaskManagerProps {
 }
 
 const MAX_TASKS = 6;
-const STORAGE_KEY = "origin_terminal_tasks";
+import { STORAGE_KEYS } from "../constants";
 
 const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
     const t = useTranslation(language);
 
     // 在挂载时从LocalStorage加载 - 直接初始化状态
     const [tasks, setTasks] = useState<Task[]>(() => {
-        const saved = localStorage.getItem(STORAGE_KEY);
+        const saved = localStorage.getItem(STORAGE_KEYS.TASKS);
         if (saved) {
             try {
                 return JSON.parse(saved);
@@ -31,7 +31,11 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
 
     // 更新时保存到LocalStorage
     useEffect(() => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        try {
+            localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
+        } catch (error) {
+            console.error("Failed to persist tasks", error);
+        }
     }, [tasks]);
 
     const addTask = () => {

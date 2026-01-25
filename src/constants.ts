@@ -10,6 +10,8 @@
 export const STORAGE_KEYS = {
     /** 用户设置（番茄钟时长、主题、语言等） */
     SETTINGS: "origin_terminal_settings",
+    /** 任务列表 */
+    TASKS: "origin_terminal_tasks",
     /** 完成的番茄钟会话数 */
     SESSIONS: "origin_terminal_sessions",
     /** 累计学习总秒数 */

@@ -71,7 +71,7 @@ export default defineConfig({
                             cacheName: "index-html",
                             expiration: {
                                 maxEntries: 1,
-                                maxAgeSeconds: 0, // 不缓存
+                                maxAgeSeconds: 60 * 60 * 24 * 7, // 1周离线回退 (PWA Support)
                             },
                         },
                     },

@@ -465,45 +465,50 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     }, []);
 
     // 删除曲目
+    // 在设置状态前计算新的索引，避免依赖可能过时的闭包状态
     const removeTrack = useCallback(
         (index: number) => {
-            setPlaylist((prev) => {
-                const track = prev[index];
-                if (track) {
-                    URL.revokeObjectURL(track.blobUrl);
-                    if (track.coverUrl) URL.revokeObjectURL(track.coverUrl);
+            const currentList = playlistRef.current;
+            const track = currentList[index];
+            if (track) {
+                URL.revokeObjectURL(track.blobUrl);
+                if (track.coverUrl) URL.revokeObjectURL(track.coverUrl);
+            }
+
+            const newList = currentList.filter((_, i) => i !== index);
+
+            // 在更新状态之前计算新的索引
+            let newIndex = currentIndex;
+            if (index === currentIndex) {
+                if (newList.length === 0) {
+                    newIndex = -1;
+                    queueMicrotask(() => setIsPlaying(false));
+                } else if (index >= newList.length) {
+                    newIndex = newList.length - 1;
                 }
+            } else if (index < currentIndex) {
+                newIndex = currentIndex - 1;
+            }
 
-                const newList = prev.filter((_, i) => i !== index);
-
-                // 调整当前索引
-                if (index === currentIndex) {
-                    if (newList.length === 0) {
-                        setCurrentIndex(-1);
-                        setIsPlaying(false);
-                    } else if (index >= newList.length) {
-                        setCurrentIndex(newList.length - 1);
-                    }
-                } else if (index < currentIndex) {
-                    setCurrentIndex((prev) => prev - 1);
-                }
-
-                return newList;
-            });
+            setPlaylist(newList);
+            if (newIndex !== currentIndex) {
+                setCurrentIndex(newIndex);
+            }
         },
         [currentIndex],
     );
 
     // 清空播放列表
     const clearPlaylist = useCallback(() => {
-        playlist.forEach((track) => {
+        // 使用 playlistRef.current 确保清理最新的 Blob URL，避免闭包陷阱
+        playlistRef.current.forEach((track) => {
             URL.revokeObjectURL(track.blobUrl);
             if (track.coverUrl) URL.revokeObjectURL(track.coverUrl);
         });
         setPlaylist([]);
         setCurrentIndex(-1);
         setIsPlaying(false);
-    }, [playlist]);
+    }, []);
 
     // 组件卸载时清理所有 Blob URL
     useEffect(() => {

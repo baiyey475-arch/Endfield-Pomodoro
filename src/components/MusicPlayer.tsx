@@ -146,7 +146,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
                     >
                         {playlist.map((song, index) => (
                             <li
-                                key={index}
+                                key={song.url || index} // 使用 URL 作为稳定键，若无则回退到索引
                                 ref={(el) => {
                                     if (el) itemRefs.current.set(index, el);
                                     else itemRefs.current.delete(index);

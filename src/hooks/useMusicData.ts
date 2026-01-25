@@ -65,11 +65,15 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                 try {
                     const url = adapter.buildUrl({ server, type, id });
 
+                    // 从 adapter.fetchOptions 中移除 signal，以避免覆盖我们的 controller.signal
+                    const { signal: _ignored, ...safeFetchOptions } =
+                        adapter.fetchOptions || {};
+
                     // 使用 Promise.race 来处理超时，并在完成后清理 setTimeout
                     const response = await Promise.race([
                         fetch(url, {
                             signal: controller.signal,
-                            ...adapter.fetchOptions,
+                            ...safeFetchOptions,
                         }),
                         new Promise<never>((_, reject) => {
                             timeoutId = setTimeout(
