@@ -65,7 +65,8 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                 try {
                     const url = adapter.buildUrl({ server, type, id });
 
-                    // 从 adapter.fetchOptions 中移除 signal，以避免覆盖我们的 controller.signal
+                    // 从 adapter.fetchOptions 中移除 signal，以避免覆盖 controller.signal
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const { signal: _ignored, ...safeFetchOptions } =
                         adapter.fetchOptions || {};
 

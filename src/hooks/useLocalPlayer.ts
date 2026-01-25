@@ -7,6 +7,7 @@ import {
     TIME_UPDATE_THROTTLE_SECONDS,
 } from "../constants";
 import { PlayMode } from "../types";
+import { asyncPool } from "../utils/asyncPool";
 import { useShuffle } from "./useShuffle";
 
 export interface LocalTrack {
@@ -17,8 +18,6 @@ export interface LocalTrack {
     blobUrl: string;
     coverUrl?: string;
 }
-
-import { asyncPool } from "../utils/asyncPool";
 
 export const useLocalPlayer = (enabled: boolean = true) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -206,8 +205,8 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         // 只在 URL 真正变化时才重新加载
         if (audio.src !== track.blobUrl) {
             const wasPlaying = isPlaying;
-            // 使用 queueMicrotask 避免同步更新状态
-            queueMicrotask(() => setIsLoading(true));
+            // eslint-disable-next-line react-hooks/set-state-in-effect -- 故意同步设置以确保 UI 立即显示加载状态
+            setIsLoading(true);
             audio.src = track.blobUrl;
             audio.load();
 
