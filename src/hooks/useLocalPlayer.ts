@@ -1,9 +1,13 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { parseBlob } from 'music-metadata';
-import { AUDIO_LOADING_TIMEOUT_MS, TIME_UPDATE_THROTTLE_SECONDS, STORAGE_KEYS } from '../constants';
-import { PlayMode } from '../types';
-import { DEFAULT_MUSIC_VOLUME } from '../config/musicConfig';
-import { useShuffle } from './useShuffle';
+import { parseBlob } from "music-metadata";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { DEFAULT_MUSIC_VOLUME } from "../config/musicConfig";
+import {
+    AUDIO_LOADING_TIMEOUT_MS,
+    STORAGE_KEYS,
+    TIME_UPDATE_THROTTLE_SECONDS,
+} from "../constants";
+import { PlayMode } from "../types";
+import { useShuffle } from "./useShuffle";
 
 export interface LocalTrack {
     id: string;
@@ -15,15 +19,19 @@ export interface LocalTrack {
 }
 
 // 并发控制工具函数
-async function asyncPool<T, R>(limit: number, items: T[], fn: (item: T) => Promise<R>): Promise<R[]> {
+async function asyncPool<T, R>(
+    limit: number,
+    items: T[],
+    fn: (item: T) => Promise<R>,
+): Promise<R[]> {
     // 如果 limit 不是正数，则直接并行执行所有任务
     if (limit <= 0) {
-        return Promise.all(items.map(item => fn(item)));
+        return Promise.all(items.map((item) => fn(item)));
     }
 
     const ret: Promise<R>[] = [];
     const executing = new Set<Promise<R>>();
-    
+
     for (const item of items) {
         const p = Promise.resolve().then(() => fn(item));
         ret.push(p);
@@ -44,7 +52,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     const [playlist, setPlaylist] = useState<LocalTrack[]>([]);
     // 使用 ref 追踪 playlist，确保即使组件卸载也能正确清理 Blob URL
     const playlistRef = useRef<LocalTrack[]>([]);
-    
+
     // 更新 ref 以保持与 state 同步
     useEffect(() => {
         playlistRef.current = playlist;
@@ -57,21 +65,33 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         try {
             const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_VOLUME);
             const parsed = stored ? Number(stored) : NaN;
-            return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : DEFAULT_MUSIC_VOLUME;
+            return Number.isFinite(parsed)
+                ? Math.min(1, Math.max(0, parsed))
+                : DEFAULT_MUSIC_VOLUME;
         } catch (error) {
-            console.error('Failed to read audio volume from localStorage', error);
+            console.error(
+                "Failed to read audio volume from localStorage",
+                error,
+            );
             return DEFAULT_MUSIC_VOLUME;
         }
     });
     const [playMode, setPlayMode] = useState<PlayMode>(() => {
         try {
             const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_PLAY_MODE);
-            if (stored === PlayMode.SEQUENCE || stored === PlayMode.LOOP || stored === PlayMode.RANDOM) {
+            if (
+                stored === PlayMode.SEQUENCE ||
+                stored === PlayMode.LOOP ||
+                stored === PlayMode.RANDOM
+            ) {
                 return stored;
             }
             return PlayMode.RANDOM;
         } catch (error) {
-            console.error('Failed to read audio play mode from localStorage', error);
+            console.error(
+                "Failed to read audio play mode from localStorage",
+                error,
+            );
             return PlayMode.RANDOM;
         }
     });
@@ -92,33 +112,39 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     }, [playMode]);
 
     // 使用提取的洗牌逻辑 Hook
-    const { getNextRandomIndex, getPrevRandomIndex } = useShuffle(playlist.length, playMode, currentIndex);
+    const { getNextRandomIndex, getPrevRandomIndex } = useShuffle(
+        playlist.length,
+        playMode,
+        currentIndex,
+    );
 
     // 切歌逻辑
-    const handleNext = useCallback((isAuto: boolean = false) => {
-        if (playlist.length === 0) return;
+    const handleNext = useCallback(
+        (isAuto: boolean = false) => {
+            if (playlist.length === 0) return;
 
-        if (playMode === PlayMode.LOOP && isAuto) {
-            if (audioRef.current) {
-                audioRef.current.currentTime = 0;
-                if (isPlayingRef.current) {
-                    audioRef.current.play();
+            if (playMode === PlayMode.LOOP && isAuto) {
+                if (audioRef.current) {
+                    audioRef.current.currentTime = 0;
+                    if (isPlayingRef.current) {
+                        audioRef.current.play();
+                    }
                 }
+                return;
             }
-            return;
-        }
 
-        let nextIndex: number;
-        if (playMode === PlayMode.RANDOM) {
-            nextIndex = getNextRandomIndex();
-        } else {
-            nextIndex = (currentIndex + 1) % playlist.length;
-        }
+            let nextIndex: number;
+            if (playMode === PlayMode.RANDOM) {
+                nextIndex = getNextRandomIndex();
+            } else {
+                nextIndex = (currentIndex + 1) % playlist.length;
+            }
 
-        setCurrentIndex(nextIndex);
-        // 不调用 setIsPlaying，保持当前播放状态
-    }, [playlist.length, playMode, currentIndex, getNextRandomIndex]);
-
+            setCurrentIndex(nextIndex);
+            // 不调用 setIsPlaying，保持当前播放状态
+        },
+        [playlist.length, playMode, currentIndex, getNextRandomIndex],
+    );
 
     useEffect(() => {
         handleNextRef.current = handleNext;
@@ -132,7 +158,10 @@ export const useLocalPlayer = (enabled: boolean = true) => {
 
         const onTimeUpdate = () => {
             const time = audio.currentTime;
-            if (Math.abs(time - lastTimeRef.current) >= TIME_UPDATE_THROTTLE_SECONDS) {
+            if (
+                Math.abs(time - lastTimeRef.current) >=
+                TIME_UPDATE_THROTTLE_SECONDS
+            ) {
                 lastTimeRef.current = time;
                 setCurrentTime(time);
             }
@@ -146,25 +175,25 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         const onWaiting = () => setIsLoading(true);
         const onError = () => {
             setIsLoading(false);
-            console.error('Audio playback error');
+            console.error("Audio playback error");
         };
 
-        audio.addEventListener('timeupdate', onTimeUpdate);
-        audio.addEventListener('loadedmetadata', onLoadedMetadata);
-        audio.addEventListener('ended', onEnded);
-        audio.addEventListener('canplay', onCanPlay);
-        audio.addEventListener('waiting', onWaiting);
-        audio.addEventListener('error', onError);
+        audio.addEventListener("timeupdate", onTimeUpdate);
+        audio.addEventListener("loadedmetadata", onLoadedMetadata);
+        audio.addEventListener("ended", onEnded);
+        audio.addEventListener("canplay", onCanPlay);
+        audio.addEventListener("waiting", onWaiting);
+        audio.addEventListener("error", onError);
 
         return () => {
             audio.pause();
-            audio.src = '';
-            audio.removeEventListener('timeupdate', onTimeUpdate);
-            audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-            audio.removeEventListener('ended', onEnded);
-            audio.removeEventListener('canplay', onCanPlay);
-            audio.removeEventListener('waiting', onWaiting);
-            audio.removeEventListener('error', onError);
+            audio.src = "";
+            audio.removeEventListener("timeupdate", onTimeUpdate);
+            audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+            audio.removeEventListener("ended", onEnded);
+            audio.removeEventListener("canplay", onCanPlay);
+            audio.removeEventListener("waiting", onWaiting);
+            audio.removeEventListener("error", onError);
         };
     }, []);
 
@@ -179,7 +208,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         try {
             localStorage.setItem(STORAGE_KEYS.AUDIO_VOLUME, String(volume));
         } catch (error) {
-            console.error('Failed to persist audio volume', error);
+            console.error("Failed to persist audio volume", error);
         }
     }, [volume]);
 
@@ -187,14 +216,15 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         try {
             localStorage.setItem(STORAGE_KEYS.AUDIO_PLAY_MODE, playMode);
         } catch (error) {
-            console.error('Failed to persist audio play mode', error);
+            console.error("Failed to persist audio play mode", error);
         }
     }, [playMode]);
 
     // 监听当前曲目变化 - 加载音频
     useEffect(() => {
         const audio = audioRef.current;
-        if (!audio || currentIndex < 0 || currentIndex >= playlist.length) return;
+        if (!audio || currentIndex < 0 || currentIndex >= playlist.length)
+            return;
 
         const track = playlist[currentIndex];
         if (!track?.blobUrl) return;
@@ -208,10 +238,14 @@ export const useLocalPlayer = (enabled: boolean = true) => {
             audio.load();
 
             if (wasPlaying) {
-                audio.play().catch(err => {
+                audio.play().catch((err) => {
                     // 忽略 AbortError
-                    if (err instanceof DOMException && err.name === 'AbortError') return;
-                    console.error('Playback failed:', err);
+                    if (
+                        err instanceof DOMException &&
+                        err.name === "AbortError"
+                    )
+                        return;
+                    console.error("Playback failed:", err);
                     setIsPlaying(false);
                 });
             }
@@ -224,33 +258,38 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         if (!audio || currentIndex < 0) return;
 
         if (isPlaying && audio.paused && audio.readyState >= 2) {
-            audio.play().catch(err => {
+            audio.play().catch((err) => {
                 // 忽略 AbortError
-                if (err instanceof DOMException && err.name === 'AbortError') return;
-                console.error('Playback failed:', err);
+                if (err instanceof DOMException && err.name === "AbortError")
+                    return;
+                console.error("Playback failed:", err);
                 setIsPlaying(false);
             });
         } else if (isPlaying && audio.readyState < 2) {
             const onCanPlay = () => {
-                audio.play().catch(err => {
+                audio.play().catch((err) => {
                     // 忽略 AbortError
-                    if (err instanceof DOMException && err.name === 'AbortError') return;
-                    console.error('Playback failed:', err);
+                    if (
+                        err instanceof DOMException &&
+                        err.name === "AbortError"
+                    )
+                        return;
+                    console.error("Playback failed:", err);
                     setIsPlaying(false);
                 });
             };
-            audio.addEventListener('canplay', onCanPlay, { once: true });
+            audio.addEventListener("canplay", onCanPlay, { once: true });
 
             const timeoutId = setTimeout(() => {
                 if (audioRef.current && audioRef.current.readyState < 2) {
-                    console.warn('Audio loading timeout');
+                    console.warn("Audio loading timeout");
                     setIsPlaying(false);
                 }
             }, AUDIO_LOADING_TIMEOUT_MS);
 
             return () => {
                 clearTimeout(timeoutId);
-                audio.removeEventListener('canplay', onCanPlay);
+                audio.removeEventListener("canplay", onCanPlay);
             };
         } else if (!isPlaying && !audio.paused) {
             audio.pause();
@@ -269,11 +308,12 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     // 添加文件到播放列表（渐进式加载：先显示文件名，后台更新元数据）
     const addFiles = useCallback(async (files: File[]) => {
         // 过滤重复文件
-        const uniqueFiles = files.filter(file => {
-            const isDuplicate = playlistRef.current.some(track => 
-                track.file.name === file.name &&
-                track.file.size === file.size &&
-                track.file.lastModified === file.lastModified
+        const uniqueFiles = files.filter((file) => {
+            const isDuplicate = playlistRef.current.some(
+                (track) =>
+                    track.file.name === file.name &&
+                    track.file.size === file.size &&
+                    track.file.lastModified === file.lastModified,
             );
             if (isDuplicate) {
                 console.warn(`Skip duplicate file: ${file.name}`);
@@ -284,23 +324,27 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         if (uniqueFiles.length === 0) return;
 
         // 第一步：立即用文件名创建列表项
-        const initialTracks: LocalTrack[] = uniqueFiles.map(file => ({
+        const initialTracks: LocalTrack[] = uniqueFiles.map((file) => ({
             id: `${file.name}-${file.size}-${file.lastModified}`,
             file,
-            name: file.name.replace(/\.[^/.]+$/, ''),
+            name: file.name.replace(/\.[^/.]+$/, ""),
             artist: undefined,
             blobUrl: URL.createObjectURL(file),
-            coverUrl: undefined
+            coverUrl: undefined,
         }));
 
         let startIndex = 0;
         const isFirstLoad = playlistRef.current.length === 0;
         // 使用 playModeRef 获取最新模式，避免 addFiles 依赖变化
-        if (isFirstLoad && playModeRef.current === PlayMode.RANDOM && uniqueFiles.length > 0) {
-             startIndex = Math.floor(Math.random() * uniqueFiles.length);
+        if (
+            isFirstLoad &&
+            playModeRef.current === PlayMode.RANDOM &&
+            uniqueFiles.length > 0
+        ) {
+            startIndex = Math.floor(Math.random() * uniqueFiles.length);
         }
 
-        setPlaylist(prev => {
+        setPlaylist((prev) => {
             const updated = [...prev, ...initialTracks];
             if (prev.length === 0 && updated.length > 0) {
                 setCurrentIndex(startIndex);
@@ -313,51 +357,61 @@ export const useLocalPlayer = (enabled: boolean = true) => {
             const trackId = `${file.name}-${file.size}-${file.lastModified}`;
             try {
                 const metadata = await parseBlob(file);
-                const title = metadata.common.title || file.name.replace(/\.[^/.]+$/, '');
+                const title =
+                    metadata.common.title || file.name.replace(/\.[^/.]+$/, "");
                 const artist = metadata.common.artist;
                 const picture = metadata.common.picture?.[0];
                 let coverUrl: string | undefined;
-                
+
                 if (picture) {
-                    const blob = new Blob([picture.data as BlobPart], { type: picture.format });
+                    const blob = new Blob([picture.data as BlobPart], {
+                        type: picture.format,
+                    });
                     coverUrl = URL.createObjectURL(blob);
                 }
                 return { id: trackId, name: title, artist, coverUrl };
             } catch (error) {
-                console.warn('Failed to extract metadata:', error);
+                console.warn("Failed to extract metadata:", error);
                 return { id: trackId }; // Return partial or minimal update
             }
         };
 
         // 第二步：智能解析 (Priority + Concurrency Pool)
-        
+
         // 1. 优先解析当前选中曲目 (High Priority)
         // 只有在首次加载且有有效 startIndex 时才执行优先逻辑
         if (isFirstLoad && uniqueFiles[startIndex]) {
             const metadata = await parseFile(uniqueFiles[startIndex]);
-            if (metadata.name || metadata.artist) { // 只有解析出有效信息才更新
-                 setPlaylist(prev => prev.map(track => 
-                    track.id === metadata.id 
-                        ? { ...track, ...metadata }
-                        : track
-                ));
+            if (metadata.name || metadata.artist) {
+                // 只有解析出有效信息才更新
+                setPlaylist((prev) =>
+                    prev.map((track) =>
+                        track.id === metadata.id
+                            ? { ...track, ...metadata }
+                            : track,
+                    ),
+                );
             }
         }
 
         // 2. 解析其余文件 (Bulk with Pool)
         // 过滤掉已经解析过的 startIndex 文件
-        const restFiles = isFirstLoad 
+        const restFiles = isFirstLoad
             ? uniqueFiles.filter((_, i) => i !== startIndex)
             : uniqueFiles;
 
         if (restFiles.length > 0) {
             const CONCURRENCY_LIMIT = 5;
-            const results = await asyncPool(CONCURRENCY_LIMIT, restFiles, parseFile);
-            
+            const results = await asyncPool(
+                CONCURRENCY_LIMIT,
+                restFiles,
+                parseFile,
+            );
+
             // 3. 全量更新 (Final Update)
-            setPlaylist(prev => {
-                const updates = new Map(results.map(r => [r.id, r]));
-                return prev.map(track => {
+            setPlaylist((prev) => {
+                const updates = new Map(results.map((r) => [r.id, r]));
+                return prev.map((track) => {
                     const update = updates.get(track.id);
                     return update ? { ...track, ...update } : track;
                 });
@@ -366,14 +420,17 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     }, []);
 
     // 播放指定曲目（可选保持当前播放状态）
-    const playTrack = useCallback((index: number, keepPlayState: boolean = false) => {
-        if (index >= 0 && index < playlist.length) {
-            setCurrentIndex(index);
-            if (!keepPlayState) {
-                setIsPlaying(true);
+    const playTrack = useCallback(
+        (index: number, keepPlayState: boolean = false) => {
+            if (index >= 0 && index < playlist.length) {
+                setCurrentIndex(index);
+                if (!keepPlayState) {
+                    setIsPlaying(true);
+                }
             }
-        }
-    }, [playlist.length]);
+        },
+        [playlist.length],
+    );
 
     // 播放/暂停切换
     const togglePlay = useCallback(() => {
@@ -384,7 +441,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
             return;
         }
 
-        setIsPlaying(prev => !prev);
+        setIsPlaying((prev) => !prev);
     }, [playlist.length, currentIndex, playTrack]);
 
     // 上一曲
@@ -413,17 +470,20 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     }, [playlist.length, playMode, currentIndex, getPrevRandomIndex]);
 
     // 进度跳转
-    const seek = useCallback((time: number) => {
-        if (audioRef.current && duration > 0) {
-            const newTime = Math.max(0, Math.min(time, duration));
-            audioRef.current.currentTime = newTime;
-            setCurrentTime(newTime);
-        }
-    }, [duration]);
+    const seek = useCallback(
+        (time: number) => {
+            if (audioRef.current && duration > 0) {
+                const newTime = Math.max(0, Math.min(time, duration));
+                audioRef.current.currentTime = newTime;
+                setCurrentTime(newTime);
+            }
+        },
+        [duration],
+    );
 
     // 切换播放模式
     const toggleMode = useCallback(() => {
-        setPlayMode(prev => {
+        setPlayMode((prev) => {
             if (prev === PlayMode.SEQUENCE) return PlayMode.LOOP;
             if (prev === PlayMode.LOOP) return PlayMode.RANDOM;
             return PlayMode.SEQUENCE;
@@ -431,35 +491,38 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     }, []);
 
     // 删除曲目
-    const removeTrack = useCallback((index: number) => {
-        setPlaylist(prev => {
-            const track = prev[index];
-            if (track) {
-                URL.revokeObjectURL(track.blobUrl);
-                if (track.coverUrl) URL.revokeObjectURL(track.coverUrl);
-            }
-
-            const newList = prev.filter((_, i) => i !== index);
-
-            // 调整当前索引
-            if (index === currentIndex) {
-                if (newList.length === 0) {
-                    setCurrentIndex(-1);
-                    setIsPlaying(false);
-                } else if (index >= newList.length) {
-                    setCurrentIndex(newList.length - 1);
+    const removeTrack = useCallback(
+        (index: number) => {
+            setPlaylist((prev) => {
+                const track = prev[index];
+                if (track) {
+                    URL.revokeObjectURL(track.blobUrl);
+                    if (track.coverUrl) URL.revokeObjectURL(track.coverUrl);
                 }
-            } else if (index < currentIndex) {
-                setCurrentIndex(prev => prev - 1);
-            }
 
-            return newList;
-        });
-    }, [currentIndex]);
+                const newList = prev.filter((_, i) => i !== index);
+
+                // 调整当前索引
+                if (index === currentIndex) {
+                    if (newList.length === 0) {
+                        setCurrentIndex(-1);
+                        setIsPlaying(false);
+                    } else if (index >= newList.length) {
+                        setCurrentIndex(newList.length - 1);
+                    }
+                } else if (index < currentIndex) {
+                    setCurrentIndex((prev) => prev - 1);
+                }
+
+                return newList;
+            });
+        },
+        [currentIndex],
+    );
 
     // 清空播放列表
     const clearPlaylist = useCallback(() => {
-        playlist.forEach(track => {
+        playlist.forEach((track) => {
             URL.revokeObjectURL(track.blobUrl);
             if (track.coverUrl) URL.revokeObjectURL(track.coverUrl);
         });
@@ -472,7 +535,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     useEffect(() => {
         return () => {
             // 使用 ref 中的最新 playlist，而不是闭包中的初始空 playlist
-            playlistRef.current.forEach(track => {
+            playlistRef.current.forEach((track) => {
                 URL.revokeObjectURL(track.blobUrl);
                 if (track.coverUrl) URL.revokeObjectURL(track.coverUrl);
             });
@@ -502,6 +565,6 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         setVolume,
         toggleMode,
         removeTrack,
-        clearPlaylist
+        clearPlaylist,
     };
 };

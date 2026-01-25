@@ -45,6 +45,7 @@
 - **图标库**: [Remixicon](https://remixicon.com/) + [Lucide React](https://lucide.dev/) - 风格统一的开源图标集
 - **状态管理**: React Hooks (useState, useEffect, useRef)
 - **工具函数**: [react-use](https://github.com/streamich/react-use) - 实用的 React Hooks 集合
+- **代码质量**: [ESLint](https://eslint.org/) (代码检查) + [Biome](https://biomejs.dev/) (代码格式化)
 
 ## 🚀 快速开始 (Getting Started)
 

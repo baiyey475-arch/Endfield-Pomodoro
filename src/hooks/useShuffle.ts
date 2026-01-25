@@ -1,18 +1,22 @@
-import { useState, useEffect, useCallback } from 'react';
-import { PlayMode } from '../types';
+import { useCallback, useEffect, useState } from "react";
+import { PlayMode } from "../types";
 
 /**
  * 随机播放逻辑 Hook
- * 
+ *
  * 1. 随机模式下无重复播放，直到列表全部播完
  * 2. 列表播完后自动重新洗牌
  * 3. 支持上一曲回退到正确的历史记录
- * 
+ *
  * @param playlistLength 播放列表长度
  * @param playMode 当前播放模式
  * @param currentIndex 当前播放索引
  */
-export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIndex: number) => {
+export const useShuffle = (
+    playlistLength: number,
+    playMode: PlayMode,
+    currentIndex: number,
+) => {
     // 存储打乱后的索引列表
     const [shuffledIndices, setShuffledIndices] = useState<number[]>([]);
     // 当前播放指针在 shuffledIndices 中的位置
@@ -90,7 +94,10 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
             }
 
             // 避免首尾相接：如果新列表的第一首跟旧列表的最后一首一样，交换第一首和第二首
-            if (newIndices.length > 1 && newIndices[0] === shuffledIndices[shuffledIndices.length - 1]) {
+            if (
+                newIndices.length > 1 &&
+                newIndices[0] === shuffledIndices[shuffledIndices.length - 1]
+            ) {
                 [newIndices[0], newIndices[1]] = [newIndices[1], newIndices[0]];
             }
 
@@ -155,6 +162,6 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
         shufflePointer,
         getNextRandomIndex,
         getPrevRandomIndex,
-        peekNextRandomIndex
+        peekNextRandomIndex,
     };
 };

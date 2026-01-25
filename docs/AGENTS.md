@@ -68,6 +68,7 @@ endfield-pomodoro/
 - **Icon Libraries**: [Remixicon](https://remixicon.com/) + [Lucide React](https://lucide.dev/) - Consistent style open-source icon sets
 - **State Management**: React Hooks (useState, useEffect, useRef)
 - **Utility Functions**: [react-use](https://github.com/streamich/react-use) - Practical React Hooks collection
+- **Code Quality**: [ESLint](https://eslint.org/) for linting + [Biome](https://biomejs.dev/) for formatting
 
 ## 🌐 Internationalization Support (i18n)
 
@@ -161,3 +162,17 @@ This project enables React Compiler, which automatically optimizes component per
 - When ensuring object/function reference stability (such as props passed to child components)
 - When involving complex dependency relationships
 - To improve code readability and explicit intent
+
+## 🧹 Code Quality
+
+This project uses a dual-tool approach for code quality:
+
+| Tool | Purpose | Command |
+|------|---------|---------|
+| **ESLint** | Linting (React Hooks rules) | `pnpm lint` |
+| **Biome** | Formatting + Import sorting | `pnpm format` |
+
+### Available Scripts
+- `pnpm lint` - Run ESLint checks
+- `pnpm format` - Format code with Biome
+- `pnpm check` - Run Biome check (format + organize imports)

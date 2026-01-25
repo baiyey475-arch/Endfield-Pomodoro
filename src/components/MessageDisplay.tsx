@@ -1,6 +1,6 @@
-import React from 'react';
-import { useTranslation } from '../utils/i18n';
-import { Language } from '../types';
+import React from "react";
+import { Language } from "../types";
+import { useTranslation } from "../utils/i18n";
 
 // 从 useTranslation 的返回类型中提取键类型
 type TranslationKey = Parameters<ReturnType<typeof useTranslation>>[0];
@@ -14,7 +14,11 @@ interface MessageDisplayProps {
     };
 }
 
-const MessageDisplay: React.FC<MessageDisplayProps> = ({ messageKey, language, actionButton }) => {
+const MessageDisplay: React.FC<MessageDisplayProps> = ({
+    messageKey,
+    language,
+    actionButton,
+}) => {
     const t = useTranslation(language);
 
     return (

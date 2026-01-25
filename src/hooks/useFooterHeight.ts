@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Hook 用于获取 footer 元素的高度
@@ -14,11 +14,11 @@ export const useFooterHeight = () => {
                 setFooterHeight(footerRef.current.offsetHeight);
             }
         };
-        
+
         updateFooterHeight();
-        window.addEventListener('resize', updateFooterHeight);
-        
-        return () => window.removeEventListener('resize', updateFooterHeight);
+        window.addEventListener("resize", updateFooterHeight);
+
+        return () => window.removeEventListener("resize", updateFooterHeight);
     }, []);
 
     return { footerRef, footerHeight };

@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { API_FETCH_DELAY_MS, API_TIMEOUT_MS } from '../constants';
-import { getAdapters } from '../utils/musicApiAdapters';
+import { useEffect, useRef, useState } from "react";
+import { API_FETCH_DELAY_MS, API_TIMEOUT_MS } from "../constants";
+import { getAdapters } from "../utils/musicApiAdapters";
 
 /**
  * 音乐曲目数据结构
@@ -25,13 +25,13 @@ interface UseMusicDataProps {
 
 /**
  * 获取音乐数据的 Hook
- * 
+ *
  * 功能：
  * - 从音乐 API 获取歌单数据
  * - 支持多个 API 适配器的故障转移
  * - 自动超时控制
  * - 请求取消（组件卸载或参数变化时）
- * 
+ *
  * @param server - 音乐平台（netease/tencent/kugou/baidu/kuwo）
  * @param type - 操作类型（通常为 'playlist'）
  * @param id - 资源 ID（歌单 ID 或搜索关键词）
@@ -64,22 +64,27 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                 let timeoutId: ReturnType<typeof setTimeout> | null = null;
                 try {
                     const url = adapter.buildUrl({ server, type, id });
-                    
+
                     // 使用 Promise.race 来处理超时，并在完成后清理 setTimeout
                     const response = await Promise.race([
                         fetch(url, {
                             signal: controller.signal,
-                            ...adapter.fetchOptions
+                            ...adapter.fetchOptions,
                         }),
                         new Promise<never>((_, reject) => {
-                            timeoutId = setTimeout(() => reject(new Error('API request timed out')), API_TIMEOUT_MS);
-                        })
+                            timeoutId = setTimeout(
+                                () =>
+                                    reject(new Error("API request timed out")),
+                                API_TIMEOUT_MS,
+                            );
+                        }),
                     ]);
-                    
+
                     // 请求成功，清理超时计时器
                     if (timeoutId) clearTimeout(timeoutId);
 
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    if (!response.ok)
+                        throw new Error(`HTTP ${response.status}`);
 
                     const data = await response.json();
                     const tracks = adapter.parseResponse(data);
@@ -90,7 +95,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                 } catch (err) {
                     // 清理超时计时器
                     if (timeoutId) clearTimeout(timeoutId);
-                    
+
                     // 如果是外部中止（组件卸载），则直接返回
                     if (controller.signal.aborted) {
                         return;
@@ -100,7 +105,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                 }
             }
 
-            setError('All APIs failed');
+            setError("All APIs failed");
             setLoading(false);
         };
 
