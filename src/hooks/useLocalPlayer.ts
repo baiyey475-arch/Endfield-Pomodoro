@@ -28,7 +28,7 @@ async function asyncPool<T, R>(limit: number, items: T[], fn: (item: T) => Promi
         const p = Promise.resolve().then(() => fn(item));
         ret.push(p);
 
-        // 仅当项目数超过限制时才应用池化
+        // 当并发任务数达到上限时，等待一个任务完成后再继续。
         const e: Promise<R> = p.finally(() => executing.delete(e));
         executing.add(e);
         if (executing.size >= limit) {

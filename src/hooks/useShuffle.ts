@@ -62,7 +62,14 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
         
         // 如果洗牌列表未准备好（极端情况），降级为纯随机
         if (shuffledIndices.length === 0) {
-            return Math.floor(Math.random() * playlistLength);
+            if (playlistLength <= 1) {
+                return 0;
+            }
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * playlistLength);
+            } while (nextIndex === currentIndex);
+            return nextIndex;
         }
 
         let nextPointer = shufflePointer + 1;
@@ -90,7 +97,7 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
             setShufflePointer(nextPointer);
             return shuffledIndices[nextPointer];
         }
-    }, [playlistLength, shuffledIndices, shufflePointer]);
+    }, [playlistLength, shuffledIndices, shufflePointer, currentIndex]);
 
     /**
      * 获取上一首随机歌曲的索引
