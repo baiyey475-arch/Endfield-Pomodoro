@@ -13,7 +13,7 @@ export interface Song {
 }
 
 export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, enabled: boolean = true) => {
-    // 使用 State 而不是 Ref 来管理当前的 Audio 实例，以便在实例切换（Swap）时触发重渲染
+    // 使用 State 管理当前的 Audio 实例，以便在实例切换（Swap）时触发重渲染
     const [audioInstance, setAudioInstance] = useState<HTMLAudioElement>(() => new Audio());
     
     // 预加载的 Audio 实例引用
@@ -39,12 +39,18 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
+    const consecutiveErrorsRef = useRef(0);
 
     // 使用提取的洗牌逻辑 Hook
     const { getNextRandomIndex, getPrevRandomIndex, peekNextRandomIndex } = useShuffle(playlist.length, playMode, currentIndex);
 
     // 切歌逻辑
     const handleNext = useCallback((isAuto: boolean = false) => {
+        // 如果是手动切歌，重置连续错误计数
+        if (!isAuto) {
+            consecutiveErrorsRef.current = 0;
+        }
+
         if (playlist.length === 0) return;
 
         let nextIndex = currentIndex;
@@ -84,11 +90,22 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         };
         const handleLoadedMetadata = () => setDuration(audio.duration);
         const handleEnded = () => handleNextRef.current?.(true);
-        const handleCanPlay = () => setIsLoading(false);
+        const handleCanPlay = () => {
+            setIsLoading(false);
+            consecutiveErrorsRef.current = 0; // 重置连续错误计数
+        };
         const handleWaiting = () => setIsLoading(true);
         const handleError = () => {
             setIsLoading(false);
             setError('Load failed');
+            
+            consecutiveErrorsRef.current += 1;
+            if (consecutiveErrorsRef.current >= 5) {
+                console.error('Too many consecutive errors, stopping playback.');
+                setIsPlaying(false);
+                return;
+            }
+
             setTimeout(() => handleNextRef.current?.(true), NEXT_TRACK_RETRY_DELAY_MS);
         };
 
@@ -216,6 +233,18 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         return () => clearTimeout(timerId);
     }, [currentIndex, playlist, playMode, peekNextRandomIndex]);
 
+    // 组件卸载时清理资源
+    useEffect(() => {
+        return () => {
+            // 清理预加载的音频实例
+            if (preloadAudioRef.current) {
+                preloadAudioRef.current.pause();
+                preloadAudioRef.current.src = '';
+                preloadAudioRef.current = null;
+            }
+        };
+    }, []);
+
     // 监听播放列表和索引变化 - 加载当前音频（含无缝切换逻辑）
     useEffect(() => {
         const audio = audioInstance;
@@ -255,11 +284,24 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
                     audio.load();
 
                     if (wasPlaying || autoPlay) {
-                        await audio.play();
+                        try {
+                            await audio.play();
+                        } catch (err) {
+                            // 忽略 AbortError (快速切歌时发生)
+                            if (err instanceof DOMException && err.name === 'AbortError') {
+                                console.log("Playback aborted (rapid switching)");
+                                return;
+                            }
+                            throw err;
+                        }
                     }
                 } catch (err) {
                     console.error("Playback failed:", err);
-                    setIsPlaying(false);
+                    // 只有在非 AbortError 时才重置播放状态
+                    // 这样可以避免网络慢或快速切换时 UI 闪烁回暂停
+                    if (!(err instanceof DOMException && err.name === 'AbortError')) {
+                        setIsPlaying(false);
+                    }
                 }
             };
 
@@ -329,7 +371,14 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             if (playPromise !== undefined) {
                 playPromise
                     .then(() => setIsPlaying(true))
-                    .catch(err => console.error("Playback failed:", err));
+                    .catch(err => {
+                        // 忽略 AbortError
+                        if (err instanceof DOMException && err.name === 'AbortError') {
+                            return;
+                        }
+                        console.error("Playback failed:", err);
+                        setIsPlaying(false);
+                    });
             }
         }
     };

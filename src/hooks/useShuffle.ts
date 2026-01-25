@@ -43,6 +43,17 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
         }
     }, [playlistLength, playMode]); // 移除 currentIndex 依赖，避免每首歌都重洗
 
+    // 当 currentIndex 从外部被改变时（例如点击列表切歌），同步 shufflePointer
+    useEffect(() => {
+        if (playMode === PlayMode.RANDOM && shuffledIndices.length > 0) {
+            const newPointer = shuffledIndices.indexOf(currentIndex);
+            // 只有当当前索引确实在洗牌列表中，且指针不对时才更新
+            if (newPointer !== -1 && newPointer !== shufflePointer) {
+                setShufflePointer(newPointer);
+            }
+        }
+    }, [currentIndex, shuffledIndices, playMode, shufflePointer]);
+
     /**
      * 获取下一首随机歌曲的索引
      */

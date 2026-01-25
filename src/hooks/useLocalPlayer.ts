@@ -188,6 +188,8 @@ export const useLocalPlayer = (enabled: boolean = true) => {
 
             if (wasPlaying) {
                 audio.play().catch(err => {
+                    // 忽略 AbortError
+                    if (err instanceof DOMException && err.name === 'AbortError') return;
                     console.error('Playback failed:', err);
                     setIsPlaying(false);
                 });
@@ -202,12 +204,16 @@ export const useLocalPlayer = (enabled: boolean = true) => {
 
         if (isPlaying && audio.paused && audio.readyState >= 2) {
             audio.play().catch(err => {
+                // 忽略 AbortError
+                if (err instanceof DOMException && err.name === 'AbortError') return;
                 console.error('Playback failed:', err);
                 setIsPlaying(false);
             });
         } else if (isPlaying && audio.readyState < 2) {
             const onCanPlay = () => {
                 audio.play().catch(err => {
+                    // 忽略 AbortError
+                    if (err instanceof DOMException && err.name === 'AbortError') return;
                     console.error('Playback failed:', err);
                     setIsPlaying(false);
                 });
@@ -356,7 +362,20 @@ export const useLocalPlayer = (enabled: boolean = true) => {
             return;
         }
 
-        setIsPlaying(prev => !prev);
+        setIsPlaying(prev => {
+            const nextState = !prev;
+            if (audioRef.current) {
+                if (nextState) {
+                    audioRef.current.play().catch(err => {
+                        console.error('Playback failed:', err);
+                        setIsPlaying(false);
+                    });
+                } else {
+                    audioRef.current.pause();
+                }
+            }
+            return nextState;
+        });
     }, [playlist.length, currentIndex, playTrack]);
 
     // 上一曲
