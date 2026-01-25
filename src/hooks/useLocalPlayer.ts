@@ -3,6 +3,7 @@ import { parseBlob } from 'music-metadata';
 import { AUDIO_LOADING_TIMEOUT_MS, TIME_UPDATE_THROTTLE_SECONDS, STORAGE_KEYS } from '../constants';
 import { PlayMode } from '../types';
 import { DEFAULT_MUSIC_VOLUME } from '../config/musicConfig';
+import { useShuffle } from './useShuffle';
 
 export interface LocalTrack {
     id: string;
@@ -13,7 +14,24 @@ export interface LocalTrack {
     coverUrl?: string;
 }
 
+// 并发控制工具函数
+async function asyncPool<T, R>(limit: number, items: T[], fn: (item: T) => Promise<R>): Promise<R[]> {
+    const ret: Promise<R>[] = [];
+    const executing: Promise<void>[] = [];
+    for (const item of items) {
+        const p = Promise.resolve().then(() => fn(item));
+        ret.push(p);
 
+        if (limit <= items.length) {
+            const e = p.then(() => { executing.splice(executing.indexOf(e), 1); });
+            executing.push(e);
+            if (executing.length >= limit) {
+                await Promise.race(executing);
+            }
+        }
+    }
+    return Promise.all(ret);
+}
 
 export const useLocalPlayer = (enabled: boolean = true) => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -52,6 +70,9 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         isPlayingRef.current = isPlaying;
     }, [isPlaying]);
 
+    // 使用提取的洗牌逻辑 Hook
+    const { getNextRandomIndex, getPrevRandomIndex } = useShuffle(playlist.length, playMode, currentIndex);
+
     // 切歌逻辑
     const handleNext = useCallback((isAuto: boolean = false) => {
         if (playlist.length === 0) return;
@@ -68,20 +89,15 @@ export const useLocalPlayer = (enabled: boolean = true) => {
 
         let nextIndex: number;
         if (playMode === PlayMode.RANDOM) {
-            if (playlist.length > 1) {
-                do {
-                    nextIndex = Math.floor(Math.random() * playlist.length);
-                } while (nextIndex === currentIndex);
-            } else {
-                nextIndex = 0;
-            }
+            nextIndex = getNextRandomIndex();
         } else {
             nextIndex = (currentIndex + 1) % playlist.length;
         }
 
         setCurrentIndex(nextIndex);
         // 不调用 setIsPlaying，保持当前播放状态
-    }, [playlist.length, playMode, currentIndex]);
+    }, [playlist.length, playMode, currentIndex, getNextRandomIndex]);
+
 
     useEffect(() => {
         handleNextRef.current = handleNext;
@@ -250,18 +266,23 @@ export const useLocalPlayer = (enabled: boolean = true) => {
             coverUrl: undefined
         }));
 
+        let startIndex = 0;
+        const isFirstLoad = playlistRef.current.length === 0;
+        if (isFirstLoad && playMode === PlayMode.RANDOM && uniqueFiles.length > 0) {
+             startIndex = Math.floor(Math.random() * uniqueFiles.length);
+        }
+
         setPlaylist(prev => {
             const updated = [...prev, ...initialTracks];
             if (prev.length === 0 && updated.length > 0) {
-                setCurrentIndex(0);
+                setCurrentIndex(startIndex);
             }
             return updated;
         });
 
-        // 第二步：后台并行解析元数据，逐个更新
-        uniqueFiles.forEach(async (file) => {
+        // 定义单个文件解析函数
+        const parseFile = async (file: File) => {
             const trackId = `${file.name}-${file.size}-${file.lastModified}`;
-            
             try {
                 const metadata = await parseBlob(file);
                 const title = metadata.common.title || file.name.replace(/\.[^/.]+$/, '');
@@ -273,18 +294,48 @@ export const useLocalPlayer = (enabled: boolean = true) => {
                     const blob = new Blob([picture.data as BlobPart], { type: picture.format });
                     coverUrl = URL.createObjectURL(blob);
                 }
-
-                // 更新对应的 track
-                setPlaylist(prev => prev.map(track => 
-                    track.id === trackId 
-                        ? { ...track, name: title, artist, coverUrl }
-                        : track
-                ));
+                return { id: trackId, name: title, artist, coverUrl };
             } catch (error) {
                 console.warn('Failed to extract metadata:', error);
+                return { id: trackId }; // Return partial or minimal update
             }
-        });
-    }, []);
+        };
+
+        // 第二步：智能解析 (Priority + Concurrency Pool)
+        
+        // 1. 优先解析当前选中曲目 (High Priority)
+        // 只有在首次加载且有有效 startIndex 时才执行优先逻辑
+        if (isFirstLoad && uniqueFiles[startIndex]) {
+            const metadata = await parseFile(uniqueFiles[startIndex]);
+            if (metadata.name || metadata.artist) { // 只有解析出有效信息才更新
+                 setPlaylist(prev => prev.map(track => 
+                    track.id === metadata.id 
+                        ? { ...track, ...metadata }
+                        : track
+                ));
+            }
+        }
+
+        // 2. 解析其余文件 (Bulk with Pool)
+        // 过滤掉已经解析过的 startIndex 文件
+        const restFiles = isFirstLoad 
+            ? uniqueFiles.filter((_, i) => i !== startIndex)
+            : uniqueFiles;
+
+        if (restFiles.length > 0) {
+            const CONCURRENCY_LIMIT = 5;
+            const results = await asyncPool(CONCURRENCY_LIMIT, restFiles, parseFile);
+            
+            // 3. 全量更新 (Final Update)
+            setPlaylist(prev => {
+                const updates = new Map(results.map(r => [r.id, r]));
+                return prev.map(track => {
+                    const update = updates.get(track.id);
+                    return update ? { ...track, ...update } : track;
+                });
+            });
+        }
+    }, [playMode]);
 
     // 播放指定曲目（可选保持当前播放状态）
     const playTrack = useCallback((index: number, keepPlayState: boolean = false) => {
@@ -323,17 +374,15 @@ export const useLocalPlayer = (enabled: boolean = true) => {
         }
 
         let prevIndex: number;
-        if (playMode === PlayMode.RANDOM && playlist.length > 1) {
-            do {
-                prevIndex = Math.floor(Math.random() * playlist.length);
-            } while (prevIndex === currentIndex);
+        if (playMode === PlayMode.RANDOM) {
+            prevIndex = getPrevRandomIndex();
         } else {
             prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
         }
 
         setCurrentIndex(prevIndex);
         // 不调用 setIsPlaying，保持当前播放状态
-    }, [playlist.length, playMode, currentIndex]);
+    }, [playlist.length, playMode, currentIndex, getPrevRandomIndex]);
 
     // 进度跳转
     const seek = useCallback((time: number) => {

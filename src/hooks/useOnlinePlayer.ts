@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { NEXT_TRACK_RETRY_DELAY_MS, AUDIO_LOADING_TIMEOUT_MS, TIME_UPDATE_THROTTLE_SECONDS, STORAGE_KEYS } from '../constants';
+import { NEXT_TRACK_RETRY_DELAY_MS, AUDIO_LOADING_TIMEOUT_MS, TIME_UPDATE_THROTTLE_SECONDS, STORAGE_KEYS, PRELOAD_DELAY_MS } from '../constants';
 import { PlayMode } from '../types';
 import { DEFAULT_MUSIC_VOLUME } from '../config/musicConfig';
+import { useShuffle } from './useShuffle';
 
 export interface Song {
     name: string;
@@ -11,10 +12,13 @@ export interface Song {
     lrc: string;
 }
 
-
-
 export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, enabled: boolean = true) => {
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    // 使用 State 而不是 Ref 来管理当前的 Audio 实例，以便在实例切换（Swap）时触发重渲染
+    const [audioInstance, setAudioInstance] = useState<HTMLAudioElement>(() => new Audio());
+    
+    // 预加载的 Audio 实例引用
+    const preloadAudioRef = useRef<HTMLAudioElement | null>(null);
+
     const lastTimeRef = useRef(0);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -36,6 +40,9 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     const [error, setError] = useState<string | null>(null);
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
 
+    // 使用提取的洗牌逻辑 Hook
+    const { getNextRandomIndex, getPrevRandomIndex, peekNextRandomIndex } = useShuffle(playlist.length, playMode, currentIndex);
+
     // 切歌逻辑
     const handleNext = useCallback((isAuto: boolean = false) => {
         if (playlist.length === 0) return;
@@ -43,15 +50,12 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         let nextIndex = currentIndex;
 
         if (playMode === PlayMode.RANDOM) {
-            if (playlist.length > 1) {
-                do {
-                    nextIndex = Math.floor(Math.random() * playlist.length);
-                } while (nextIndex === currentIndex);
-            }
+            nextIndex = getNextRandomIndex();
         } else if (playMode === PlayMode.LOOP && isAuto) {
-            if (audioRef.current) {
-                audioRef.current.currentTime = 0;
-                audioRef.current.play();
+            // 单曲循环模式下自动切歌（播放结束），只需重置进度
+            if (audioInstance) {
+                audioInstance.currentTime = 0;
+                audioInstance.play().catch(console.error);
             }
             return;
         } else {
@@ -60,18 +64,17 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
 
         setCurrentIndex(nextIndex);
         // 不调用 setIsPlaying，保持当前播放状态
-    }, [currentIndex, playMode, playlist.length]);
+    }, [currentIndex, playMode, playlist.length, getNextRandomIndex, audioInstance]);
+
 
     useEffect(() => {
         handleNextRef.current = handleNext;
     }, [handleNext]);
 
-    // 初始化 Audio 对象（只执行一次）
+    // 初始化 Audio 对象事件监听 (当 audioInstance 变化时重新绑定)
     useEffect(() => {
-        const audio = new Audio();
-        // 不在这里设置音量，由专门的音量 effect 处理
-        audioRef.current = audio;
-
+        const audio = audioInstance;
+        
         const handleTimeUpdate = () => {
             const time = audio.currentTime;
             if (Math.abs(time - lastTimeRef.current) >= TIME_UPDATE_THROTTLE_SECONDS) {
@@ -96,27 +99,39 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         audio.addEventListener('waiting', handleWaiting);
         audio.addEventListener('error', handleError);
 
+        // 确保应用当前音量
+        audio.volume = volume;
+
+        // 初始化状态同步（针对已加载的音频实例）
+        if (audio.readyState >= 1) { // HAVE_METADATA
+            setDuration(audio.duration);
+        }
+        if (audio.readyState >= 3) { // HAVE_FUTURE_DATA
+            setIsLoading(false);
+        }
+
         return () => {
             audio.pause();
-            audio.src = '';
+            // 注意：这里不要清空 src，因为如果这是被交换出去的 audio，它可能马上要被用作 preload
+            // 或者如果这是 preload 进来的 audio，我们也不希望清空它
+            // 只有当组件卸载或者真正销毁时才需要清理，但 React Effect cleanup 在依赖变化时也会运行。
+            // 简单 pause 和移除监听器即可。
+            
             audio.removeEventListener('timeupdate', handleTimeUpdate);
             audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
             audio.removeEventListener('ended', handleEnded);
             audio.removeEventListener('canplay', handleCanPlay);
             audio.removeEventListener('waiting', handleWaiting);
             audio.removeEventListener('error', handleError);
-
-            // 注意：在线播放器的歌曲 URL 来自 Meting API，不是 blob URL，因此不需要清理
-            // 保留此注释是为了提醒未来开发者，如果在线播放器开始支持 blob URL，需要添加相应的清理逻辑
         };
-    }, []);
+    }, [audioInstance]); // 依赖 audioInstance，切换实例时自动重绑
 
-    // 监听音量变化（独立effect）
+    // 监听音量变化
     useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = volume;
+        if (audioInstance) {
+            audioInstance.volume = volume;
         }
-    }, [volume]);
+    }, [volume, audioInstance]);
 
     useEffect(() => {
         try {
@@ -136,20 +151,98 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
 
     // 当禁用时暂停播放
     useEffect(() => {
-        if (!enabled && audioRef.current) {
-            audioRef.current.pause();
+        if (!enabled && audioInstance) {
+            audioInstance.pause();
             queueMicrotask(() => setIsPlaying(false));
         }
-    }, [enabled]);
+    }, [enabled, audioInstance]);
 
-    // 监听播放列表和索引变化
+    // 监听播放列表变化，处理初始随机播放
+    // 使用 ref 记录是否已初始化
+    const initializedRef = useRef(false);
+    
     useEffect(() => {
-        const audio = audioRef.current;
+        if (playlist.length === 0) {
+            initializedRef.current = false;
+        } else if (!initializedRef.current) {
+            initializedRef.current = true;
+            if (playMode === PlayMode.RANDOM) {
+                const randomIndex = Math.floor(Math.random() * playlist.length);
+                setCurrentIndex(randomIndex);
+            }
+        }
+    }, [playlist, playMode]);
+
+    // 预加载下一首（延迟执行以优化性能）
+    useEffect(() => {
+        if (playlist.length <= 1) return;
+
+        const timerId = setTimeout(() => {
+            let nextIndex = -1;
+
+            if (playMode === PlayMode.RANDOM) {
+                // 使用 peek 获取下一首随机索引，不改变洗牌状态
+                nextIndex = peekNextRandomIndex();
+            } else {
+                nextIndex = (currentIndex + 1) % playlist.length;
+            }
+            
+            if (nextIndex === -1) return;
+
+            const nextSong = playlist[nextIndex];
+            if (nextSong?.url) {
+                // Create or reuse audio element
+                if (!preloadAudioRef.current) {
+                    preloadAudioRef.current = new Audio();
+                }
+                const preloadAudio = preloadAudioRef.current;
+                
+                // Only load if URL is different
+                if (preloadAudio.src !== nextSong.url) {
+                    console.log(`Preloading next track: ${nextSong.name}`);
+                    preloadAudio.src = nextSong.url;
+                    preloadAudio.preload = 'auto';
+                    preloadAudio.load();
+                }
+
+                // Preload cover image
+                if (nextSong.cover) {
+                    const img = new Image();
+                    img.src = nextSong.cover;
+                }
+            }
+        }, PRELOAD_DELAY_MS);
+
+        return () => clearTimeout(timerId);
+    }, [currentIndex, playlist, playMode, peekNextRandomIndex]);
+
+    // 监听播放列表和索引变化 - 加载当前音频（含无缝切换逻辑）
+    useEffect(() => {
+        const audio = audioInstance;
         if (!audio || playlist.length === 0) return;
 
         const currentSong = playlist[currentIndex];
         if (!currentSong?.url) return;
 
+        // 检查是否命中预加载 (无缝切换核心逻辑)
+        if (preloadAudioRef.current && preloadAudioRef.current.src === currentSong.url) {
+            console.log('Instant play: Swapping audio instance');
+            const newMain = preloadAudioRef.current;
+            const oldMain = audioInstance;
+
+            // 交换实例
+            // 1. 设置新实例为 State (触发重渲染)
+            setAudioInstance(newMain);
+            // 2. 将旧实例回收给预加载 Ref
+            preloadAudioRef.current = oldMain;
+            
+            // 注意：这里 return 后，State 更新会触发组件重渲染
+            // 下一次 render 时，effect 会再次运行，但此时 audioInstance 已经是 newMain
+            // 且 newMain.src 已经等于 currentSong.url，所以会进入下方的 play 逻辑
+            return;
+        }
+
+        // 普通加载逻辑 (未命中预加载或无需交换)
         if (audio.src !== currentSong.url) {
             const wasPlaying = isPlaying;
 
@@ -171,56 +264,68 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             };
 
             loadAndPlay();
+        } else {
+            // 如果 src 相同 (例如刚刚完成了 Swap，或者重复点击同一首)
+            // 确保如果应该是播放状态，则进行播放
+            if (isPlaying && audio.paused) {
+                 audio.play().catch(err => {
+                    console.error("Playback failed (swap resume):", err);
+                    setIsPlaying(false);
+                 });
+            }
         }
-    }, [currentIndex, playlist, autoPlay, isPlaying]);
+    }, [currentIndex, playlist, autoPlay, isPlaying, audioInstance]);
 
-    // 监听播放状态变化
+    // 监听播放状态变化 (Play/Pause 控制)
     useEffect(() => {
-        const audio = audioRef.current;
+        const audio = audioInstance;
         if (!audio || playlist.length === 0) return;
 
         if (isPlaying) {
-            if (audio.readyState >= 2) {
-                audio.play().catch(err => {
-                    console.error("Playback failed:", err);
-                    setIsPlaying(false);
-                });
-            } else {
-                // 添加 canplay 监听和超时回退
-                const onCanPlay = () => {
+            if (audio.paused) {
+                if (audio.readyState >= 2) {
                     audio.play().catch(err => {
                         console.error("Playback failed:", err);
                         setIsPlaying(false);
                     });
-                };
-                audio.addEventListener('canplay', onCanPlay, { once: true });
-                
-                const timeoutId = setTimeout(() => {
-                    if (audioRef.current && audioRef.current.readyState < 2) {
-                        console.warn('Audio loading timeout');
-                        setIsPlaying(false);
-                    }
-                }, AUDIO_LOADING_TIMEOUT_MS);
+                } else {
+                    const onCanPlay = () => {
+                        audio.play().catch(err => {
+                            console.error("Playback failed:", err);
+                            setIsPlaying(false);
+                        });
+                    };
+                    audio.addEventListener('canplay', onCanPlay, { once: true });
+                    
+                    const timeoutId = setTimeout(() => {
+                        if (audioInstance && audioInstance.readyState < 2) {
+                            console.warn('Audio loading timeout');
+                            setIsPlaying(false);
+                        }
+                    }, AUDIO_LOADING_TIMEOUT_MS);
 
-                return () => {
-                    clearTimeout(timeoutId);
-                    audio.removeEventListener('canplay', onCanPlay);
-                };
+                    return () => {
+                        clearTimeout(timeoutId);
+                        audio.removeEventListener('canplay', onCanPlay);
+                    };
+                }
             }
         } else {
-            audio.pause();
+            if (!audio.paused) {
+                audio.pause();
+            }
         }
-    }, [isPlaying, playlist.length]);
+    }, [isPlaying, playlist.length, audioInstance]);
 
     // 播放控制
     const togglePlay = () => {
-        if (!audioRef.current) return;
+        if (!audioInstance) return;
 
         if (isPlaying) {
-            audioRef.current.pause();
+            audioInstance.pause();
             setIsPlaying(false);
         } else {
-            const playPromise = audioRef.current.play();
+            const playPromise = audioInstance.play();
             if (playPromise !== undefined) {
                 playPromise
                     .then(() => setIsPlaying(true))
@@ -229,42 +334,36 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         }
     };
 
-    const handlePrev = () => {
+    // 上一曲
+    const handlePrev = useCallback(() => {
         if (playlist.length === 0) return;
 
-        // LOOP 模式下，上一曲只重置进度，保持当前播放状态
         if (playMode === PlayMode.LOOP) {
-            if (audioRef.current) {
-                audioRef.current.currentTime = 0;
-                // 如果正在播放，继续播放
+            if (audioInstance) {
+                audioInstance.currentTime = 0;
                 if (isPlaying) {
-                    audioRef.current.play();
+                    audioInstance.play();
                 }
             }
             return;
         }
 
-        let prevIndex = currentIndex;
+        let prevIndex: number;
 
         if (playMode === PlayMode.RANDOM) {
-            if (playlist.length > 1) {
-                do {
-                    prevIndex = Math.floor(Math.random() * playlist.length);
-                } while (prevIndex === currentIndex);
-            }
+             prevIndex = getPrevRandomIndex();
         } else {
             prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
         }
 
         setCurrentIndex(prevIndex);
-        // 不调用 setIsPlaying，保持当前播放状态
-    };
+    }, [currentIndex, playMode, playlist.length, getPrevRandomIndex, isPlaying, audioInstance]);
 
     // 进度跳转
     const seek = (time: number) => {
-        if (audioRef.current) {
+        if (audioInstance) {
             const newTime = Math.max(0, Math.min(time, duration));
-            audioRef.current.currentTime = newTime;
+            audioInstance.currentTime = newTime;
             lastTimeRef.current = newTime;
             setCurrentTime(newTime);
         }
@@ -279,7 +378,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         });
     };
 
-    // 直接播放指定索引（保持当前播放状态）
+    // 直接播放指定索引
     const playTrack = (index: number, keepPlayState: boolean = false) => {
         if (index >= 0 && index < playlist.length) {
             setCurrentIndex(index);
@@ -300,7 +399,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         isLoading,
         error,
         togglePlay,
-        handleNext: () => handleNext(false), // 手动触发
+        handleNext: () => handleNext(false),
         handlePrev,
         seek,
         setVolume,
