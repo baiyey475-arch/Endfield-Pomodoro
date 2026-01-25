@@ -186,7 +186,7 @@ const App: React.FC = () => {
             />
 
             <main className="flex-1 pt-24 md:pt-28 px-4 md:px-12 overflow-y-auto overflow-x-hidden relative z-10 flex flex-col custom-scrollbar" style={{ scrollbarGutter: 'stable', paddingBottom: footerHeight + getThemeExtraSpacing(settings.theme === ThemePreset.MIKU) }}>
-                {currentView === View.SETTINGS ? (
+                <div className={currentView === View.SETTINGS ? '' : 'hidden'}>
                     <SettingsPanel
                         settings={settings}
                         tempMusicConfig={tempMusicConfig}
@@ -196,7 +196,8 @@ const App: React.FC = () => {
                         onResetMusicConfig={() => setTempMusicConfig(DEFAULT_SETTINGS.musicConfig)}
                         t={t}
                     />
-                ) : (
+                </div>
+                <div className={currentView === View.DASHBOARD ? '' : 'hidden'}>
                     <Dashboard
                         settings={settings}
                         sessionCount={sessionCount}
@@ -204,7 +205,7 @@ const App: React.FC = () => {
                         onSessionsUpdate={onSessionsUpdate}
                         onTick={onTick}
                     />
-                )}
+                </div>
             </main>
 
             <FooterStats

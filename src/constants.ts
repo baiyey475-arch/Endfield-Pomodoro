@@ -18,6 +18,10 @@ export const STORAGE_KEYS = {
     CURRENT_SESSION_START: 'origin_terminal_current_session_start',
     /** 音频源模式（local/online） */
     AUDIO_SOURCE: 'origin_terminal_audio_source',
+    /** 音频音量（0-1） */
+    AUDIO_VOLUME: 'origin_terminal_audio_volume',
+    /** 音频播放模式（sequence/loop/random） */
+    AUDIO_PLAY_MODE: 'origin_terminal_audio_play_mode',
     /** 计时器状态（用于刷新后恢复） */
     TIMER: 'origin_terminal_timer'
 } as const;
@@ -45,7 +49,8 @@ export const MUSIC_API_FALLBACK_URL = 'https://api.injahow.cn/meting/';
  */
 export const NEXT_TRACK_RETRY_DELAY_MS = 1000; // 音频加载失败后自动跳转下一曲的延迟（毫秒）
 export const TOAST_DURATION_MS = 4000; // 提示消息显示时长（毫秒）
-export const AUDIO_LOADING_TIMEOUT_MS = 5000; // 音频加载超时时间（毫秒）
+export const AUDIO_LOADING_TIMEOUT_MS = 15000; // 音频加载超时时间（毫秒）
+export const PRELOAD_DELAY_MS = 3000; // 预加载延迟时间（毫秒），避免抢占当前播放带宽
 export const TIME_UPDATE_THROTTLE_SECONDS = 0.25; // 时间更新节流阈值（秒），减少频繁重渲染
 export const API_FETCH_DELAY_MS = 100; // API 数据获取延迟（毫秒），减少初始加载卡顿
 export const API_TIMEOUT_MS = 5000; // API 请求超时时间（毫秒）
