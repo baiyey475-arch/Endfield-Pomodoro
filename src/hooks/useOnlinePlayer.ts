@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { NEXT_TRACK_RETRY_DELAY_MS, AUDIO_LOADING_TIMEOUT_MS, TIME_UPDATE_THROTTLE_SECONDS } from '../constants';
+import { NEXT_TRACK_RETRY_DELAY_MS, AUDIO_LOADING_TIMEOUT_MS, TIME_UPDATE_THROTTLE_SECONDS, STORAGE_KEYS } from '../constants';
 import { PlayMode } from '../types';
 import { DEFAULT_MUSIC_VOLUME } from '../config/musicConfig';
 
@@ -20,8 +20,18 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [duration, setDuration] = useState<number>(0);
-    const [volume, setVolume] = useState<number>(DEFAULT_MUSIC_VOLUME);
-    const [playMode, setPlayMode] = useState<PlayMode>(PlayMode.SEQUENCE);
+    const [volume, setVolume] = useState<number>(() => {
+        const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_VOLUME);
+        const parsed = stored ? Number(stored) : NaN;
+        return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : DEFAULT_MUSIC_VOLUME;
+    });
+    const [playMode, setPlayMode] = useState<PlayMode>(() => {
+        const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_PLAY_MODE);
+        if (stored === PlayMode.SEQUENCE || stored === PlayMode.LOOP || stored === PlayMode.RANDOM) {
+            return stored;
+        }
+        return PlayMode.SEQUENCE;
+    });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
@@ -107,6 +117,22 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             audioRef.current.volume = volume;
         }
     }, [volume]);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(STORAGE_KEYS.AUDIO_VOLUME, String(volume));
+        } catch (error) {
+            console.error('Failed to persist audio volume', error);
+        }
+    }, [volume]);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(STORAGE_KEYS.AUDIO_PLAY_MODE, playMode);
+        } catch (error) {
+            console.error('Failed to persist audio play mode', error);
+        }
+    }, [playMode]);
 
     // 当禁用时暂停播放
     useEffect(() => {

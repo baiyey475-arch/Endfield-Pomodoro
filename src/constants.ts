@@ -18,6 +18,10 @@ export const STORAGE_KEYS = {
     CURRENT_SESSION_START: 'origin_terminal_current_session_start',
     /** 音频源模式（local/online） */
     AUDIO_SOURCE: 'origin_terminal_audio_source',
+    /** 音频音量（0-1） */
+    AUDIO_VOLUME: 'origin_terminal_audio_volume',
+    /** 音频播放模式（sequence/loop/random） */
+    AUDIO_PLAY_MODE: 'origin_terminal_audio_play_mode',
     /** 计时器状态（用于刷新后恢复） */
     TIMER: 'origin_terminal_timer'
 } as const;
