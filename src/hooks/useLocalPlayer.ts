@@ -29,12 +29,10 @@ async function asyncPool<T, R>(limit: number, items: T[], fn: (item: T) => Promi
         ret.push(p);
 
         // 仅当项目数超过限制时才应用池化
-        if (items.length > limit) {
-            const e = p.finally(() => executing.delete(e));
-            executing.add(e);
-            if (executing.size >= limit) {
-                await Promise.race(executing);
-            }
+        const e = p.finally(() => executing.delete(e));
+        executing.add(e);
+        if (executing.size >= limit) {
+            await Promise.race(executing);
         }
     }
     return Promise.all(ret);
@@ -76,6 +74,12 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     useEffect(() => {
         isPlayingRef.current = isPlaying;
     }, [isPlaying]);
+
+    // 用 ref 追踪 playMode，确保 addFiles 引用稳定
+    const playModeRef = useRef(playMode);
+    useEffect(() => {
+        playModeRef.current = playMode;
+    }, [playMode]);
 
     // 使用提取的洗牌逻辑 Hook
     const { getNextRandomIndex, getPrevRandomIndex } = useShuffle(playlist.length, playMode, currentIndex);
@@ -281,7 +285,8 @@ export const useLocalPlayer = (enabled: boolean = true) => {
 
         let startIndex = 0;
         const isFirstLoad = playlistRef.current.length === 0;
-        if (isFirstLoad && playMode === PlayMode.RANDOM && uniqueFiles.length > 0) {
+        // 使用 playModeRef 获取最新模式，避免 addFiles 依赖变化
+        if (isFirstLoad && playModeRef.current === PlayMode.RANDOM && uniqueFiles.length > 0) {
              startIndex = Math.floor(Math.random() * uniqueFiles.length);
         }
 
@@ -348,7 +353,7 @@ export const useLocalPlayer = (enabled: boolean = true) => {
                 });
             });
         }
-    }, [playMode]);
+    }, []);
 
     // 播放指定曲目（可选保持当前播放状态）
     const playTrack = useCallback((index: number, keepPlayState: boolean = false) => {

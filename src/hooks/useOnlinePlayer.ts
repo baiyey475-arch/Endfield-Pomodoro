@@ -98,6 +98,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         const handleError = () => {
             setIsLoading(false);
             setError('Load failed');
+            console.error('Online playback error: Load failed'); // Log every error
             
             consecutiveErrorsRef.current += 1;
             if (consecutiveErrorsRef.current >= 5) {
@@ -181,20 +182,24 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     useEffect(() => {
         if (playlist.length === 0) {
             initializedRef.current = false;
-        } else if (playlist.length > 0 && playMode === PlayMode.RANDOM) {
-            // 如果还没初始化，或者模式切换到了 RANDOM，则尝试随机开始
-            if (!initializedRef.current) {
+            return;
+        }
+
+        // 仅在 RANDOM 模式且未初始化时执行随机逻辑
+        if (playMode === PlayMode.RANDOM && !initializedRef.current) {
+            // 只有当当前未在播放（例如刚加载或暂停状态下首次进入随机模式）时，才自动跳转
+            // 避免正在听歌时切模式导致切歌
+            if (!isPlaying) {
                 initializedRef.current = true;
                 const randomIndex = Math.floor(Math.random() * playlist.length);
                 setCurrentIndex(randomIndex);
-            }
-        } else {
-            // 非 RANDOM 模式或已初始化，标记为已初始化
-            if (playlist.length > 0) {
-                initializedRef.current = true;
+            } else {
+                 // 如果正在播放，我们标记为已初始化，避免后续干扰，
+                 // 用户下一首会自然进入随机逻辑（通过 getNextRandomIndex）
+                 initializedRef.current = true;
             }
         }
-    }, [playlist, playMode]);
+    }, [playlist, playMode, isPlaying]);
 
     // 预加载下一首（延迟执行以优化性能）
     useEffect(() => {
