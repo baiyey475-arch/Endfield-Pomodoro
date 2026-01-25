@@ -25,16 +25,26 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [duration, setDuration] = useState<number>(0);
     const [volume, setVolume] = useState<number>(() => {
-        const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_VOLUME);
-        const parsed = stored ? Number(stored) : NaN;
-        return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : DEFAULT_MUSIC_VOLUME;
+        try {
+            const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_VOLUME);
+            const parsed = stored ? Number(stored) : NaN;
+            return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : DEFAULT_MUSIC_VOLUME;
+        } catch (error) {
+            console.error('Failed to read audio volume from localStorage', error);
+            return DEFAULT_MUSIC_VOLUME;
+        }
     });
     const [playMode, setPlayMode] = useState<PlayMode>(() => {
-        const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_PLAY_MODE);
-        if (stored === PlayMode.SEQUENCE || stored === PlayMode.LOOP || stored === PlayMode.RANDOM) {
-            return stored;
+        try {
+            const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_PLAY_MODE);
+            if (stored === PlayMode.SEQUENCE || stored === PlayMode.LOOP || stored === PlayMode.RANDOM) {
+                return stored;
+            }
+            return PlayMode.RANDOM;
+        } catch (error) {
+            console.error('Failed to read audio play mode from localStorage', error);
+            return PlayMode.RANDOM;
         }
-        return PlayMode.RANDOM;
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -194,9 +204,9 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
                 const randomIndex = Math.floor(Math.random() * playlist.length);
                 setCurrentIndex(randomIndex);
             } else {
-                 // 如果正在播放，我们标记为已初始化，避免后续干扰，
-                 // 用户下一首会自然进入随机逻辑（通过 getNextRandomIndex）
-                 initializedRef.current = true;
+                // 如果正在播放，我们标记为已初始化，避免后续干扰，
+                // 用户下一首会自然进入随机逻辑（通过 getNextRandomIndex）
+                initializedRef.current = true;
             }
         }
     }, [playlist, playMode, isPlaying]);

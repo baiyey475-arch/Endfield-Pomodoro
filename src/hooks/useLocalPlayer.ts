@@ -22,14 +22,14 @@ async function asyncPool<T, R>(limit: number, items: T[], fn: (item: T) => Promi
     }
 
     const ret: Promise<R>[] = [];
-    const executing = new Set<Promise<any>>();
+    const executing = new Set<Promise<R>>();
     
     for (const item of items) {
         const p = Promise.resolve().then(() => fn(item));
         ret.push(p);
 
         // 仅当项目数超过限制时才应用池化
-        const e = p.finally(() => executing.delete(e));
+        const e: Promise<R> = p.finally(() => executing.delete(e));
         executing.add(e);
         if (executing.size >= limit) {
             await Promise.race(executing);
@@ -54,16 +54,26 @@ export const useLocalPlayer = (enabled: boolean = true) => {
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [duration, setDuration] = useState<number>(0);
     const [volume, setVolume] = useState<number>(() => {
-        const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_VOLUME);
-        const parsed = stored ? Number(stored) : NaN;
-        return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : DEFAULT_MUSIC_VOLUME;
+        try {
+            const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_VOLUME);
+            const parsed = stored ? Number(stored) : NaN;
+            return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : DEFAULT_MUSIC_VOLUME;
+        } catch (error) {
+            console.error('Failed to read audio volume from localStorage', error);
+            return DEFAULT_MUSIC_VOLUME;
+        }
     });
     const [playMode, setPlayMode] = useState<PlayMode>(() => {
-        const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_PLAY_MODE);
-        if (stored === PlayMode.SEQUENCE || stored === PlayMode.LOOP || stored === PlayMode.RANDOM) {
-            return stored;
+        try {
+            const stored = localStorage.getItem(STORAGE_KEYS.AUDIO_PLAY_MODE);
+            if (stored === PlayMode.SEQUENCE || stored === PlayMode.LOOP || stored === PlayMode.RANDOM) {
+                return stored;
+            }
+            return PlayMode.RANDOM;
+        } catch (error) {
+            console.error('Failed to read audio play mode from localStorage', error);
+            return PlayMode.RANDOM;
         }
-        return PlayMode.RANDOM;
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
