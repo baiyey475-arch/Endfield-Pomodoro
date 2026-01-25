@@ -181,12 +181,18 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     useEffect(() => {
         if (playlist.length === 0) {
             initializedRef.current = false;
-        } else if (!initializedRef.current) {
-            initializedRef.current = true;
-            if (playMode === PlayMode.RANDOM) {
+        } else if (playlist.length > 0 && playMode === PlayMode.RANDOM) {
+            // 如果还没初始化，或者模式切换到了 RANDOM，则尝试随机开始
+            if (!initializedRef.current) {
+                initializedRef.current = true;
                 const randomIndex = Math.floor(Math.random() * playlist.length);
                 setCurrentIndex(randomIndex);
             }
+        } else {
+             // 非 RANDOM 模式或已初始化，标记为已初始化
+             if (playlist.length > 0) {
+                initializedRef.current = true;
+             }
         }
     }, [playlist, playMode]);
 
