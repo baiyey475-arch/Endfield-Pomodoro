@@ -195,7 +195,7 @@ export const useOnlinePlayer = (
             audio.removeEventListener("waiting", handleWaiting);
             audio.removeEventListener("error", handleError);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- volume 的变化由单独的 effect (line 157-162) 处理
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- volume 的变化由单独的 effect 处理，以避免每次音量变化都重新绑定所有事件监听器
     }, [audioInstance]);
 
     // 监听音量变化
