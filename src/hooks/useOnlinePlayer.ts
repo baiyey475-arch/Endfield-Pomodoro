@@ -15,7 +15,7 @@ export interface Song {
 export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, enabled: boolean = true) => {
     // 使用 State 管理当前的 Audio 实例，以便在实例切换（Swap）时触发重渲染
     const [audioInstance, setAudioInstance] = useState<HTMLAudioElement>(() => new Audio());
-    
+
     // 预加载的 Audio 实例引用
     const preloadAudioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -90,7 +90,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     // 初始化 Audio 对象事件监听 (当 audioInstance 变化时重新绑定)
     useEffect(() => {
         const audio = audioInstance;
-        
+
         const handleTimeUpdate = () => {
             const time = audio.currentTime;
             if (Math.abs(time - lastTimeRef.current) >= TIME_UPDATE_THROTTLE_SECONDS) {
@@ -109,7 +109,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             setIsLoading(false);
             setError('Load failed');
             console.error('Online playback error: Load failed'); // Log every error
-            
+
             consecutiveErrorsRef.current += 1;
             if (consecutiveErrorsRef.current >= 5) {
                 console.error('Too many consecutive errors, stopping playback.');
@@ -144,7 +144,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             // 或者如果这是 preload 进来的 audio，我们也不希望清空它
             // 只有当组件卸载或者真正销毁时才需要清理，但 React Effect cleanup 在依赖变化时也会运行。
             // 简单 pause 和移除监听器即可。
-            
+
             audio.removeEventListener('timeupdate', handleTimeUpdate);
             audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
             audio.removeEventListener('ended', handleEnded);
@@ -152,7 +152,8 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             audio.removeEventListener('waiting', handleWaiting);
             audio.removeEventListener('error', handleError);
         };
-    }, [audioInstance]); // 依赖 audioInstance，切换实例时自动重绑
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- volume 的变化由单独的 effect (line 157-162) 处理
+    }, [audioInstance]);
 
     // 监听音量变化
     useEffect(() => {
@@ -188,7 +189,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
     // 监听播放列表变化，处理初始随机播放
     // 使用 ref 记录是否已初始化
     const initializedRef = useRef(false);
-    
+
     useEffect(() => {
         if (playlist.length === 0) {
             initializedRef.current = false;
@@ -224,7 +225,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             } else {
                 nextIndex = (currentIndex + 1) % playlist.length;
             }
-            
+
             if (nextIndex === -1) return;
 
             const nextSong = playlist[nextIndex];
@@ -234,7 +235,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
                     preloadAudioRef.current = new Audio();
                 }
                 const preloadAudio = preloadAudioRef.current;
-                
+
                 // Only load if URL is different
                 if (preloadAudio.src !== nextSong.url) {
                     console.log(`Preloading next track: ${nextSong.name}`);
@@ -285,7 +286,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             setAudioInstance(newMain);
             // 2. 将旧实例回收给预加载 Ref
             preloadAudioRef.current = oldMain;
-            
+
             // 注意：这里 return 后，State 更新会触发组件重渲染
             // 下一次 render 时，effect 会再次运行，但此时 audioInstance 已经是 newMain
             // 且 newMain.src 已经等于 currentSong.url，所以会进入下方的 play 逻辑
@@ -331,10 +332,10 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
             // 如果 src 相同 (例如刚刚完成了 Swap，或者重复点击同一首)
             // 确保如果应该是播放状态，则进行播放
             if (isPlaying && audio.paused) {
-                 audio.play().catch(err => {
+                audio.play().catch(err => {
                     console.error("Playback failed (swap resume):", err);
                     setIsPlaying(false);
-                 });
+                });
             }
         }
     }, [currentIndex, playlist, autoPlay, isPlaying, audioInstance]);
@@ -359,7 +360,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
                         });
                     };
                     audio.addEventListener('canplay', onCanPlay, { once: true });
-                    
+
                     const timeoutId = setTimeout(() => {
                         if (audioInstance && audioInstance.readyState < 2) {
                             console.warn('Audio loading timeout');
@@ -421,7 +422,7 @@ export const useOnlinePlayer = (playlist: Song[], autoPlay: boolean = false, ena
         let prevIndex: number;
 
         if (playMode === PlayMode.RANDOM) {
-             prevIndex = getPrevRandomIndex();
+            prevIndex = getPrevRandomIndex();
         } else {
             prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
         }

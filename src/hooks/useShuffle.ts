@@ -23,25 +23,30 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
         if (playMode === PlayMode.RANDOM && playlistLength > 0) {
             // 生成初始索引数组 [0, 1, 2, ...]
             const indices = Array.from({ length: playlistLength }, (_, i) => i);
-            
+
             // Fisher-Yates 洗牌算法
             for (let i = indices.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [indices[i], indices[j]] = [indices[j], indices[i]];
             }
-            
-            setShuffledIndices(indices);
-            
+
             // 尝试在新的洗牌列表中找到当前正在播放的歌曲，并同步指针
             // 如果 currentIndex 为 -1 (未播放)，指针将重置为 0 (准备播放第一首)
             const currentPointer = indices.indexOf(currentIndex);
-            setShufflePointer(currentPointer !== -1 ? currentPointer : 0);
+            // 使用 queueMicrotask 避免同步 setState 导致级联渲染
+            queueMicrotask(() => {
+                setShuffledIndices(indices);
+                setShufflePointer(currentPointer !== -1 ? currentPointer : 0);
+            });
         } else {
             // 非随机模式，清空状态
-            setShuffledIndices([]);
-            setShufflePointer(-1);
+            queueMicrotask(() => {
+                setShuffledIndices([]);
+                setShufflePointer(-1);
+            });
         }
-    }, [playlistLength, playMode]); // 移除 currentIndex 依赖，避免每首歌都重洗
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- 故意排除 currentIndex，避免每首歌都重洗
+    }, [playlistLength, playMode]);
 
     // 当 currentIndex 从外部被改变时（例如点击列表切歌），同步 shufflePointer
     useEffect(() => {
@@ -49,7 +54,7 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
             const newPointer = shuffledIndices.indexOf(currentIndex);
             // 只有当当前索引确实在洗牌列表中，且指针不对时才更新
             if (newPointer !== -1 && newPointer !== shufflePointer) {
-                setShufflePointer(newPointer);
+                queueMicrotask(() => setShufflePointer(newPointer));
             }
         }
     }, [currentIndex, shuffledIndices, playMode, shufflePointer]);
@@ -59,7 +64,7 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
      */
     const getNextRandomIndex = useCallback((): number => {
         if (playlistLength === 0) return -1;
-        
+
         // 如果洗牌列表未准备好（极端情况），降级为纯随机
         if (shuffledIndices.length === 0) {
             if (playlistLength <= 1) {
@@ -72,23 +77,23 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
             return nextIndex;
         }
 
-        let nextPointer = shufflePointer + 1;
-        
+        const nextPointer = shufflePointer + 1;
+
         // 如果已经播完了整个列表，需要重新洗牌
         if (nextPointer >= shuffledIndices.length) {
             const newIndices = [...shuffledIndices];
-            
+
             // 重新洗牌
             for (let i = newIndices.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [newIndices[i], newIndices[j]] = [newIndices[j], newIndices[i]];
             }
-            
+
             // 避免首尾相接：如果新列表的第一首跟旧列表的最后一首一样，交换第一首和第二首
             if (newIndices.length > 1 && newIndices[0] === shuffledIndices[shuffledIndices.length - 1]) {
                 [newIndices[0], newIndices[1]] = [newIndices[1], newIndices[0]];
             }
-            
+
             setShuffledIndices(newIndices);
             setShufflePointer(0);
             return newIndices[0];
@@ -107,12 +112,12 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
 
         if (shuffledIndices.length > 0) {
             let prevPointer = shufflePointer - 1;
-            
+
             // 如果已经是第一首，回退到最后一首（循环）
             if (prevPointer < 0) {
                 prevPointer = shuffledIndices.length - 1;
             }
-            
+
             setShufflePointer(prevPointer);
             return shuffledIndices[prevPointer];
         } else {
@@ -131,17 +136,17 @@ export const useShuffle = (playlistLength: number, playMode: PlayMode, currentIn
      */
     const peekNextRandomIndex = useCallback((): number => {
         if (playlistLength === 0) return -1;
-        
+
         // 如果洗牌列表未准备好
         if (shuffledIndices.length === 0) return -1;
 
         const nextPointer = shufflePointer + 1;
-        
+
         // 如果即将重新洗牌，无法预测下一首（返回 -1 表示不预加载）
         if (nextPointer >= shuffledIndices.length) {
             return -1;
         }
-        
+
         return shuffledIndices[nextPointer];
     }, [playlistLength, shuffledIndices, shufflePointer]);
 
