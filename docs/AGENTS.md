@@ -44,7 +44,8 @@ endfield-pomodoro/
 │   │   ├── useLocalPlayer.ts   # Local player logic Hook
 │   │   ├── useMusicData.ts     # Music data retrieval
 │   │   ├── useOnlinePlayer.ts  # Online player logic Hook
-│   │   └── useSessionStats.ts  # Session stats logic Hook
+│   │   ├── useSessionStats.ts  # Session stats logic Hook
+│   │   └── useShuffle.ts       # Shuffle playback logic Hook
 │   ├── utils/                  # Utility functions
 │   │   ├── i18n.ts             # Internationalization configuration (Chinese/English)
 │   │   └── musicApiAdapters.ts # Music API adapters
