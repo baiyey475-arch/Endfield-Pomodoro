@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useTranslation } from '../utils/i18n';
-import { Language, AudioMode } from '../types';
-import { SECONDS_PER_MINUTE } from '../constants';
+import React, { useEffect, useRef, useState } from "react";
+import { SECONDS_PER_MINUTE } from "../constants";
+import { AudioMode, Language } from "../types";
+import { useTranslation } from "../utils/i18n";
 
 export interface PlayerInterfaceProps {
     // 状态
@@ -47,7 +47,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
     onSeek,
     onVolumeChange,
     onModeToggle,
-    onPlaylistToggle
+    onPlaylistToggle,
 }) => {
     const t = useTranslation(language);
     const progressBarRef = useRef<HTMLDivElement>(null);
@@ -58,15 +58,38 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
     const [dragTime, setDragTime] = useState<number | null>(null);
     const [dragVolume, setDragVolume] = useState<number | null>(null);
     const [isHandleHovered, setIsHandleHovered] = useState(false);
+    const [displayCoverUrl, setDisplayCoverUrl] = useState<string | undefined>(
+        coverUrl,
+    );
+    const coverLoadIdRef = useRef(0);
 
     // 用 ref 保存回调和 duration，避免事件监听器频繁重建
     const onSeekRef = useRef(onSeek);
     const onVolumeChangeRef = useRef(onVolumeChange);
     const durationRef = useRef(duration);
 
-    useEffect(() => { onSeekRef.current = onSeek; }, [onSeek]);
-    useEffect(() => { onVolumeChangeRef.current = onVolumeChange; }, [onVolumeChange]);
-    useEffect(() => { durationRef.current = duration; }, [duration]);
+    useEffect(() => {
+        onSeekRef.current = onSeek;
+    }, [onSeek]);
+    useEffect(() => {
+        onVolumeChangeRef.current = onVolumeChange;
+    }, [onVolumeChange]);
+    useEffect(() => {
+        durationRef.current = duration;
+    }, [duration]);
+
+    useEffect(() => {
+        if (!coverUrl || coverUrl === displayCoverUrl) return;
+
+        const loadId = ++coverLoadIdRef.current;
+        const img = new Image();
+        img.onload = () => {
+            if (coverLoadIdRef.current === loadId) {
+                setDisplayCoverUrl(coverUrl);
+            }
+        };
+        img.src = coverUrl;
+    }, [coverUrl, displayCoverUrl]);
 
     // 同步保存非零音量值到 ref
     useEffect(() => {
@@ -77,10 +100,10 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
 
     // 格式化时间
     const formatTime = (seconds: number) => {
-        if (isNaN(seconds) || !isFinite(seconds)) return '00:00';
+        if (isNaN(seconds) || !isFinite(seconds)) return "00:00";
         const mins = Math.floor(seconds / SECONDS_PER_MINUTE);
         const secs = Math.floor(seconds % SECONDS_PER_MINUTE);
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
     };
 
     // 处理进度条和音量条拖拽
@@ -89,9 +112,16 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
             e.preventDefault();
 
             // 进度条拖拽
-            if (isDraggingRef.current && progressBarRef.current && durationRef.current > 0) {
+            if (
+                isDraggingRef.current &&
+                progressBarRef.current &&
+                durationRef.current > 0
+            ) {
                 const rect = progressBarRef.current.getBoundingClientRect();
-                const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+                const clickX = Math.max(
+                    0,
+                    Math.min(e.clientX - rect.left, rect.width),
+                );
                 const newTime = (clickX / rect.width) * durationRef.current;
                 setDragTime(newTime);
             }
@@ -99,7 +129,10 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
             // 音量条拖拽 - 实时更新
             if (isVolumeDraggingRef.current && volumeBarRef.current) {
                 const rect = volumeBarRef.current.getBoundingClientRect();
-                const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+                const clickX = Math.max(
+                    0,
+                    Math.min(e.clientX - rect.left, rect.width),
+                );
                 const newVolume = Math.max(0, Math.min(1, clickX / rect.width));
                 setDragVolume(newVolume);
             }
@@ -109,7 +142,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
             // 进度条释放
             if (isDraggingRef.current) {
                 // 使用函数式更新获取最新 dragTime
-                setDragTime(prev => {
+                setDragTime((prev) => {
                     if (prev !== null) onSeekRef.current(prev);
                     return null;
                 });
@@ -118,7 +151,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
 
             // 音量条释放
             if (isVolumeDraggingRef.current) {
-                setDragVolume(prev => {
+                setDragVolume((prev) => {
                     if (prev !== null) onVolumeChangeRef.current(prev);
                     return null;
                 });
@@ -126,16 +159,17 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
             isVolumeDraggingRef.current = false;
         };
 
-        window.addEventListener('mousemove', handleGlobalMouseMove);
-        window.addEventListener('mouseup', handleGlobalMouseUp);
+        window.addEventListener("mousemove", handleGlobalMouseMove);
+        window.addEventListener("mouseup", handleGlobalMouseUp);
         return () => {
-            window.removeEventListener('mousemove', handleGlobalMouseMove);
-            window.removeEventListener('mouseup', handleGlobalMouseUp);
+            window.removeEventListener("mousemove", handleGlobalMouseMove);
+            window.removeEventListener("mouseup", handleGlobalMouseUp);
         };
     }, []); // 空依赖，只挂载一次
 
     const displayTime = dragTime !== null ? dragTime : currentTime;
     const displayVolume = dragVolume !== null ? dragVolume : volume;
+    const renderedCoverUrl = coverUrl ? displayCoverUrl : undefined;
 
     return (
         <div className="flex flex-col h-full w-full relative">
@@ -145,12 +179,13 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                 <div className="flex justify-between items-end border-b border-theme-highlight/30 pb-2 mb-2">
                     <div className="flex flex-col overflow-hidden mr-4 flex-1">
                         <span className="text-[10px] text-theme-dim uppercase tracking-widest">
-                            {isLoading ? t('CONNECTING') : t('STATUS')}
+                            {isLoading ? t("CONNECTING") : t("STATUS")}
                         </span>
                         {currentTrackName ? (
                             <div className="flex flex-col mt-1">
                                 <div className="text-sm font-mono text-theme-primary truncate animate-pulse-fast leading-tight">
-                                    {isPlaying ? '► ' : '❚❚ '} {currentTrackName}
+                                    {isPlaying ? "► " : "❚❚ "}{" "}
+                                    {currentTrackName}
                                 </div>
                                 {currentArtist && (
                                     <div className="text-xs text-theme-dim truncate leading-tight mt-0.5">
@@ -159,23 +194,29 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                                 )}
                             </div>
                         ) : (
-                            <div className="text-sm font-mono text-theme-dim uppercase leading-tight mt-1">{t('NO_TRACK')}</div>
+                            <div className="text-sm font-mono text-theme-dim uppercase leading-tight mt-1">
+                                {t("NO_TRACK")}
+                            </div>
                         )}
                     </div>
                     <div className="text-[10px] font-mono text-theme-dim text-right shrink-0">
-                        {playlistCount > 0 ? `${currentIndex + 1} / ${playlistCount}` : '- / -'}
+                        {playlistCount > 0
+                            ? `${currentIndex + 1} / ${playlistCount}`
+                            : "- / -"}
                     </div>
                 </div>
 
                 {/* 中间：封面(可选) + 进度条 + 播放列表按钮 + 模式 */}
                 <div className="flex items-center gap-3">
                     {/* 封面 */}
-                    {coverUrl && (
+                    {renderedCoverUrl && (
                         <div
                             className="w-12 h-12 rounded-full border border-theme-primary/30 bg-cover bg-center shrink-0 animate-spin-slow"
                             style={{
-                                backgroundImage: `url(${coverUrl})`,
-                                animationPlayState: isPlaying ? 'running' : 'paused'
+                                backgroundImage: `url(${renderedCoverUrl})`,
+                                animationPlayState: isPlaying
+                                    ? "running"
+                                    : "paused",
                             }}
                         ></div>
                     )}
@@ -190,30 +231,39 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                                 onMouseDown={(e) => {
                                     e.preventDefault();
                                     isDraggingRef.current = true;
-                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    const rect =
+                                        e.currentTarget.getBoundingClientRect();
                                     const clickX = e.clientX - rect.left;
-                                    const newTime = (clickX / rect.width) * duration;
+                                    const newTime =
+                                        (clickX / rect.width) * duration;
                                     setDragTime(newTime);
                                 }}
                             >
                                 {/* 进度填充 */}
-                                {duration > 0 && (displayTime / duration) > 0.01 && (
-                                    <div
-                                        className="h-full bg-theme-primary/80 relative pointer-events-none"
-                                        style={{
-                                            width: `${(displayTime / duration) * 100}%`,
-                                            filter: 'drop-shadow(0 0 4px rgba(var(--color-primary), 0.6))'
-                                        }}
-                                    >
-                                        <div className="absolute inset-0 bg-gradient-to-r from-theme-primary/20 to-transparent animate-pulse-fast"></div>
-                                    </div>
-                                )}
+                                {duration > 0 &&
+                                    displayTime / duration > 0.01 && (
+                                        <div
+                                            className="h-full bg-theme-primary/80 relative pointer-events-none"
+                                            style={{
+                                                width: `${(displayTime / duration) * 100}%`,
+                                                filter: "drop-shadow(0 0 4px rgba(var(--color-primary), 0.6))",
+                                            }}
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-r from-theme-primary/20 to-transparent animate-pulse-fast"></div>
+                                        </div>
+                                    )}
                             </div>
 
                             {/* 时间显示覆盖层 */}
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div className="flex items-center gap-2 px-2 bg-black/60 backdrop-blur-sm rounded">
-                                    <span className="text-[10px] md:text-xs font-mono text-white font-bold" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                                    <span
+                                        className="text-[10px] md:text-xs font-mono text-white font-bold"
+                                        style={{
+                                            textShadow:
+                                                "0 1px 2px rgba(0,0,0,0.8)",
+                                        }}
+                                    >
                                         {formatTime(displayTime)}
                                     </span>
                                     <span className="text-[8px] md:text-[9px] font-mono text-white/70">
@@ -231,8 +281,8 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     <button
                         onClick={onPlaylistToggle}
                         className="p-1.5 border border-theme-dim text-theme-dim hover:text-theme-primary hover:border-theme-primary transition-colors rounded-sm cursor-pointer"
-                        title={t('PLAYLIST_BUTTON')}
-                        aria-label={t('PLAYLIST_BUTTON')}
+                        title={t("PLAYLIST_BUTTON")}
+                        aria-label={t("PLAYLIST_BUTTON")}
                     >
                         <i className="ri-play-list-line text-base"></i>
                     </button>
@@ -241,8 +291,14 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     <button
                         onClick={onModeToggle}
                         className="p-1.5 border border-theme-dim text-theme-dim hover:text-theme-primary hover:border-theme-primary transition-colors rounded-sm cursor-pointer"
-                        title={playMode === AudioMode.SEQUENTIAL ? t('MODE_SEQ') : playMode === AudioMode.REPEAT_ONE ? t('MODE_REPEAT_ONE') : t('MODE_SHUFFLE')}
-                        aria-label={t('TOGGLE_MODE')}
+                        title={
+                            playMode === AudioMode.SEQUENTIAL
+                                ? t("MODE_SEQ")
+                                : playMode === AudioMode.REPEAT_ONE
+                                  ? t("MODE_REPEAT_ONE")
+                                  : t("MODE_SHUFFLE")
+                        }
+                        aria-label={t("TOGGLE_MODE")}
                     >
                         {playMode === AudioMode.SEQUENTIAL ? (
                             <i className="ri-repeat-line text-base"></i>
@@ -262,8 +318,8 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     onClick={onPrev}
                     disabled={playlistCount === 0}
                     className="p-2 border border-theme-highlight hover:border-theme-primary text-theme-dim hover:text-theme-primary transition-colors rounded-sm shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    title={t('PREVIOUS_TRACK_TOOLTIP')}
-                    aria-label={t('PREVIOUS_TRACK_TOOLTIP')}
+                    title={t("PREVIOUS_TRACK_TOOLTIP")}
+                    aria-label={t("PREVIOUS_TRACK_TOOLTIP")}
                 >
                     <i className="ri-skip-back-line text-xl"></i>
                 </button>
@@ -272,9 +328,9 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                 <button
                     onClick={onPlayPause}
                     disabled={playlistCount === 0}
-                    className={`w-14 h-9 flex items-center justify-center border transition-colors rounded-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${isPlaying ? 'bg-theme-primary text-black border-theme-primary' : 'border-theme-highlight text-theme-text hover:border-theme-primary'}`}
-                    title={t('PLAY_PAUSE')}
-                    aria-label={t('PLAY_PAUSE')}
+                    className={`w-14 h-9 flex items-center justify-center border transition-colors rounded-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${isPlaying ? "bg-theme-primary text-black border-theme-primary" : "border-theme-highlight text-theme-text hover:border-theme-primary"}`}
+                    title={t("PLAY_PAUSE")}
+                    aria-label={t("PLAY_PAUSE")}
                 >
                     {isPlaying ? (
                         <i className="ri-pause-line text-2xl"></i>
@@ -288,8 +344,8 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     onClick={onNext}
                     disabled={playlistCount === 0}
                     className="p-2 border border-theme-highlight hover:border-theme-primary text-theme-dim hover:text-theme-primary transition-colors rounded-sm shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    title={t('NEXT_TRACK')}
-                    aria-label={t('NEXT_TRACK')}
+                    title={t("NEXT_TRACK")}
+                    aria-label={t("NEXT_TRACK")}
                 >
                     <i className="ri-skip-forward-line text-xl"></i>
                 </button>
@@ -297,13 +353,17 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                 {/* 音量条 */}
                 <div className="flex-1 h-9 flex items-center gap-2 px-2 border border-theme-highlight/30 rounded-sm bg-black/10">
                     <i
-                        className={`${displayVolume === 0 ? 'ri-volume-mute-line' : 'ri-volume-up-line'} text-theme-dim hover:text-theme-primary text-base shrink-0 cursor-pointer transition-colors`}
+                        className={`${displayVolume === 0 ? "ri-volume-mute-line" : "ri-volume-up-line"} text-theme-dim hover:text-theme-primary text-base shrink-0 cursor-pointer transition-colors`}
                         role="button"
-                        aria-label={displayVolume === 0 ? 'Unmute' : 'Mute'}
+                        aria-label={
+                            displayVolume === 0 ? t("UNMUTE") : t("MUTE")
+                        }
                         tabIndex={0}
                         onClick={() => {
                             if (displayVolume === 0) {
-                                onVolumeChange(previousVolumeRef.current || 0.5);
+                                onVolumeChange(
+                                    previousVolumeRef.current || 0.5,
+                                );
                             } else {
                                 previousVolumeRef.current = displayVolume;
                                 onVolumeChange(0);
@@ -315,9 +375,16 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                             ref={volumeBarRef}
                             className="w-full h-1 bg-theme-highlight/30 relative rounded-full"
                             onClick={(e) => {
-                                const rect = e.currentTarget.getBoundingClientRect();
-                                const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-                                const newVolume = Math.max(0, Math.min(1, clickX / rect.width));
+                                const rect =
+                                    e.currentTarget.getBoundingClientRect();
+                                const clickX = Math.max(
+                                    0,
+                                    Math.min(e.clientX - rect.left, rect.width),
+                                );
+                                const newVolume = Math.max(
+                                    0,
+                                    Math.min(1, clickX / rect.width),
+                                );
                                 onVolumeChange(newVolume);
                             }}
                         >
@@ -331,7 +398,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                             className="absolute w-3 h-3 bg-theme-primary rounded-full shadow-lg cursor-grab active:cursor-grabbing transition-transform group/slider"
                             style={{
                                 left: `${displayVolume * 100}%`,
-                                transform: `translateX(-50%) scale(${isHandleHovered ? 1.25 : 1})`
+                                transform: `translateX(-50%) scale(${isHandleHovered ? 1.25 : 1})`,
                             }}
                             onMouseEnter={() => setIsHandleHovered(true)}
                             onMouseLeave={() => setIsHandleHovered(false)}
@@ -339,9 +406,16 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                                 e.preventDefault();
                                 e.stopPropagation();
                                 isVolumeDraggingRef.current = true;
-                                const rect = volumeBarRef.current!.getBoundingClientRect();
-                                const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
-                                const newVolume = Math.max(0, Math.min(1, clickX / rect.width));
+                                const rect =
+                                    volumeBarRef.current!.getBoundingClientRect();
+                                const clickX = Math.max(
+                                    0,
+                                    Math.min(e.clientX - rect.left, rect.width),
+                                );
+                                const newVolume = Math.max(
+                                    0,
+                                    Math.min(1, clickX / rect.width),
+                                );
                                 setDragVolume(newVolume);
                             }}
                         ></div>

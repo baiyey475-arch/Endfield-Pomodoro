@@ -1,53 +1,61 @@
 /**
  * TerminalUI - 主题层容器组件
- * 
+ *
  * 负责根据当前主题渲染对应的背景和前景效果
  * 主题效果组件位于 ./themes/ 目录
  */
-import React, { useEffect, useState } from 'react';
-import { ThemePreset } from '../types';
-import { useIsMobile } from '../hooks/useIsMobile';
-
+import React, { useEffect, useState } from "react";
+import { useIsMobile } from "../hooks/useIsMobile";
+import { ThemePreset } from "../types";
+// Miku 主题效果
+import { MikuBackgroundLayer, MikuForegroundLayer } from "./MikuDecorations";
 // 主题背景效果
 import {
-    OriginGrid,
     AzureGrid,
-    NeonGrid,
-    MatrixRain,
-    TacticalGrid,
-    RoyalParticles,
     IndustrialGrid,
-    LaboratoryGrid
-} from './themes/BackgroundEffects';
-
+    LaboratoryGrid,
+    MatrixRain,
+    NeonGrid,
+    OriginGrid,
+    RoyalParticles,
+    TacticalGrid,
+} from "./themes/BackgroundEffects";
 // 主题前景效果
 import {
-    OriginForeground,
-    TacticalForeground,
     AzureForeground,
     IndustrialForeground,
-    LaboratoryForeground
-} from './themes/ForegroundEffects';
-
-// Miku 主题效果
-import { MikuBackgroundLayer, MikuForegroundLayer } from './MikuDecorations';
+    LaboratoryForeground,
+    OriginForeground,
+    TacticalForeground,
+} from "./themes/ForegroundEffects";
 
 /**
  * 背景层容器 (Z-0)
  * 根据主题渲染对应的静态背景效果
  */
-export const BackgroundLayer: React.FC<{ theme?: ThemePreset }> = ({ theme = ThemePreset.ORIGIN }) => {
+export const BackgroundLayer: React.FC<{ theme?: ThemePreset }> = ({
+    theme = ThemePreset.ORIGIN,
+}) => {
     const renderContent = () => {
         switch (theme) {
-            case ThemePreset.AZURE: return <AzureGrid />;
-            case ThemePreset.NEON: return <NeonGrid />;
-            case ThemePreset.MATRIX: return <MatrixRain />;
-            case ThemePreset.TACTICAL: return <TacticalGrid />;
-            case ThemePreset.ROYAL: return <RoyalParticles />;
-            case ThemePreset.INDUSTRIAL: return <IndustrialGrid />;
-            case ThemePreset.LABORATORY: return <LaboratoryGrid />;
-            case ThemePreset.MIKU: return <MikuBackgroundLayer />;
-            default: return <OriginGrid />;
+            case ThemePreset.AZURE:
+                return <AzureGrid />;
+            case ThemePreset.NEON:
+                return <NeonGrid />;
+            case ThemePreset.MATRIX:
+                return <MatrixRain />;
+            case ThemePreset.TACTICAL:
+                return <TacticalGrid />;
+            case ThemePreset.ROYAL:
+                return <RoyalParticles />;
+            case ThemePreset.INDUSTRIAL:
+                return <IndustrialGrid />;
+            case ThemePreset.LABORATORY:
+                return <LaboratoryGrid />;
+            case ThemePreset.MIKU:
+                return <MikuBackgroundLayer />;
+            default:
+                return <OriginGrid />;
         }
     };
 
@@ -62,7 +70,9 @@ export const BackgroundLayer: React.FC<{ theme?: ThemePreset }> = ({ theme = The
  * 前景层容器 (Z-50)
  * 根据主题渲染对应的鼠标交互效果
  */
-export const ForegroundLayer: React.FC<{ theme?: ThemePreset }> = ({ theme = ThemePreset.ORIGIN }) => {
+export const ForegroundLayer: React.FC<{ theme?: ThemePreset }> = ({
+    theme = ThemePreset.ORIGIN,
+}) => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const isMobile = useIsMobile();
 
@@ -76,9 +86,9 @@ export const ForegroundLayer: React.FC<{ theme?: ThemePreset }> = ({ theme = The
                 setMousePos({ x: e.clientX, y: e.clientY });
             });
         };
-        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener("mousemove", handleMouseMove);
         return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener("mousemove", handleMouseMove);
             cancelAnimationFrame(animationFrameId);
         };
     }, [isMobile]);

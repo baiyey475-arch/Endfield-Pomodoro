@@ -9,39 +9,41 @@
  */
 export const STORAGE_KEYS = {
     /** 用户设置（番茄钟时长、主题、语言等） */
-    SETTINGS: 'origin_terminal_settings',
+    SETTINGS: "origin_terminal_settings",
+    /** 任务列表 */
+    TASKS: "origin_terminal_tasks",
     /** 完成的番茄钟会话数 */
-    SESSIONS: 'origin_terminal_sessions',
+    SESSIONS: "origin_terminal_sessions",
     /** 累计学习总秒数 */
-    TOTAL_SECONDS: 'origin_terminal_total_seconds',
+    TOTAL_SECONDS: "origin_terminal_total_seconds",
     /** 当前会话开始时间戳 */
-    CURRENT_SESSION_START: 'origin_terminal_current_session_start',
+    CURRENT_SESSION_START: "origin_terminal_current_session_start",
     /** 音频源模式（local/online） */
-    AUDIO_SOURCE: 'origin_terminal_audio_source',
+    AUDIO_SOURCE: "origin_terminal_audio_source",
     /** 音频音量（0-1） */
-    AUDIO_VOLUME: 'origin_terminal_audio_volume',
+    AUDIO_VOLUME: "origin_terminal_audio_volume",
     /** 音频播放模式（sequence/loop/random） */
-    AUDIO_PLAY_MODE: 'origin_terminal_audio_play_mode',
+    AUDIO_PLAY_MODE: "origin_terminal_audio_play_mode",
     /** 计时器状态（用于刷新后恢复） */
-    TIMER: 'origin_terminal_timer'
+    TIMER: "origin_terminal_timer",
 } as const;
 
 /**
  * 音乐 API 基础 URL
  * 用于获取在线音乐数据
- * 
+ *
  * 主 API: api.i-meto.com
  * 备用 API: api.injahow.cn
- * 
+ *
  * 使用位置：
  * - hooks/useMusicData.ts
  */
-export const MUSIC_API_BASE_URL = 'https://api.i-meto.com/meting/api';
-export const MUSIC_API_FALLBACK_URL = 'https://api.injahow.cn/meting/';
+export const MUSIC_API_BASE_URL = "https://api.i-meto.com/meting/api";
+export const MUSIC_API_FALLBACK_URL = "https://api.injahow.cn/meting/";
 
 /**
  * 音频播放器常量
- * 
+ *
  * 使用位置：
  * - hooks/useOnlinePlayer.ts
  * - hooks/useLocalPlayer.ts
@@ -57,7 +59,7 @@ export const API_TIMEOUT_MS = 5000; // API 请求超时时间（毫秒）
 
 /**
  * 时间转换常量
- * 
+ *
  * 使用位置：
  * - App.tsx
  * - Pomodoro.tsx
@@ -71,7 +73,7 @@ export const HOURLY_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 每小时检查间隔
 
 /**
  * 番茄钟计时器常量
- * 
+ *
  * 使用位置：
  * - Pomodoro.tsx
  */
@@ -80,7 +82,7 @@ export const LONG_BREAK_INTERVAL = 4; // 每完成多少个工作会话后进入
 
 /**
  * 音效时长常量（秒）
- * 
+ *
  * 使用位置：
  * - SoundManager.tsx
  */
