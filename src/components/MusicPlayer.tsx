@@ -152,24 +152,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
                                     else itemRefs.current.delete(index);
                                 }}
                                 className={`flex items-center p-2 hover:bg-theme-highlight/10 cursor-pointer text-xs border-b border-theme-highlight/5 last:border-0 ${index === player.currentIndex ? "text-theme-primary bg-theme-primary/5" : "text-theme-text"}`}
-                                role="button"
-                                tabIndex={0}
-                                aria-pressed={index === player.currentIndex}
                                 onClick={() => {
                                     // 保持当前播放状态：如果正在播放则继续播放，如果暂停则保持暂停
                                     player.playTrack(index, true);
                                     // 不关闭播放列表
-                                }}
-                                onKeyDown={(event) => {
-                                    if (
-                                        event.key === " " ||
-                                        event.key === "Enter"
-                                    ) {
-                                        if (event.key === " ") {
-                                            event.preventDefault();
-                                        }
-                                        player.playTrack(index, true);
-                                    }
                                 }}
                             >
                                 <span className="w-6 text-theme-dim font-mono">

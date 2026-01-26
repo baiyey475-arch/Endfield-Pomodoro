@@ -58,6 +58,10 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
     const [dragTime, setDragTime] = useState<number | null>(null);
     const [dragVolume, setDragVolume] = useState<number | null>(null);
     const [isHandleHovered, setIsHandleHovered] = useState(false);
+    const [displayCoverUrl, setDisplayCoverUrl] = useState<string | undefined>(
+        coverUrl,
+    );
+    const coverLoadIdRef = useRef(0);
 
     // 用 ref 保存回调和 duration，避免事件监听器频繁重建
     const onSeekRef = useRef(onSeek);
@@ -73,6 +77,19 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
     useEffect(() => {
         durationRef.current = duration;
     }, [duration]);
+
+    useEffect(() => {
+        if (!coverUrl || coverUrl === displayCoverUrl) return;
+
+        const loadId = ++coverLoadIdRef.current;
+        const img = new Image();
+        img.onload = () => {
+            if (coverLoadIdRef.current === loadId) {
+                setDisplayCoverUrl(coverUrl);
+            }
+        };
+        img.src = coverUrl;
+    }, [coverUrl, displayCoverUrl]);
 
     // 同步保存非零音量值到 ref
     useEffect(() => {
@@ -152,6 +169,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
 
     const displayTime = dragTime !== null ? dragTime : currentTime;
     const displayVolume = dragVolume !== null ? dragVolume : volume;
+    const renderedCoverUrl = coverUrl ? displayCoverUrl : undefined;
 
     return (
         <div className="flex flex-col h-full w-full relative">
@@ -191,11 +209,11 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                 {/* 中间：封面(可选) + 进度条 + 播放列表按钮 + 模式 */}
                 <div className="flex items-center gap-3">
                     {/* 封面 */}
-                    {coverUrl && (
+                    {renderedCoverUrl && (
                         <div
                             className="w-12 h-12 rounded-full border border-theme-primary/30 bg-cover bg-center shrink-0 animate-spin-slow"
                             style={{
-                                backgroundImage: `url(${coverUrl})`,
+                                backgroundImage: `url(${renderedCoverUrl})`,
                                 animationPlayState: isPlaying
                                     ? "running"
                                     : "paused",
