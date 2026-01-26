@@ -76,12 +76,13 @@ export const translations = {
 
         // Task Manager
         TASK_MODULE: "MISSION PROTOCOLS",
-        ADD_TASK_PLACEHOLDER: "Input objective parameters...",
+        ADD_TASK_PLACEHOLDER: "Input tasks...",
         ADD_TASK: "ADD",
         NO_TASKS: "NO ACTIVE OBJECTIVES",
         TASKS_CLEARED: "ALL OBJECTIVES CLEARED",
         CLEAR_COMPLETED: "PURGE COMPLETED",
         CAPACITY: "CAPACITY",
+        CAPACITY_REACHED: "CAPACITY REACHED",
 
         // Audio Player
         AUDIO_MODULE: "AUDIO FEED",
@@ -210,6 +211,7 @@ export const translations = {
         TASKS_CLEARED: "任务列表已清空",
         CLEAR_COMPLETED: "清除已完成",
         CAPACITY: "容量",
+        CAPACITY_REACHED: "容量已满",
 
         // Audio Player
         AUDIO_MODULE: "音频讯号",

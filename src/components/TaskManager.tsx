@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { STORAGE_KEYS } from "../constants";
 import type { Task } from "../types";
 import { Language } from "../types";
 import { useTranslation } from "../utils/i18n";
@@ -9,7 +10,6 @@ interface TaskManagerProps {
 }
 
 const MAX_TASKS = 6;
-import { STORAGE_KEYS } from "../constants";
 
 const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
     const t = useTranslation(language);
@@ -19,7 +19,18 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
         const saved = localStorage.getItem(STORAGE_KEYS.TASKS);
         if (saved) {
             try {
-                return JSON.parse(saved);
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed)) {
+                    return parsed.filter(
+                        (task): task is Task =>
+                            typeof task === "object" &&
+                            task !== null &&
+                            typeof task.id === "string" &&
+                            typeof task.text === "string" &&
+                            typeof task.completed === "boolean" &&
+                            typeof task.createdAt === "number",
+                    );
+                }
             } catch (e) {
                 console.error("Failed to load tasks", e);
             }
@@ -54,18 +65,18 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
 
     const toggleTask = (id: string) => {
         setTasks(
-            tasks.map((t) =>
-                t.id === id ? { ...t, completed: !t.completed } : t,
+            tasks.map((task) =>
+                task.id === id ? { ...task, completed: !task.completed } : task,
             ),
         );
     };
 
     const deleteTask = (id: string) => {
-        setTasks(tasks.filter((t) => t.id !== id));
+        setTasks(tasks.filter((task) => task.id !== id));
     };
 
     const clearCompleted = () => {
-        setTasks(tasks.filter((t) => !t.completed));
+        setTasks(tasks.filter((task) => !task.completed));
     };
 
     const isFull = tasks.length >= MAX_TASKS;
@@ -91,7 +102,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                             onChange={(e) => setInputValue(e.target.value)}
                             placeholder={
                                 isFull
-                                    ? "CAPACITY REACHED"
+                                    ? t("CAPACITY_REACHED")
                                     : t("ADD_TASK_PLACEHOLDER")
                             }
                             onKeyDown={(e) => e.key === "Enter" && addTask()}
@@ -154,7 +165,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                     )}
                 </div>
 
-                {tasks.some((t) => t.completed) && (
+                {tasks.some((task) => task.completed) && (
                     <div className="mt-4 pt-2 border-t border-theme-highlight flex justify-end shrink-0">
                         <button
                             onClick={clearCompleted}

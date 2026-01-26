@@ -66,9 +66,12 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                     const url = adapter.buildUrl({ server, type, id });
 
                     // 从 adapter.fetchOptions 中移除 signal，以避免覆盖 controller.signal
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const { signal: _ignored, ...safeFetchOptions } =
-                        adapter.fetchOptions || {};
+                    const safeFetchOptions = {
+                        ...(adapter.fetchOptions || {}),
+                    };
+                    if ("signal" in safeFetchOptions) {
+                        delete safeFetchOptions.signal;
+                    }
 
                     // 使用 Promise.race 来处理超时，并在完成后清理 setTimeout
                     const response = await Promise.race([

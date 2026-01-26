@@ -60,7 +60,7 @@ export default defineConfig({
                 navigateFallback: "index.html",
                 navigateFallbackDenylist: [/^\/api/, /\.(mp3|m4a|flac)$/i],
                 ignoreURLParametersMatching: [/.*/],
-                // index.html 不应该被缓存，总是从网络获取
+                // index.html 优先从网络获取，缓存仅作为离线回退
                 dontCacheBustURLsMatching: /\.(js|css)$/,
                 runtimeCaching: [
                     // index.html: 优先从网络获取，确保用户总是获得最新版本
