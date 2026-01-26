@@ -118,6 +118,8 @@ export const translations = {
         DELETE_TASK: "DELETE TASK",
         CLEAR_ALL_TASKS: "CLEAR ALL TASKS",
         RESET_SESSIONS: "RESET CYCLES",
+        MUTE: "MUTE",
+        UNMUTE: "UNMUTE",
 
         // PWA
         pwa_updated: "Updated successfully!",
@@ -247,6 +249,8 @@ export const translations = {
         DELETE_TASK: "删除任务",
         CLEAR_ALL_TASKS: "清除所有任务",
         RESET_SESSIONS: "重置完成周期",
+        MUTE: "静音",
+        UNMUTE: "取消静音",
 
         // PWA
         pwa_updated: "已更新成功！",

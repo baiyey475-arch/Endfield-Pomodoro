@@ -355,7 +355,9 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     <i
                         className={`${displayVolume === 0 ? "ri-volume-mute-line" : "ri-volume-up-line"} text-theme-dim hover:text-theme-primary text-base shrink-0 cursor-pointer transition-colors`}
                         role="button"
-                        aria-label={displayVolume === 0 ? "Unmute" : "Mute"}
+                        aria-label={
+                            displayVolume === 0 ? t("UNMUTE") : t("MUTE")
+                        }
                         tabIndex={0}
                         onClick={() => {
                             if (displayVolume === 0) {
