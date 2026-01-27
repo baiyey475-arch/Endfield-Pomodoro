@@ -46,7 +46,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
             id: item.id,
             name: item.name,
             artist: item.artist,
-            url: urlOverrides[item.id] || item.url,
+            url: (item.id && urlOverrides[item.id]) || item.url,
             cover: item.cover,
             lrc: item.lrc,
         }));

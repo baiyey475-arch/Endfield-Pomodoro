@@ -6,6 +6,7 @@ import { getAdapters } from "../utils/musicApiAdapters";
  * 音乐曲目数据结构
  */
 export interface MusicTrack {
+    /** 歌曲唯一标识符。如果不可用，可能为空字符串。 */
     id: string;
     name: string;
     artist: string;
@@ -145,7 +146,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
 
     // 尝试获取单曲的备用 URL
     const fetchTrackUrl = useCallback(
-        async (trackId: string): Promise<string | null> => {
+        async (trackId: string, signal?: AbortSignal): Promise<string | null> => {
             const adapters = getAdapters();
             // 尝试除当前使用的适配器以外的其他适配器
             const otherAdapters = adapters.filter(
@@ -157,6 +158,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
 
             for (const adapter of targetAdapters) {
                 if (!adapter.buildTrackUrl) continue;
+                if (signal?.aborted) return null;
 
                 try {
                     const url = adapter.buildTrackUrl({ server, id: trackId });
@@ -169,7 +171,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
 
                     let timeoutId: ReturnType<typeof setTimeout> | null = null;
                     const response = await Promise.race([
-                        fetch(url, safeFetchOptions),
+                        fetch(url, { ...safeFetchOptions, signal }),
                         new Promise<never>((_, reject) => {
                             timeoutId = setTimeout(
                                 () => reject(new Error("Timeout")),
@@ -187,6 +189,9 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                         return tracks[0].url;
                     }
                 } catch (err) {
+                    if (err instanceof DOMException && err.name === "AbortError") {
+                        return null;
+                    }
                     if (err instanceof Error && err.message === "Timeout") {
                         continue;
                     }

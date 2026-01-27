@@ -81,6 +81,12 @@ export const useOnlinePlayer = (
         index: -1,
         fixed: false,
     });
+    // 保持最新的 currentIndex 引用，解决 handleError 闭包问题
+    const currentIndexRef = useRef(currentIndex);
+
+    useEffect(() => {
+        currentIndexRef.current = currentIndex;
+    }, [currentIndex]);
 
     // 使用提取的洗牌逻辑 Hook
     const { getNextRandomIndex, getPrevRandomIndex, peekNextRandomIndex } =
@@ -155,25 +161,28 @@ export const useOnlinePlayer = (
 
             // 单曲级回退逻辑
             if (onTrackFix) {
+                const currentIdx = currentIndexRef.current;
                 // 如果是新的一首歌，或者虽然是同一首但还没尝试修复过
                 if (
-                    trackRetryRef.current.index !== currentIndex ||
+                    trackRetryRef.current.index !== currentIdx ||
                     !trackRetryRef.current.fixed
                 ) {
                     console.log("Attempting track fallback fix...");
                     // 尝试修复时，暂时清除错误状态，避免触发上层整单回退
                     setError(null);
                     trackRetryRef.current = {
-                        index: currentIndex,
+                        index: currentIdx,
                         fixed: true,
                     };
 
-                    onTrackFix(currentIndex, audio.src)
+                    onTrackFix(currentIdx, audio.src)
                         .then((newUrl) => {
                             if (newUrl) {
                                 console.log(
                                     "Track fix successful, retrying with new URL",
                                 );
+                                // URL 覆盖将通过播放列表状态传播，
+                                // 从而通过播放列表 effect 触发重载
                                 return;
                             } else {
                                 // 修复失败，继续走原有错误流程
