@@ -77,8 +77,9 @@ export const useOnlinePlayer = (
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
     const consecutiveErrorsRef = useRef(0);
     // 用于标记当前歌曲是否已经尝试过单曲回退
-    const trackRetryRef = useRef<{ index: number; fixed: boolean }>({
+    const trackRetryRef = useRef<{ index: number; id: string; fixed: boolean }>({
         index: -1,
+        id: "",
         fixed: false,
     });
     // 保持最新的 currentIndex 引用，解决 handleError 闭包问题
@@ -87,6 +88,19 @@ export const useOnlinePlayer = (
     useEffect(() => {
         currentIndexRef.current = currentIndex;
     }, [currentIndex]);
+
+    // 保持最新的 isPlaying 引用
+    const isPlayingRef = useRef(isPlaying);
+    useEffect(() => {
+        isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
+
+    // 使用 Ref 存储最新的 onTrackFix
+    const onTrackFixRef = useRef(onTrackFix);
+
+    useEffect(() => {
+        onTrackFixRef.current = onTrackFix;
+    }, [onTrackFix]);
 
     // 初始化随机索引逻辑
     const initializedRef = useRef(false);
@@ -160,6 +174,7 @@ export const useOnlinePlayer = (
     // 初始化 Audio 对象事件监听 (当 audioInstance 变化时重新绑定)
     useEffect(() => {
         const audio = audioInstance;
+        let isMounted = true;
 
         const handleTimeUpdate = () => {
             const time = audio.currentTime;
@@ -183,12 +198,18 @@ export const useOnlinePlayer = (
             setIsLoading(false);
             console.error("Online playback error: Load failed");
 
+            const currentOnTrackFix = onTrackFixRef.current;
+            const currentIsPlaying = isPlayingRef.current;
+
             // 单曲级回退逻辑
-            if (onTrackFix) {
+            if (currentOnTrackFix) {
                 const currentIdx = currentIndexRef.current;
-                // 如果是新的一首歌，或者虽然是同一首但还没尝试修复过
+                const currentTrackId = playlist[currentIdx]?.id || "";
+                
+                // 如果是新的一首歌(索引或ID变化)，或者虽然是同一首但还没尝试修复过
                 if (
                     trackRetryRef.current.index !== currentIdx ||
+                    trackRetryRef.current.id !== currentTrackId ||
                     !trackRetryRef.current.fixed
                 ) {
                     console.log("Attempting track fallback fix...");
@@ -196,11 +217,13 @@ export const useOnlinePlayer = (
                     setError(null);
                     trackRetryRef.current = {
                         index: currentIdx,
+                        id: currentTrackId,
                         fixed: true,
                     };
 
-                    onTrackFix(currentIdx, audio.src)
+                    currentOnTrackFix(currentIdx, audio.src)
                         .then((newUrl) => {
+                            if (!isMounted) return;
                             if (newUrl) {
                                 console.log(
                                     "Track fix successful, retrying with new URL",
@@ -210,7 +233,7 @@ export const useOnlinePlayer = (
                                 audio.src = newUrl;
                                 audio.load();
                                 // 如果之前是播放状态，尝试恢复播放
-                                if (isPlaying) {
+                                if (currentIsPlaying) {
                                     audio.play().catch((e) => {
                                         console.warn(
                                             "Auto-play on track fix failed:",
@@ -224,7 +247,9 @@ export const useOnlinePlayer = (
                                 proceedToErrorHandling();
                             }
                         })
-                        .catch(() => proceedToErrorHandling());
+                        .catch(() => {
+                            if (isMounted) proceedToErrorHandling();
+                        });
                     return;
                 }
             }
@@ -243,10 +268,11 @@ export const useOnlinePlayer = (
                 return;
             }
 
-            setTimeout(
-                () => handleNextRef.current?.(true),
-                NEXT_TRACK_RETRY_DELAY_MS,
-            );
+            setTimeout(() => {
+                if (isMounted) {
+                    handleNextRef.current?.(true);
+                }
+            }, NEXT_TRACK_RETRY_DELAY_MS);
         };
 
         audio.addEventListener("timeupdate", handleTimeUpdate);
@@ -270,6 +296,7 @@ export const useOnlinePlayer = (
         }
 
         return () => {
+            isMounted = false;
             audio.pause();
             // 注意：这里不要清空 src，因为如果这是被交换出去的 audio，它可能马上要被用作 preload
             // 或者如果这是 preload 进来的 audio，我们也不希望清空它

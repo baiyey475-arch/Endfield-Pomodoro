@@ -169,6 +169,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                     signal.addEventListener("abort", onAbort);
                 }
 
+                let timeoutId: ReturnType<typeof setTimeout> | null = null;
                 try {
                     const url = adapter.buildTrackUrl({ server, id: trackId });
                     const safeFetchOptions = {
@@ -178,7 +179,6 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                         delete safeFetchOptions.signal;
                     }
 
-                    let timeoutId: ReturnType<typeof setTimeout> | null = null;
                     const response = await Promise.race([
                         fetch(url, {
                             ...safeFetchOptions,
@@ -192,7 +192,6 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                         }),
                     ]);
 
-                    if (timeoutId) clearTimeout(timeoutId);
                     if (!response.ok) continue;
 
                     const data = await response.json();
@@ -205,8 +204,9 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                         err instanceof DOMException &&
                         err.name === "AbortError"
                     ) {
-                        if (signal?.aborted) return null;
                         // 外部中止信号触发，直接返回 null
+                        if (signal?.aborted) return null;
+                        // 内部超时触发的 abort，继续尝试下一个适配器
                         continue;
                     }
                     if (err instanceof Error && err.message === "Timeout") {
@@ -214,6 +214,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                     }
                     console.warn("Track fallback fetch failed:", err);
                 } finally {
+                    if (timeoutId) clearTimeout(timeoutId);
                     if (signal) {
                         signal.removeEventListener("abort", onAbort);
                     }

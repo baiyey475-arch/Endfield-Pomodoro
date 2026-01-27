@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type MusicTrack, useMusicData } from "../hooks/useMusicData";
 import { useOnlinePlayer } from "../hooks/useOnlinePlayer";
 import { AudioMode, Language, PlayMode } from "../types";
@@ -33,7 +33,16 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
     const [isListOpen, setIsListOpen] = useState(false);
     const itemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
     const errorCountRef = useRef(0);
-    const lastErrorTrackIdRef = useRef<string | null>(null);
+    const trackFixAbortRef = useRef<AbortController | null>(null);
+
+    // 组件卸载时取消未完成的请求
+    useEffect(() => {
+        return () => {
+            if (trackFixAbortRef.current) {
+                trackFixAbortRef.current.abort();
+            }
+        };
+    }, []);
 
     // 本地维护一个 URL 覆盖映射，用于存储单曲修复后的 URL
     const [urlOverrides, setUrlOverrides] = useState<Record<string, string>>(
@@ -52,65 +61,62 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
         }));
     }, [metingData, urlOverrides]);
 
-    const handleTrackFix = async (index: number): Promise<string | null> => {
-        const track = metingData[index];
-        if (!track || !track.id) return null;
-
-        console.log(
-            `[MusicPlayer] Attempting single-track fallback for: ${track.name} (id: ${track.id})`,
-        );
-
-        // 记录这一次失败（尽管被 useOnlinePlayer 捕获并尝试修复，但对播放列表来说这是一次故障）
-        if (lastErrorTrackIdRef.current === track.id) {
-            errorCountRef.current += 1;
-        } else {
-            lastErrorTrackIdRef.current = track.id;
-            errorCountRef.current = 1;
-        }
-
-        const newUrl = await fetchTrackUrl(track.id);
-
-        if (newUrl) {
-            console.log(
-                `[MusicPlayer] Track fallback successful. New URL: ${newUrl}`,
-            );
-            setUrlOverrides((prev) => ({
-                ...prev,
-                [track.id]: newUrl,
-            }));
-            return newUrl;
-        }
-
-        console.warn(`[MusicPlayer] Track fallback failed for: ${track.name}`);
-        return null;
-    };
-
-    const player = useOnlinePlayer(playlist, false, enabled, handleTrackFix);
-
-    // 处理播放器错误
-    useEffect(() => {
-        const trackId = player.currentSong?.id || null;
-        if (player.error && trackId) {
-            if (lastErrorTrackIdRef.current === trackId) {
-                errorCountRef.current += 1;
-            } else {
-                lastErrorTrackIdRef.current = trackId;
-                errorCountRef.current = 1;
+    const handleTrackFix = useCallback(
+        async (index: number): Promise<string | null> => {
+            // 取消上一次可能的请求
+            if (trackFixAbortRef.current) {
+                trackFixAbortRef.current.abort();
             }
+            const controller = new AbortController();
+            trackFixAbortRef.current = controller;
+
+            const track = metingData[index];
+            if (!track || !track.id) return null;
+
+            console.log(
+                `[MusicPlayer] Attempting single-track fallback for: ${track.name} (id: ${track.id})`,
+            );
+
+            const newUrl = await fetchTrackUrl(track.id, controller.signal);
+
+            if (controller.signal.aborted) return null;
+
+            if (newUrl) {
+                console.log(
+                    `[MusicPlayer] Track fallback successful. New URL: ${newUrl}`,
+                );
+                // 修复成功，重置错误计数
+                errorCountRef.current = 0;
+
+                setUrlOverrides((prev) => ({
+                    ...prev,
+                    [track.id]: newUrl,
+                }));
+                return newUrl;
+            }
+
+            console.warn(
+                `[MusicPlayer] Track fallback failed for: ${track.name}`,
+            );
+
+            // 修复失败，增加错误计数
+            errorCountRef.current += 1;
 
             if (errorCountRef.current >= 2) {
                 console.warn(
                     "[MusicPlayer] Playlist playback failed consistently, switching to next API adapter for entire playlist...",
                 );
+                setUrlOverrides({});
                 retryWithNextAdapter();
                 errorCountRef.current = 0;
-                lastErrorTrackIdRef.current = null;
             }
-        } else {
-            errorCountRef.current = 0;
-            lastErrorTrackIdRef.current = null;
-        }
-    }, [player.error, player.currentSong?.id, retryWithNextAdapter]);
+
+            return null;
+        },
+        [metingData, fetchTrackUrl, retryWithNextAdapter],
+    );
+
+    const player = useOnlinePlayer(playlist, false, enabled, handleTrackFix);
 
     // 当播放列表打开或当前索引变化时，滚动到当前项
     useEffect(() => {
