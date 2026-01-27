@@ -11,6 +11,7 @@ import { PlayMode } from "../types";
 import { useShuffle } from "./useShuffle";
 
 export interface Song {
+    id?: string;
     name: string;
     artist: string;
     url: string;
@@ -22,6 +23,7 @@ export const useOnlinePlayer = (
     playlist: Song[],
     autoPlay: boolean = false,
     enabled: boolean = true,
+    onTrackFix?: (index: number, currentUrl: string) => Promise<string | null>,
 ) => {
     // 使用 State 管理当前的 Audio 实例，以便在实例切换（Swap）时触发重渲染
     const [audioInstance, setAudioInstance] = useState<HTMLAudioElement>(
@@ -74,6 +76,55 @@ export const useOnlinePlayer = (
     const [error, setError] = useState<string | null>(null);
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
     const consecutiveErrorsRef = useRef(0);
+    // 用于标记当前歌曲是否已经尝试过单曲回退
+    const trackRetryRef = useRef<{ index: number; id: string; fixed: boolean }>({
+        index: -1,
+        id: "",
+        fixed: false,
+    });
+    // 保持最新的 currentIndex 引用，解决 handleError 闭包问题
+    const currentIndexRef = useRef(currentIndex);
+
+    useEffect(() => {
+        currentIndexRef.current = currentIndex;
+    }, [currentIndex]);
+
+    // 保持最新的 isPlaying 引用
+    const isPlayingRef = useRef(isPlaying);
+    useEffect(() => {
+        isPlayingRef.current = isPlaying;
+    }, [isPlaying]);
+
+    // 使用 Ref 存储最新的 onTrackFix
+    const onTrackFixRef = useRef(onTrackFix);
+
+    useEffect(() => {
+        onTrackFixRef.current = onTrackFix;
+    }, [onTrackFix]);
+
+    // 初始化随机索引逻辑
+    const initializedRef = useRef(false);
+
+    useEffect(() => {
+        // 如果播放列表为空，重置初始化状态，以便下次加载时能重新执行随机逻辑
+        if (playlist.length === 0) {
+            initializedRef.current = false;
+            return;
+        }
+
+        // 当播放列表首次加载且非空时
+        if (!initializedRef.current) {
+            initializedRef.current = true;
+            // 如果是随机模式，则随机选择一首起始歌曲
+            if (playMode === PlayMode.RANDOM) {
+                const randomIndex = Math.floor(Math.random() * playlist.length);
+                console.log(
+                    `[useOnlinePlayer] Initializing random index: ${randomIndex}`,
+                );
+                setCurrentIndex(randomIndex);
+            }
+        }
+    }, [playlist.length, playMode]);
 
     // 使用提取的洗牌逻辑 Hook
     const { getNextRandomIndex, getPrevRandomIndex, peekNextRandomIndex } =
@@ -123,6 +174,7 @@ export const useOnlinePlayer = (
     // 初始化 Audio 对象事件监听 (当 audioInstance 变化时重新绑定)
     useEffect(() => {
         const audio = audioInstance;
+        let isMounted = true;
 
         const handleTimeUpdate = () => {
             const time = audio.currentTime;
@@ -138,14 +190,75 @@ export const useOnlinePlayer = (
         const handleEnded = () => handleNextRef.current?.(true);
         const handleCanPlay = () => {
             setIsLoading(false);
+            setError(null); // Clear error on success
             consecutiveErrorsRef.current = 0; // 重置连续错误计数
         };
         const handleWaiting = () => setIsLoading(true);
         const handleError = () => {
             setIsLoading(false);
-            setError("Load failed");
-            console.error("Online playback error: Load failed"); // Log every error
+            console.error("Online playback error: Load failed");
 
+            const currentOnTrackFix = onTrackFixRef.current;
+            const currentIsPlaying = isPlayingRef.current;
+
+            // 单曲级回退逻辑
+            if (currentOnTrackFix) {
+                const currentIdx = currentIndexRef.current;
+                const currentTrackId = playlist[currentIdx]?.id || "";
+                
+                // 如果是新的一首歌(索引或ID变化)，或者虽然是同一首但还没尝试修复过
+                if (
+                    trackRetryRef.current.index !== currentIdx ||
+                    trackRetryRef.current.id !== currentTrackId ||
+                    !trackRetryRef.current.fixed
+                ) {
+                    console.log("Attempting track fallback fix...");
+                    // 尝试修复时，暂时清除错误状态，避免触发上层整单回退
+                    setError(null);
+                    trackRetryRef.current = {
+                        index: currentIdx,
+                        id: currentTrackId,
+                        fixed: true,
+                    };
+
+                    currentOnTrackFix(currentIdx, audio.src)
+                        .then((newUrl) => {
+                            if (!isMounted) return;
+                            if (newUrl) {
+                                console.log(
+                                    "Track fix successful, retrying with new URL",
+                                );
+                                // URL 覆盖将通过播放列表状态传播
+                                // 但为了立即生效，直接应用到当前 audio 实例
+                                audio.src = newUrl;
+                                audio.load();
+                                // 如果之前是播放状态，尝试恢复播放
+                                if (currentIsPlaying) {
+                                    audio.play().catch((e) => {
+                                        console.warn(
+                                            "Auto-play on track fix failed:",
+                                            e,
+                                        );
+                                    });
+                                }
+                                return;
+                            } else {
+                                // 修复失败，继续走原有错误流程
+                                proceedToErrorHandling();
+                            }
+                        })
+                        .catch(() => {
+                            if (isMounted) proceedToErrorHandling();
+                        });
+                    return;
+                }
+            }
+
+            proceedToErrorHandling();
+        };
+
+        const proceedToErrorHandling = () => {
+            setError("Load failed"); // Set error state only when we give up or skip
             consecutiveErrorsRef.current += 1;
             if (consecutiveErrorsRef.current >= 5) {
                 console.error(
@@ -155,10 +268,11 @@ export const useOnlinePlayer = (
                 return;
             }
 
-            setTimeout(
-                () => handleNextRef.current?.(true),
-                NEXT_TRACK_RETRY_DELAY_MS,
-            );
+            setTimeout(() => {
+                if (isMounted) {
+                    handleNextRef.current?.(true);
+                }
+            }, NEXT_TRACK_RETRY_DELAY_MS);
         };
 
         audio.addEventListener("timeupdate", handleTimeUpdate);
@@ -182,6 +296,7 @@ export const useOnlinePlayer = (
         }
 
         return () => {
+            isMounted = false;
             audio.pause();
             // 注意：这里不要清空 src，因为如果这是被交换出去的 audio，它可能马上要被用作 preload
             // 或者如果这是 preload 进来的 audio，我们也不希望清空它
@@ -228,32 +343,6 @@ export const useOnlinePlayer = (
             queueMicrotask(() => setIsPlaying(false));
         }
     }, [enabled, audioInstance]);
-
-    // 监听播放列表变化，处理初始随机播放
-    // 使用 ref 记录是否已初始化
-    const initializedRef = useRef(false);
-
-    useEffect(() => {
-        if (playlist.length === 0) {
-            initializedRef.current = false;
-            return;
-        }
-
-        // 仅在 RANDOM 模式且未初始化时执行随机逻辑
-        if (playMode === PlayMode.RANDOM && !initializedRef.current) {
-            // 只有当当前未在播放（例如刚加载或暂停状态下首次进入随机模式）时，才自动跳转
-            // 避免正在听歌时切模式导致切歌
-            if (!isPlaying) {
-                initializedRef.current = true;
-                const randomIndex = Math.floor(Math.random() * playlist.length);
-                setCurrentIndex(randomIndex);
-            } else {
-                // 如果正在播放，我们标记为已初始化，避免后续干扰，
-                // 用户下一首会自然进入随机逻辑（通过 getNextRandomIndex）
-                initializedRef.current = true;
-            }
-        }
-    }, [playlist, playMode, isPlaying]);
 
     // 预加载下一首（延迟执行以优化性能）
     useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { type MusicTrack, useMusicData } from "../hooks/useMusicData";
 import { useOnlinePlayer } from "../hooks/useOnlinePlayer";
 import { AudioMode, Language, PlayMode } from "../types";
@@ -27,22 +27,96 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
         audioList: metingData,
         loading: dataLoading,
         error: dataError,
+        retryWithNextAdapter,
+        fetchTrackUrl,
     } = useMusicData(config);
     const [isListOpen, setIsListOpen] = useState(false);
     const itemRefs = useRef<Map<number, HTMLLIElement>>(new Map());
+    const errorCountRef = useRef(0);
+    const trackFixAbortRef = useRef<AbortController | null>(null);
+
+    // 组件卸载时取消未完成的请求
+    useEffect(() => {
+        return () => {
+            if (trackFixAbortRef.current) {
+                trackFixAbortRef.current.abort();
+            }
+        };
+    }, []);
+
+    // 本地维护一个 URL 覆盖映射，用于存储单曲修复后的 URL
+    const [urlOverrides, setUrlOverrides] = useState<Record<string, string>>(
+        {},
+    );
 
     // 转换数据格式以适配 useOnlinePlayer
     const playlist = useMemo(() => {
         return metingData.map((item: MusicTrack) => ({
+            id: item.id,
             name: item.name,
             artist: item.artist,
-            url: item.url,
+            url: (item.id && urlOverrides[item.id]) || item.url,
             cover: item.cover,
             lrc: item.lrc,
         }));
-    }, [metingData]);
+    }, [metingData, urlOverrides]);
 
-    const player = useOnlinePlayer(playlist, false, enabled);
+    const handleTrackFix = useCallback(
+        async (index: number): Promise<string | null> => {
+            // 取消上一次可能的请求
+            if (trackFixAbortRef.current) {
+                trackFixAbortRef.current.abort();
+            }
+            const controller = new AbortController();
+            trackFixAbortRef.current = controller;
+
+            const track = metingData[index];
+            if (!track || !track.id) return null;
+
+            console.log(
+                `[MusicPlayer] Attempting single-track fallback for: ${track.name} (id: ${track.id})`,
+            );
+
+            const newUrl = await fetchTrackUrl(track.id, controller.signal);
+
+            if (controller.signal.aborted) return null;
+
+            if (newUrl) {
+                console.log(
+                    `[MusicPlayer] Track fallback successful. New URL: ${newUrl}`,
+                );
+                // 修复成功，重置错误计数
+                errorCountRef.current = 0;
+
+                setUrlOverrides((prev) => ({
+                    ...prev,
+                    [track.id]: newUrl,
+                }));
+                return newUrl;
+            }
+
+            console.warn(
+                `[MusicPlayer] Track fallback failed for: ${track.name}`,
+            );
+
+            // 修复失败，增加错误计数
+            errorCountRef.current += 1;
+
+            if (errorCountRef.current >= 2) {
+                console.warn(
+                    "[MusicPlayer] Playlist playback failed consistently, switching to next API adapter for entire playlist...",
+                );
+                setUrlOverrides({});
+                retryWithNextAdapter();
+                errorCountRef.current = 0;
+            }
+
+            return null;
+        },
+        [metingData, fetchTrackUrl, retryWithNextAdapter],
+    );
+
+    const player = useOnlinePlayer(playlist, false, enabled, handleTrackFix);
 
     // 当播放列表打开或当前索引变化时，滚动到当前项
     useEffect(() => {
@@ -146,7 +220,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
                     >
                         {playlist.map((song, index) => (
                             <li
-                                key={song.url || index} // 使用 URL 作为稳定键，若无则回退到索引
+                                key={song.id || song.url || index}
                                 ref={(el) => {
                                     if (el) itemRefs.current.set(index, el);
                                     else itemRefs.current.delete(index);
