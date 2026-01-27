@@ -31,7 +31,7 @@ importers:
         version: 4.2.0(react-native-gesture-handler@2.29.1(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.9)(react@19.2.3))(react@19.2.3))(react-native-reanimated@4.1.5(@babel/core@7.28.5)(react-native-worklets@0.6.1(@babel/core@7.28.5)(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.9)(react@19.2.3))(react@19.2.3))(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.9)(react@19.2.3))(react@19.2.3))(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.2.9)(react@19.2.3))(react@19.2.3)
       remixicon:
         specifier: ^4.7.0
-        version: 4.8.0
+        version: 4.9.0
       tailwindcss:
         specifier: ^4.1.17
         version: 4.1.18
@@ -3141,8 +3141,8 @@ packages:
     resolution: {integrity: sha512-NZQZdC5wOE/H3UT28fVGL+ikOZcEzfMGk/c3iN9UGxzWHMa1op7274oyiUVrAG4B2EuFhus8SvkaYnhvW92p9Q==}
     hasBin: true
 
-  remixicon@4.8.0:
-    resolution: {integrity: sha512-8qTM/bWkmsAWitvcL9XrVPVdqHRrdmnNp4zCFBdmIHBygxfHWwoK6NzitbiMyRzjcXKBMlS/ab5M65/ZlxJTVA==}
+  remixicon@4.9.0:
+    resolution: {integrity: sha512-aeU8xMTuy1dciqJSRVYvYqhe2vg0Qc0gpsG1ypLgWFhdYRJNFeR6qLpQRkhkT6fgCkyz8j/OJ6YfDPw/U4gG1g==}
 
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
@@ -7245,7 +7245,7 @@ snapshots:
     dependencies:
       jsesc: 3.1.0
 
-  remixicon@4.8.0: {}
+  remixicon@4.9.0: {}
 
   require-directory@2.1.1: {}
 
