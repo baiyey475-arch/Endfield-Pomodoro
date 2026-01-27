@@ -11,6 +11,11 @@ export interface MusicAPIAdapter {
     buildUrl(params: { server: string; type: string; id: string }): string;
 
     /**
+     * 构建单曲请求 URL
+     */
+    buildTrackUrl?(params: { server: string; id: string }): string;
+
+    /**
      * 解析 API 响应为统一格式
      */
     parseResponse(data: unknown): MusicTrack[];
@@ -29,11 +34,16 @@ export const metingAdapter: MusicAPIAdapter = {
         return `https://api.i-meto.com/meting/api?server=${server}&type=${type}&id=${id}`;
     },
 
+    buildTrackUrl: ({ server, id }) => {
+        return `https://api.i-meto.com/meting/api?server=${server}&type=song&id=${id}`;
+    },
+
     parseResponse: (data) => {
         if (!Array.isArray(data) || data.length === 0) {
             throw new Error("Empty playlist");
         }
         return data.map((item: Record<string, string>) => ({
+            id: item.id || item.song_id || "", // Extract id
             name: item.name || item.title || "Unknown Track",
             artist: item.artist || item.author || "Unknown Artist",
             url: item.url || "",
@@ -50,6 +60,10 @@ export const metingAdapter: MusicAPIAdapter = {
 export const metingFallbackAdapter: MusicAPIAdapter = {
     buildUrl: ({ server, type, id }) => {
         return `https://api.injahow.cn/meting/?server=${server}&type=${type}&id=${id}`;
+    },
+
+    buildTrackUrl: ({ server, id }) => {
+        return `https://api.injahow.cn/meting/?server=${server}&type=song&id=${id}`;
     },
 
     parseResponse: metingAdapter.parseResponse,

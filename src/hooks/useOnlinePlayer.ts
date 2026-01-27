@@ -11,6 +11,7 @@ import { PlayMode } from "../types";
 import { useShuffle } from "./useShuffle";
 
 export interface Song {
+    id?: string;
     name: string;
     artist: string;
     url: string;
@@ -22,6 +23,7 @@ export const useOnlinePlayer = (
     playlist: Song[],
     autoPlay: boolean = false,
     enabled: boolean = true,
+    onTrackFix?: (index: number, currentUrl: string) => Promise<string | null>,
 ) => {
     // 使用 State 管理当前的 Audio 实例，以便在实例切换（Swap）时触发重渲染
     const [audioInstance, setAudioInstance] = useState<HTMLAudioElement>(
@@ -74,6 +76,11 @@ export const useOnlinePlayer = (
     const [error, setError] = useState<string | null>(null);
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
     const consecutiveErrorsRef = useRef(0);
+    // 用于标记当前歌曲是否已经尝试过单曲回退
+    const trackRetryRef = useRef<{ index: number; fixed: boolean }>({
+        index: -1,
+        fixed: false,
+    });
 
     // 使用提取的洗牌逻辑 Hook
     const { getNextRandomIndex, getPrevRandomIndex, peekNextRandomIndex } =
@@ -138,14 +145,51 @@ export const useOnlinePlayer = (
         const handleEnded = () => handleNextRef.current?.(true);
         const handleCanPlay = () => {
             setIsLoading(false);
+            setError(null); // Clear error on success
             consecutiveErrorsRef.current = 0; // 重置连续错误计数
         };
         const handleWaiting = () => setIsLoading(true);
         const handleError = () => {
             setIsLoading(false);
-            setError("Load failed");
-            console.error("Online playback error: Load failed"); // Log every error
+            console.error("Online playback error: Load failed");
 
+            // 单曲级回退逻辑
+            if (onTrackFix) {
+                // 如果是新的一首歌，或者虽然是同一首但还没尝试修复过
+                if (
+                    trackRetryRef.current.index !== currentIndex ||
+                    !trackRetryRef.current.fixed
+                ) {
+                    console.log("Attempting track fallback fix...");
+                    // 尝试修复时，暂时清除错误状态，避免触发上层整单回退
+                    setError(null);
+                    trackRetryRef.current = {
+                        index: currentIndex,
+                        fixed: true,
+                    };
+
+                    onTrackFix(currentIndex, audio.src)
+                        .then((newUrl) => {
+                            if (newUrl) {
+                                console.log(
+                                    "Track fix successful, retrying with new URL",
+                                );
+                                return;
+                            } else {
+                                // 修复失败，继续走原有错误流程
+                                proceedToErrorHandling();
+                            }
+                        })
+                        .catch(() => proceedToErrorHandling());
+                    return;
+                }
+            }
+
+            proceedToErrorHandling();
+        };
+
+        const proceedToErrorHandling = () => {
+            setError("Load failed"); // Set error state only when we give up or skip
             consecutiveErrorsRef.current += 1;
             if (consecutiveErrorsRef.current >= 5) {
                 console.error(

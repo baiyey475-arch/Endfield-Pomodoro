@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { API_FETCH_DELAY_MS, API_TIMEOUT_MS } from "../constants";
 import { getAdapters } from "../utils/musicApiAdapters";
 
@@ -6,6 +6,7 @@ import { getAdapters } from "../utils/musicApiAdapters";
  * 音乐曲目数据结构
  */
 export interface MusicTrack {
+    id: string;
     name: string;
     artist: string;
     url: string;
@@ -40,7 +41,21 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
     const [audioList, setAudioList] = useState<MusicTrack[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [adapterStartIndex, setAdapterStartIndex] = useState(0);
+    const [activeAdapterIndex, setActiveAdapterIndex] = useState<number | null>(
+        null,
+    );
     const abortControllerRef = useRef<AbortController | null>(null);
+
+    const retryWithNextAdapter = useCallback(() => {
+        const adapters = getAdapters();
+        if (adapters.length === 0) return;
+        setAdapterStartIndex((prev) => (prev + 1) % adapters.length);
+    }, []);
+
+    useEffect(() => {
+        setAdapterStartIndex(0);
+    }, [server, type, id]);
 
     useEffect(() => {
         if (!server || !type || !id) {
@@ -55,10 +70,13 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
         const fetchData = async () => {
             setLoading(true);
             setError(null);
+            setActiveAdapterIndex(null);
 
             const adapters = getAdapters();
 
-            for (const adapter of adapters) {
+            for (let i = 0; i < adapters.length; i += 1) {
+                const adapterIndex = (adapterStartIndex + i) % adapters.length;
+                const adapter = adapters[adapterIndex];
                 if (controller.signal.aborted) return;
 
                 let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -98,6 +116,7 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                     const tracks = adapter.parseResponse(data);
 
                     setAudioList(tracks);
+                    setActiveAdapterIndex(adapterIndex);
                     setLoading(false);
                     return;
                 } catch (err) {
@@ -122,7 +141,69 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
             clearTimeout(timeoutId);
             controller.abort();
         };
-    }, [server, type, id]);
+    }, [server, type, id, adapterStartIndex]);
 
-    return { audioList, loading, error };
+    // 尝试获取单曲的备用 URL
+    const fetchTrackUrl = useCallback(
+        async (trackId: string): Promise<string | null> => {
+            const adapters = getAdapters();
+            // 尝试除当前使用的适配器以外的其他适配器
+            const otherAdapters = adapters.filter(
+                (_, index) => index !== activeAdapterIndex,
+            );
+            // 如果没有其他适配器，或者当前还没有成功连接的适配器，则尝试所有适配器
+            const targetAdapters =
+                otherAdapters.length > 0 ? otherAdapters : adapters;
+
+            for (const adapter of targetAdapters) {
+                if (!adapter.buildTrackUrl) continue;
+
+                try {
+                    const url = adapter.buildTrackUrl({ server, id: trackId });
+                    const safeFetchOptions = {
+                        ...(adapter.fetchOptions || {}),
+                    };
+                    if ("signal" in safeFetchOptions) {
+                        delete safeFetchOptions.signal;
+                    }
+
+                    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+                    const response = await Promise.race([
+                        fetch(url, safeFetchOptions),
+                        new Promise<never>((_, reject) => {
+                            timeoutId = setTimeout(
+                                () => reject(new Error("Timeout")),
+                                API_TIMEOUT_MS,
+                            );
+                        }),
+                    ]);
+
+                    if (timeoutId) clearTimeout(timeoutId);
+                    if (!response.ok) continue;
+
+                    const data = await response.json();
+                    const tracks = adapter.parseResponse(data);
+                    if (tracks.length > 0 && tracks[0].url) {
+                        return tracks[0].url;
+                    }
+                } catch (err) {
+                    if (err instanceof Error && err.message === "Timeout") {
+                        continue;
+                    }
+                    console.warn("Track fallback fetch failed:", err);
+                }
+            }
+            return null;
+        },
+        [server, activeAdapterIndex],
+    );
+
+    return {
+        audioList,
+        loading,
+        error,
+        retryWithNextAdapter,
+        activeAdapterIndex,
+        fetchTrackUrl,
+    };
 };
