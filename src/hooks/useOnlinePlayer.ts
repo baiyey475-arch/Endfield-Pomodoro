@@ -88,6 +88,30 @@ export const useOnlinePlayer = (
         currentIndexRef.current = currentIndex;
     }, [currentIndex]);
 
+    // 初始化随机索引逻辑
+    const initializedRef = useRef(false);
+
+    useEffect(() => {
+        // 如果播放列表为空，重置初始化状态，以便下次加载时能重新执行随机逻辑
+        if (playlist.length === 0) {
+            initializedRef.current = false;
+            return;
+        }
+
+        // 当播放列表首次加载且非空时
+        if (!initializedRef.current) {
+            initializedRef.current = true;
+            // 如果是随机模式，则随机选择一首起始歌曲
+            if (playMode === PlayMode.RANDOM) {
+                const randomIndex = Math.floor(Math.random() * playlist.length);
+                console.log(
+                    `[useOnlinePlayer] Initializing random index: ${randomIndex}`,
+                );
+                setCurrentIndex(randomIndex);
+            }
+        }
+    }, [playlist.length, playMode]);
+
     // 使用提取的洗牌逻辑 Hook
     const { getNextRandomIndex, getPrevRandomIndex, peekNextRandomIndex } =
         useShuffle(playlist.length, playMode, currentIndex);
@@ -292,32 +316,6 @@ export const useOnlinePlayer = (
             queueMicrotask(() => setIsPlaying(false));
         }
     }, [enabled, audioInstance]);
-
-    // 监听播放列表变化，处理初始随机播放
-    // 使用 ref 记录是否已初始化
-    const initializedRef = useRef(false);
-
-    useEffect(() => {
-        if (playlist.length === 0) {
-            initializedRef.current = false;
-            return;
-        }
-
-        // 仅在 RANDOM 模式且未初始化时执行随机逻辑
-        if (playMode === PlayMode.RANDOM && !initializedRef.current) {
-            // 只有当当前未在播放（例如刚加载或暂停状态下首次进入随机模式）时，才自动跳转
-            // 避免正在听歌时切模式导致切歌
-            if (!isPlaying) {
-                initializedRef.current = true;
-                const randomIndex = Math.floor(Math.random() * playlist.length);
-                setCurrentIndex(randomIndex);
-            } else {
-                // 如果正在播放，我们标记为已初始化，避免后续干扰，
-                // 用户下一首会自然进入随机逻辑（通过 getNextRandomIndex）
-                initializedRef.current = true;
-            }
-        }
-    }, [playlist, playMode, isPlaying]);
 
     // 预加载下一首（延迟执行以优化性能）
     useEffect(() => {
