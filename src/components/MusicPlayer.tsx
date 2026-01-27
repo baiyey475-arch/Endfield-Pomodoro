@@ -56,11 +56,24 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
         const track = metingData[index];
         if (!track || !track.id) return null;
 
-        console.log(`[MusicPlayer] Attempting single-track fallback for: ${track.name} (id: ${track.id})`);
+        console.log(
+            `[MusicPlayer] Attempting single-track fallback for: ${track.name} (id: ${track.id})`,
+        );
+
+        // 记录这一次失败（尽管被 useOnlinePlayer 捕获并尝试修复，但对播放列表来说这是一次故障）
+        if (lastErrorTrackIdRef.current === track.id) {
+            errorCountRef.current += 1;
+        } else {
+            lastErrorTrackIdRef.current = track.id;
+            errorCountRef.current = 1;
+        }
+
         const newUrl = await fetchTrackUrl(track.id);
 
         if (newUrl) {
-            console.log(`[MusicPlayer] Track fallback successful. New URL: ${newUrl}`);
+            console.log(
+                `[MusicPlayer] Track fallback successful. New URL: ${newUrl}`,
+            );
             setUrlOverrides((prev) => ({
                 ...prev,
                 [track.id]: newUrl,
@@ -86,7 +99,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
             }
 
             if (errorCountRef.current >= 2) {
-                console.warn("[MusicPlayer] Playlist playback failed consistently, switching to next API adapter for entire playlist...");
+                console.warn(
+                    "[MusicPlayer] Playlist playback failed consistently, switching to next API adapter for entire playlist...",
+                );
                 retryWithNextAdapter();
                 errorCountRef.current = 0;
                 lastErrorTrackIdRef.current = null;

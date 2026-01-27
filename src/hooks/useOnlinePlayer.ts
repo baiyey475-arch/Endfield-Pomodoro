@@ -181,8 +181,19 @@ export const useOnlinePlayer = (
                                 console.log(
                                     "Track fix successful, retrying with new URL",
                                 );
-                                // URL 覆盖将通过播放列表状态传播，
-                                // 从而通过播放列表 effect 触发重载
+                                // URL 覆盖将通过播放列表状态传播
+                                // 但为了立即生效，直接应用到当前 audio 实例
+                                audio.src = newUrl;
+                                audio.load();
+                                // 如果之前是播放状态，尝试恢复播放
+                                if (isPlaying) {
+                                    audio.play().catch((e) => {
+                                        console.warn(
+                                            "Auto-play on track fix failed:",
+                                            e,
+                                        );
+                                    });
+                                }
                                 return;
                             } else {
                                 // 修复失败，继续走原有错误流程

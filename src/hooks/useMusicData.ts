@@ -146,7 +146,10 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
 
     // 尝试获取单曲的备用 URL
     const fetchTrackUrl = useCallback(
-        async (trackId: string, signal?: AbortSignal): Promise<string | null> => {
+        async (
+            trackId: string,
+            signal?: AbortSignal,
+        ): Promise<string | null> => {
             const adapters = getAdapters();
             // 尝试除当前使用的适配器以外的其他适配器
             const otherAdapters = adapters.filter(
@@ -160,6 +163,12 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                 if (!adapter.buildTrackUrl) continue;
                 if (signal?.aborted) return null;
 
+                const requestController = new AbortController();
+                const onAbort = () => requestController.abort();
+                if (signal) {
+                    signal.addEventListener("abort", onAbort);
+                }
+
                 try {
                     const url = adapter.buildTrackUrl({ server, id: trackId });
                     const safeFetchOptions = {
@@ -171,12 +180,15 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
 
                     let timeoutId: ReturnType<typeof setTimeout> | null = null;
                     const response = await Promise.race([
-                        fetch(url, { ...safeFetchOptions, signal }),
+                        fetch(url, {
+                            ...safeFetchOptions,
+                            signal: requestController.signal,
+                        }),
                         new Promise<never>((_, reject) => {
-                            timeoutId = setTimeout(
-                                () => reject(new Error("Timeout")),
-                                API_TIMEOUT_MS,
-                            );
+                            timeoutId = setTimeout(() => {
+                                requestController.abort();
+                                reject(new Error("Timeout"));
+                            }, API_TIMEOUT_MS);
                         }),
                     ]);
 
@@ -189,13 +201,22 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                         return tracks[0].url;
                     }
                 } catch (err) {
-                    if (err instanceof DOMException && err.name === "AbortError") {
-                        return null;
+                    if (
+                        err instanceof DOMException &&
+                        err.name === "AbortError"
+                    ) {
+                        if (signal?.aborted) return null;
+                        // 外部中止信号触发，直接返回 null
+                        continue;
                     }
                     if (err instanceof Error && err.message === "Timeout") {
                         continue;
                     }
                     console.warn("Track fallback fetch failed:", err);
+                } finally {
+                    if (signal) {
+                        signal.removeEventListener("abort", onAbort);
+                    }
                 }
             }
             return null;
