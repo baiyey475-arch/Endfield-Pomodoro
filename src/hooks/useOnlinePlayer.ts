@@ -199,6 +199,10 @@ export const useOnlinePlayer = (
         const handleError = () => {
             setIsLoading(false);
             console.error("Online playback error: Load failed");
+            try {
+                const code = audio.error?.code;
+                if (code) console.warn("Audio error code:", code);
+            } catch {}
 
             const currentOnTrackFix = onTrackFixRef.current;
             const currentIsPlaying = isPlayingRef.current;
@@ -234,6 +238,10 @@ export const useOnlinePlayer = (
                                 // 但为了立即生效，直接应用到当前 audio 实例
                                 audio.src = newUrl;
                                 audio.load();
+                                const resume = Math.max(0, lastTimeRef.current - 0.2);
+                                try {
+                                    audio.currentTime = resume;
+                                } catch {}
                                 // 如果之前是播放状态，尝试恢复播放
                                 if (currentIsPlaying) {
                                     audio.play().catch((e) => {
