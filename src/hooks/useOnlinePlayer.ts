@@ -4,6 +4,7 @@ import {
     AUDIO_LOADING_TIMEOUT_MS,
     NEXT_TRACK_RETRY_DELAY_MS,
     PRELOAD_DELAY_MS,
+    RESUME_TIME_BUFFER_SECONDS,
     STORAGE_KEYS,
     TIME_UPDATE_THROTTLE_SECONDS,
 } from "../constants";
@@ -242,7 +243,8 @@ export const useOnlinePlayer = (
                                 audio.load();
                                 const resume = Math.max(
                                     0,
-                                    lastTimeRef.current - 0.2,
+                                    lastTimeRef.current -
+                                        RESUME_TIME_BUFFER_SECONDS,
                                 );
                                 try {
                                     audio.currentTime = resume;

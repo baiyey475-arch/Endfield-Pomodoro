@@ -80,18 +80,23 @@ export function PWAPrompt({ language }: PWAPromptProps) {
     // 处理可见性变化监听与组件卸载清理
     useEffect(() => {
         const handleVisibilityChange = () => {
-            if (document.visibilityState !== "visible") return;
-            const r = registrationRef.current;
-            if (!r) return;
+            if (document.visibilityState !== "visible") {
+                return;
+            }
+            const registration = registrationRef.current;
+            if (!registration) {
+                return;
+            }
             const now = Date.now();
             if (
                 now - lastVisibilityCheckRef.current <
                 VISIBILITY_CHECK_MIN_INTERVAL_MS
-            )
+            ) {
                 return;
+            }
             lastVisibilityCheckRef.current = now;
             console.log("[PWA] Visibility visible, checking update...");
-            r.update();
+            registration.update();
         };
 
         document.addEventListener("visibilitychange", handleVisibilityChange);
