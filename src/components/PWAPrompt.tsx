@@ -1,6 +1,9 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { useEffect, useRef, useState } from "react";
-import { HOURLY_CHECK_INTERVAL_MS } from "../constants";
+import {
+    HOURLY_CHECK_INTERVAL_MS,
+    VISIBILITY_CHECK_MIN_INTERVAL_MS,
+} from "../constants";
 import { Language } from "../types";
 import { useTranslation } from "../utils/i18n";
 
@@ -12,6 +15,7 @@ export function PWAPrompt({ language }: PWAPromptProps) {
     // 使用 Ref 存储 SW 注册实例
     const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
     const intervalRef = useRef<number | null>(null);
+    const lastVisibilityCheckRef = useRef<number>(0);
     const [showUpdated, setShowUpdated] = useState(false);
     const t = useTranslation(language);
 
@@ -76,13 +80,23 @@ export function PWAPrompt({ language }: PWAPromptProps) {
     // 处理可见性变化监听与组件卸载清理
     useEffect(() => {
         const handleVisibilityChange = () => {
-            if (
-                document.visibilityState === "visible" &&
-                registrationRef.current
-            ) {
-                console.log("[PWA] Visibility visible, checking update...");
-                registrationRef.current.update();
+            if (document.visibilityState !== "visible") {
+                return;
             }
+            const registration = registrationRef.current;
+            if (!registration) {
+                return;
+            }
+            const now = Date.now();
+            if (
+                now - lastVisibilityCheckRef.current <
+                VISIBILITY_CHECK_MIN_INTERVAL_MS
+            ) {
+                return;
+            }
+            lastVisibilityCheckRef.current = now;
+            console.log("[PWA] Visibility visible, checking update...");
+            registration.update();
         };
 
         document.addEventListener("visibilitychange", handleVisibilityChange);

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { type MusicTrack, useMusicData } from "../hooks/useMusicData";
 import { useOnlinePlayer } from "../hooks/useOnlinePlayer";
 import { AudioMode, Language, PlayMode } from "../types";

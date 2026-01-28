@@ -54,6 +54,7 @@ export const TOAST_DURATION_MS = 4000; // 提示消息显示时长（毫秒）
 export const AUDIO_LOADING_TIMEOUT_MS = 15000; // 音频加载超时时间（毫秒）
 export const PRELOAD_DELAY_MS = 3000; // 预加载延迟时间（毫秒），避免抢占当前播放带宽
 export const TIME_UPDATE_THROTTLE_SECONDS = 0.25; // 时间更新节流阈值（秒），减少频繁重渲染
+export const RESUME_TIME_BUFFER_SECONDS = 0.2; // 修复音轨后恢复播放时的时间回退缓冲（秒）
 export const API_FETCH_DELAY_MS = 100; // API 数据获取延迟（毫秒），减少初始加载卡顿
 export const API_TIMEOUT_MS = 5000; // API 请求超时时间（毫秒）
 
@@ -70,6 +71,7 @@ export const SECONDS_PER_MINUTE = 60; // 秒转分钟的转换系数
 export const SECONDS_PER_HOUR = 3600; // 秒转小时的转换系数
 export const MINUTES_PER_HOUR = 60; // 分钟转小时的转换系数
 export const HOURLY_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 每小时检查间隔（毫秒）
+export const VISIBILITY_CHECK_MIN_INTERVAL_MS = 30 * 60 * 1000; // 页面从隐藏到可见后的最小检查间隔（毫秒）
 
 /**
  * 番茄钟计时器常量

@@ -158,10 +158,10 @@ This project enables React Compiler, which automatically optimizes component per
 - Compiler configuration is located in `vite.config.ts`
 - Use React DevTools to see which components are optimized by the compiler
 
-**Note:** Although React Compiler provides automatic optimization, explicit hook calls are still retained in the following scenarios:
-- When ensuring object/function reference stability (such as props passed to child components)
-- When involving complex dependency relationships
-- To improve code readability and explicit intent
+**Note:** Although React Compiler provides automatic optimization, explicit patterns are still recommended in the following scenarios:
+- Prevent stale closures in long‑lived event listeners (e.g., DOM/Audio events in hooks): keep the latest values with refs (like current index, playing state, latest onTrackFix) or memoize callbacks passed into listeners.
+- Stabilize references passed to child components or external systems: prefer `useCallback`/`useMemo` when prop identity influences behavior or subscriptions.
+- Handle complex dependencies explicitly to improve readability and intent.
 
 ## 🧹 Code Quality
 
@@ -176,3 +176,21 @@ This project uses a dual-tool approach for code quality:
 - `pnpm lint` - Run ESLint checks
 - `pnpm format` - Format code with Biome
 - `pnpm check` - Run Biome check (format + organize imports)
+
+## 🎵 Online Playback Fallback Strategy
+
+- Single-track fallback: when a track fails to load, a replacement URL is fetched and applied immediately to the current Audio element; success resets error counters.
+- Playlist-wide fallback: after consecutive failures for the same track reach a threshold (currently 2), switch to the next API adapter for the entire playlist and clear any single-track URL overrides.
+- Reference implementation is in the online player and music data hooks; adapter rotation and URL overrides work together to recover playback quickly.
+
+## ⏱ Request Cancellation & Timeout
+
+- Track-level fix requests use AbortController. New attempts cancel the previous request; component unmount also aborts any in-flight request.
+- The track URL fetch supports an external AbortSignal and an internal timeout that triggers abort; timer cleanup is guaranteed to avoid late firing after Promise.race settles.
+- Pass the AbortSignal from the caller when fetching track URLs to prevent late state updates.
+
+## 🔌 Adapters & Platform Configuration
+
+- MusicConfig defines server/type/id at the logic level; concrete request building and response parsing are implemented by adapters.
+- Adapters provide playlist fetch and track-level URL building to support both one-time playlist retrieval and per-track fallback when needed.
+- Extending adapters allows adding or prioritizing alternative sources without changing component-level logic.

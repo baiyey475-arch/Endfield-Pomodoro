@@ -4,6 +4,7 @@ import {
     AUDIO_LOADING_TIMEOUT_MS,
     NEXT_TRACK_RETRY_DELAY_MS,
     PRELOAD_DELAY_MS,
+    RESUME_TIME_BUFFER_SECONDS,
     STORAGE_KEYS,
     TIME_UPDATE_THROTTLE_SECONDS,
 } from "../constants";
@@ -77,11 +78,13 @@ export const useOnlinePlayer = (
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
     const consecutiveErrorsRef = useRef(0);
     // 用于标记当前歌曲是否已经尝试过单曲回退
-    const trackRetryRef = useRef<{ index: number; id: string; fixed: boolean }>({
-        index: -1,
-        id: "",
-        fixed: false,
-    });
+    const trackRetryRef = useRef<{ index: number; id: string; fixed: boolean }>(
+        {
+            index: -1,
+            id: "",
+            fixed: false,
+        },
+    );
     // 保持最新的 currentIndex 引用，解决 handleError 闭包问题
     const currentIndexRef = useRef(currentIndex);
 
@@ -197,6 +200,12 @@ export const useOnlinePlayer = (
         const handleError = () => {
             setIsLoading(false);
             console.error("Online playback error: Load failed");
+            try {
+                const code = audio.error?.code;
+                if (code) console.warn("Audio error code:", code);
+            } catch {
+                void 0;
+            }
 
             const currentOnTrackFix = onTrackFixRef.current;
             const currentIsPlaying = isPlayingRef.current;
@@ -205,7 +214,7 @@ export const useOnlinePlayer = (
             if (currentOnTrackFix) {
                 const currentIdx = currentIndexRef.current;
                 const currentTrackId = playlist[currentIdx]?.id || "";
-                
+
                 // 如果是新的一首歌(索引或ID变化)，或者虽然是同一首但还没尝试修复过
                 if (
                     trackRetryRef.current.index !== currentIdx ||
@@ -232,6 +241,16 @@ export const useOnlinePlayer = (
                                 // 但为了立即生效，直接应用到当前 audio 实例
                                 audio.src = newUrl;
                                 audio.load();
+                                const resume = Math.max(
+                                    0,
+                                    lastTimeRef.current -
+                                        RESUME_TIME_BUFFER_SECONDS,
+                                );
+                                try {
+                                    audio.currentTime = resume;
+                                } catch {
+                                    void 0;
+                                }
                                 // 如果之前是播放状态，尝试恢复播放
                                 if (currentIsPlaying) {
                                     audio.play().catch((e) => {
@@ -479,6 +498,13 @@ export const useOnlinePlayer = (
             if (isPlaying && audio.paused) {
                 audio.play().catch((err) => {
                     console.error("Playback failed (swap resume):", err);
+                    if (
+                        err instanceof DOMException &&
+                        (err.name === "AbortError" ||
+                            err.name === "NotSupportedError")
+                    ) {
+                        return;
+                    }
                     setIsPlaying(false);
                 });
             }
