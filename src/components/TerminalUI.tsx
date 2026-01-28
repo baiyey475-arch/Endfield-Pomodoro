@@ -7,10 +7,10 @@
 import React, { useEffect, useState } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
 import { ThemePreset } from "../types";
-// Miku 主题效果
-import { MikuBackgroundLayer, MikuForegroundLayer } from "./MikuDecorations";
-// 主题背景效果
+// 主题效果
 import {
+    MikuBackgroundLayer,
+    MikuForegroundLayer,
     AbyssalGrid,
     IndustrialGrid,
     AzureGrid,
@@ -19,15 +19,12 @@ import {
     OriginGrid,
     RoyalParticles,
     TacticalGrid,
-} from "./themes/BackgroundEffects";
-// 主题前景效果
-import {
     AbyssalForeground,
     IndustrialForeground,
     AzureForeground,
     OriginForeground,
     TacticalForeground,
-} from "./themes/ForegroundEffects";
+} from "./themes";
 
 /**
  * 背景层容器 (Z-0)

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import mikuCharImg from "../assets/images/MIKU1.webp";
-import mikuLogoImg from "../assets/images/MIKULogo.svg";
-import { useIsMobile } from "../hooks/useIsMobile";
-import { ThemePreset } from "../types";
+import mikuCharImg from "../../assets/images/MIKU1.webp";
+import mikuLogoImg from "../../assets/images/MIKULogo.svg";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import { ThemePreset } from "../../types";
 
 // ========== 背景效果组件 ==========
 
