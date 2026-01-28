@@ -80,41 +80,6 @@ export default defineConfig({
                         handler: "NetworkOnly",
                     },
                     {
-                        urlPattern: ({ request }) => {
-                            return (
-                                request.destination === "audio" ||
-                                request.destination === "video"
-                            );
-                        },
-                        handler: "NetworkOnly",
-                    },
-                    {
-                        urlPattern: ({ url }) => {
-                            return (
-                                // 网易云音乐
-                                url.hostname.includes("music.126.net") ||
-                                url.hostname.includes("music.163.com") ||
-                                // 腾讯音乐/QQ音乐
-                                url.hostname.includes("y.qq.com") || // c.y.qq.com, u.y.qq.com
-                                url.hostname.includes("qqmusic") || // stream.qqmusic.qq.com
-                                url.hostname.includes("gtimg.cn") || // y.gtimg.cn (封面)
-                                // 酷狗音乐
-                                url.hostname.includes("kugou.com") || // mobilecdn.kugou.com, m.kugou.com, media.store.kugou.com
-                                url.hostname.includes("krcs.kugou.com") || // 歌词服务
-                                // 酷我音乐
-                                url.hostname.includes("kuwo.cn") || // www.kuwo.cn, m.kuwo.cn
-                                // 百度音乐（千千音乐）
-                                url.hostname.includes("taihe.com") || // musicapi.taihe.com
-                                url.hostname.includes("qianqian.com") || // 旧域名可能仍在使用
-                                // 通用音频文件扩展名
-                                url.pathname.includes(".mp3") ||
-                                url.pathname.includes(".m4a") ||
-                                url.pathname.includes(".flac") // 腾讯音乐支持无损
-                            );
-                        },
-                        handler: "NetworkOnly",
-                    },
-                    {
                         urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
                         handler: "CacheFirst",
                         options: {

@@ -76,5 +76,5 @@ export const metingFallbackAdapter: MusicAPIAdapter = {
  * 添加新 API 时，在此数组中添加对应的适配器即可
  */
 export const getAdapters = (): MusicAPIAdapter[] => {
-    return [metingAdapter, metingFallbackAdapter];
+    return [metingFallbackAdapter, metingAdapter];
 };

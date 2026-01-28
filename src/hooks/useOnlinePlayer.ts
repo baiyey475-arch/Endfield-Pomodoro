@@ -496,6 +496,13 @@ export const useOnlinePlayer = (
             if (isPlaying && audio.paused) {
                 audio.play().catch((err) => {
                     console.error("Playback failed (swap resume):", err);
+                    if (
+                        err instanceof DOMException &&
+                        (err.name === "AbortError" ||
+                            err.name === "NotSupportedError")
+                    ) {
+                        return;
+                    }
                     setIsPlaying(false);
                 });
             }
