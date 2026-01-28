@@ -70,6 +70,7 @@ export const SECONDS_PER_MINUTE = 60; // 秒转分钟的转换系数
 export const SECONDS_PER_HOUR = 3600; // 秒转小时的转换系数
 export const MINUTES_PER_HOUR = 60; // 分钟转小时的转换系数
 export const HOURLY_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 每小时检查间隔（毫秒）
+export const VISIBILITY_CHECK_MIN_INTERVAL_MS = 10 * 60 * 1000; // 页面从隐藏到可见后的最小检查间隔（毫秒）
 
 /**
  * 番茄钟计时器常量
