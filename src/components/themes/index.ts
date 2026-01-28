@@ -2,9 +2,9 @@
  * 主题效果组件导出
  */
 export {
-    AzureGrid,
+    AbyssalGrid,
     IndustrialGrid,
-    LaboratoryGrid,
+    AzureGrid,
     MatrixRain,
     NeonGrid,
     OriginGrid,
@@ -13,9 +13,9 @@ export {
 } from "./BackgroundEffects";
 
 export {
-    AzureForeground,
+    AbyssalForeground,
     IndustrialForeground,
-    LaboratoryForeground,
+    AzureForeground,
     OriginForeground,
     TacticalForeground,
 } from "./ForegroundEffects";

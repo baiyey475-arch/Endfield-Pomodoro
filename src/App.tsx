@@ -60,6 +60,12 @@ const App: React.FC = () => {
                     ) {
                         loadedSettings.notificationsEnabled = false;
                     }
+
+                    // Theme Migration: Handle legacy "LABORATORY" theme which was renamed to "AZURE"
+                    if (loadedSettings.theme === "LABORATORY") {
+                        loadedSettings.theme = ThemePreset.AZURE;
+                    }
+
                     return loadedSettings;
                 }
             } catch (e) {

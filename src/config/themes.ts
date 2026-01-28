@@ -17,7 +17,7 @@ export const THEMES: Record<ThemePreset, Record<string, string>> = {
         "--color-success": "#22c55e",
         "--color-error": "#ef4444",
     },
-    [ThemePreset.AZURE]: {
+    [ThemePreset.ABYSSAL]: {
         "--color-base": "#0f172a",
         "--color-surface": "#1e293b",
         "--color-highlight": "#334155",
@@ -89,13 +89,13 @@ export const THEMES: Record<ThemePreset, Record<string, string>> = {
         "--color-success": "#16a34a",
         "--color-error": "#dc2626",
     },
-    [ThemePreset.LABORATORY]: {
+    [ThemePreset.AZURE]: {
         "--color-base": "#f8fafc",
         "--color-surface": "#edeff0",
         "--color-highlight": "#cbced1",
-        "--color-primary": "#0ea5e9",
+        "--color-primary": "#00D2FF",
         "--color-secondary": "#64748b",
-        "--color-accent": "#5fffdcff",
+        "--color-accent": "#5fffdc",
         "--color-text": "#0f172a",
         "--color-dim": "#94a3b8",
         "--color-success": "#059669",

@@ -18,9 +18,9 @@ export const OriginGrid = () => (
 );
 
 /**
- * Azure 主题波浪背景
+ * Abyssal 主题波浪背景
  */
-export const AzureGrid = () => (
+export const AbyssalGrid = () => (
     <>
         <div
             className="absolute inset-0 opacity-[0.05]"
@@ -176,9 +176,9 @@ export const IndustrialGrid = () => (
 );
 
 /**
- * Laboratory 主题网格背景
+ * Azure 主题网格背景
  */
-export const LaboratoryGrid = () => (
+export const AzureGrid = () => (
     <>
         <div
             className="absolute inset-0 opacity-20"

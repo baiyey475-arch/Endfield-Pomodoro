@@ -46,13 +46,13 @@ export const translations = {
 
         // Themes
         THEME_ORIGIN: "PRESET_01: ENDFIELD_PROTOCOL",
-        THEME_AZURE: "PRESET_02: AZURE_ARCHIVE",
+        THEME_ABYSSAL: "PRESET_02: ABYSSAL_ECHO",
         THEME_NEON: "PRESET_03: NEON_CITY",
         THEME_MATRIX: "PRESET_04: MATRIX_CODE",
         THEME_TACTICAL: "PRESET_05: DESERT_OPS",
         THEME_ROYAL: "PRESET_06: ROYAL_VIOLET",
         THEME_INDUSTRIAL: "PRESET_07: HEAVY_INDUSTRY (LIGHT)",
-        THEME_LABORATORY: "PRESET_08: SCIENCE_LAB (LIGHT)",
+        THEME_AZURE: "PRESET_08: AZURE_ARCHIVE (LIGHT)",
         THEME_MIKU: "PRESET_09: MIKU",
 
         // Pomodoro
@@ -177,13 +177,13 @@ export const translations = {
 
         // Themes
         THEME_ORIGIN: "预设_01: 末端协议",
-        THEME_AZURE: "预设_02: 蔚蓝档案",
+        THEME_ABYSSAL: "预设_02: 深海回响",
         THEME_NEON: "预设_03: 霓虹都市",
         THEME_MATRIX: "预设_04: 矩阵代码",
         THEME_TACTICAL: "预设_05: 荒漠行动",
         THEME_ROYAL: "预设_06: 皇家紫罗兰",
         THEME_INDUSTRIAL: "预设_07: 重工灰烬 (亮色)",
-        THEME_LABORATORY: "预设_08: 科学实验 (亮色)",
+        THEME_AZURE: "预设_08: 蔚蓝档案 (亮色)",
         THEME_MIKU: "预设_09: MIKU",
 
         // Pomodoro
