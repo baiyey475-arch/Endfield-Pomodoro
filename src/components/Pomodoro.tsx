@@ -206,9 +206,6 @@ const Pomodoro: React.FC<PomodoroProps> = ({
 
     useEffect(() => {
         if (!isActive || timeLeft <= 0) {
-            if (timeLeft === 0 && isActive) {
-                handleComplete();
-            }
             return;
         }
 
@@ -224,6 +221,8 @@ const Pomodoro: React.FC<PomodoroProps> = ({
             if (remaining <= 0) {
                 setTimeLeft(0);
                 if (onTick) onTick(0, mode, true);
+                clearInterval(interval);
+                handleComplete();
             } else if (remaining !== timeLeft) {
                 setTimeLeft(remaining);
                 if (onTick) onTick(remaining, mode, true);
