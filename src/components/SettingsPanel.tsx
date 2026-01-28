@@ -156,8 +156,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                             label: t("THEME_ORIGIN"),
                                         },
                                         {
-                                            value: ThemePreset.AZURE,
-                                            label: t("THEME_AZURE"),
+                                            value: ThemePreset.ABYSSAL,
+                                            label: t("THEME_ABYSSAL"),
                                         },
                                         {
                                             value: ThemePreset.NEON,
@@ -180,8 +180,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                             label: t("THEME_INDUSTRIAL"),
                                         },
                                         {
-                                            value: ThemePreset.LABORATORY,
-                                            label: t("THEME_LABORATORY"),
+                                            value: ThemePreset.AZURE,
+                                            label: t("THEME_AZURE"),
                                         },
                                         {
                                             value: ThemePreset.MIKU,

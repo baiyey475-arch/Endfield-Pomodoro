@@ -20,13 +20,13 @@ export type PlayMode = (typeof PlayMode)[keyof typeof PlayMode];
 
 export const ThemePreset = {
     ORIGIN: "ORIGIN",
-    AZURE: "AZURE",
+    ABYSSAL: "ABYSSAL",
     NEON: "NEON",
     MATRIX: "MATRIX",
     TACTICAL: "TACTICAL",
     ROYAL: "ROYAL",
     INDUSTRIAL: "INDUSTRIAL",
-    LABORATORY: "LABORATORY",
+    AZURE: "AZURE",
     MIKU: "MIKU",
 } as const;
 export type ThemePreset = (typeof ThemePreset)[keyof typeof ThemePreset];

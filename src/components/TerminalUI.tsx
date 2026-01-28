@@ -7,27 +7,24 @@
 import React, { useEffect, useState } from "react";
 import { useIsMobile } from "../hooks/useIsMobile";
 import { ThemePreset } from "../types";
-// Miku 主题效果
-import { MikuBackgroundLayer, MikuForegroundLayer } from "./MikuDecorations";
-// 主题背景效果
+// 主题效果
 import {
-    AzureGrid,
+    MikuBackgroundLayer,
+    MikuForegroundLayer,
+    AbyssalGrid,
     IndustrialGrid,
-    LaboratoryGrid,
+    AzureGrid,
     MatrixRain,
     NeonGrid,
     OriginGrid,
     RoyalParticles,
     TacticalGrid,
-} from "./themes/BackgroundEffects";
-// 主题前景效果
-import {
-    AzureForeground,
+    AbyssalForeground,
     IndustrialForeground,
-    LaboratoryForeground,
+    AzureForeground,
     OriginForeground,
     TacticalForeground,
-} from "./themes/ForegroundEffects";
+} from "./themes";
 
 /**
  * 背景层容器 (Z-0)
@@ -38,8 +35,8 @@ export const BackgroundLayer: React.FC<{ theme?: ThemePreset }> = ({
 }) => {
     const renderContent = () => {
         switch (theme) {
-            case ThemePreset.AZURE:
-                return <AzureGrid />;
+            case ThemePreset.ABYSSAL:
+                return <AbyssalGrid />;
             case ThemePreset.NEON:
                 return <NeonGrid />;
             case ThemePreset.MATRIX:
@@ -50,8 +47,8 @@ export const BackgroundLayer: React.FC<{ theme?: ThemePreset }> = ({
                 return <RoyalParticles />;
             case ThemePreset.INDUSTRIAL:
                 return <IndustrialGrid />;
-            case ThemePreset.LABORATORY:
-                return <LaboratoryGrid />;
+            case ThemePreset.AZURE:
+                return <AzureGrid />;
             case ThemePreset.MIKU:
                 return <MikuBackgroundLayer />;
             default:
@@ -101,12 +98,12 @@ export const ForegroundLayer: React.FC<{ theme?: ThemePreset }> = ({
             return <OriginForeground mousePos={mousePos} />;
         case ThemePreset.TACTICAL:
             return <TacticalForeground mousePos={mousePos} />;
-        case ThemePreset.AZURE:
-            return <AzureForeground />;
+        case ThemePreset.ABYSSAL:
+            return <AbyssalForeground />;
         case ThemePreset.INDUSTRIAL:
             return <IndustrialForeground mousePos={mousePos} />;
-        case ThemePreset.LABORATORY:
-            return <LaboratoryForeground mousePos={mousePos} />;
+        case ThemePreset.AZURE:
+            return <AzureForeground mousePos={mousePos} />;
         case ThemePreset.MIKU:
             return <MikuForegroundLayer />;
         default:

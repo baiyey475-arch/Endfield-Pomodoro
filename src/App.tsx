@@ -3,7 +3,7 @@ import pkg from "../package.json";
 import Dashboard from "./components/Dashboard";
 import FooterStats from "./components/FooterStats";
 import HeaderBar from "./components/HeaderBar";
-import { MikuDecorations } from "./components/MikuDecorations";
+import { MikuDecorations } from "./components/themes";
 import { PWAPrompt } from "./components/PWAPrompt";
 import SettingsPanel from "./components/SettingsPanel";
 import { BackgroundLayer, ForegroundLayer } from "./components/TerminalUI";
@@ -60,6 +60,12 @@ const App: React.FC = () => {
                     ) {
                         loadedSettings.notificationsEnabled = false;
                     }
+
+                    // Theme Migration: Handle legacy "LABORATORY" theme which was renamed to "AZURE"
+                    if (loadedSettings.theme === "LABORATORY") {
+                        loadedSettings.theme = ThemePreset.AZURE;
+                    }
+
                     return loadedSettings;
                 }
             } catch (e) {

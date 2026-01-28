@@ -45,9 +45,9 @@ export const TacticalForeground: React.FC<{ mousePos: MousePos }> = ({
 );
 
 /**
- * Azure 主题前景效果 - 扫描线
+ * Abyssal 主题前景效果 - 扫描线
  */
-export const AzureForeground: React.FC = () => (
+export const AbyssalForeground: React.FC = () => (
     <div className="fixed inset-0 pointer-events-none z-50">
         <div className="absolute top-0 left-0 w-full h-[5px] bg-theme-primary/20 blur-sm animate-[scan_3s_ease-in-out_infinite]"></div>
         <style>{`@keyframes scan { 0% { top: 0; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }`}</style>
@@ -84,9 +84,9 @@ export const IndustrialForeground: React.FC<{ mousePos: MousePos }> = ({
 );
 
 /**
- * Laboratory 主题前景效果 - 分析聚光灯
+ * Azure 主题前景效果 - 分析聚光灯
  */
-export const LaboratoryForeground: React.FC<{ mousePos: MousePos }> = ({
+export const AzureForeground: React.FC<{ mousePos: MousePos }> = ({
     mousePos,
 }) => (
     <div className="fixed inset-0 pointer-events-none z-50">
