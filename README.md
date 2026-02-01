@@ -13,41 +13,43 @@
 >
 > 一个受 Cyber UI 和 终末地 风格启发的沉浸式 Web 番茄钟应用。
 
-## ✨ 核心特性 (Core Features)
+## 核心特性 (Core Features)
 
-### 🍅 番茄钟 (Pomodoro)
+### 番茄钟 (Pomodoro)
 - **沉浸计时**: 呼吸灯效环形进度条，提供精确视觉反馈
 - **多模式**: 支持工作/短休/长休循环，可配置自动序列
 - **数据持久化**: 设置长期保存，专注统计仅在当前标签页会话生效
 
-### 🎵 音频控制终端 (Audio Terminal)
+### 音频控制终端 (Audio Terminal)
 - **双模式播放**:
   - **本地模式**: 支持导入现代浏览器支持的所有音频类型，具备进度与播放列表管理
   - **在线模式**: 集成 MetingAPI，支持网易云音乐/QQ音乐等平台的歌单解析
 - **终端交互**: 支持基本信息、播放控制、封面展示及后台播放等功能
 
-### 📋 任务与配置 (Mission & Config)
+### 任务与配置 (Mission & Config)
 - **任务协议**: 存储限制（Max 6），聚焦当前目标
 - **完全自定义**: 计时参数、音效开关、音量及背景音乐源均可配置
 
-### 📱 PWA支持
+### PWA支持
 
 - **离线支持**: 通过 Service Worker 实现离线缓存
 - **在线音乐**: 实现API过滤，在PWA环境下也能播放在线音乐
 
-## 🛠️ 技术栈 (Tech Stack)
+## 技术栈 (Tech Stack)
 
-- **核心框架**: [React 19](https://react.dev/) - 利用最新的 Hooks 和并发特性
-- **性能优化**: [React Compiler](https://react.dev/learn/react-compiler) - 自动记忆化优化，无需手动 useMemo/useCallback
-- **构建工具**: [Vite](https://vitejs.dev/) - 极速的冷启动与热更新体验
-- **开发语言**: [TypeScript](https://www.typescriptlang.org/) - 强类型保障代码健壮性
-- **样式方案**: [TailwindCSS v4](https://tailwindcss.com/) - 原子化 CSS 引擎，配合 CSS Variables 实现动态主题切换
-- **图标库**: [Remixicon](https://remixicon.com/) + [Lucide React](https://lucide.dev/) - 风格统一的开源图标集
-- **状态管理**: React Hooks (useState, useEffect, useRef)
-- **工具函数**: [react-use](https://github.com/streamich/react-use) - 实用的 React Hooks 集合
-- **代码质量**: [ESLint](https://eslint.org/) (代码检查) + [Biome](https://biomejs.dev/) (代码格式化)
+| 模块 | 技术选型 | 说明 |
+| :--- | :--- | :--- |
+| **核心框架** | [React 19](https://react.dev/) | 现代声明式 UI 库，利用最新并发特性 |
+| **性能优化** | [React Compiler](https://react.dev/learn/react-compiler) | 自动记忆化，优化运行时性能 |
+| **构建工具** | [Vite](https://vitejs.dev/) | 下一代前端构建工具，极速冷启动 |
+| **开发语言** | [TypeScript](https://www.typescriptlang.org/) | 静态强类型，提升代码可维护性 |
+| **样式方案** | [TailwindCSS v4](https://tailwindcss.com/) | 原子化 CSS 引擎，支持 CSS 变量动态主题 |
+| **图标库** | [Remixicon](https://remixicon.com/) / [Lucide](https://lucide.dev/) | 风格统一的现代化图标集 |
+| **状态管理** | React Hooks | 基于 Hook 的原生状态逻辑复用 |
+| **工具函数** | [react-use](https://github.com/streamich/react-use) | 通用 React Hooks 集合 |
+| **代码质量** | [ESLint](https://eslint.org/) + [Biome](https://biomejs.dev/) | 代码检查与高性能格式化 |
 
-## 🚀 快速开始 (Getting Started)
+## 快速开始 (Getting Started)
 
 ### 环境要求
 - Node.js >= 18
@@ -82,7 +84,7 @@
    pnpm preview
    ```
 
-## 🌐 国际化支持 (i18n)
+## 国际化支持 (i18n)
 
 项目支持中英双语，所有UI文本均通过 `i18n.ts` 管理，包括：
 
@@ -91,7 +93,7 @@
 - 音乐平台和类型选项
 - 错误和加载提示
 
-## 🎨 主题系统 (Theme System)
+## 主题系统 (Theme System)
 
 使用 CSS Variables 实现动态主题切换，每个主题定义包括：
 
@@ -104,7 +106,7 @@
 
 所有主题配置存储在 `src/config/themes.ts` 中，主题效果组件分离在 `src/components/themes/` 目录下。
 
-## 🔧 开发建议 (Development Tips)
+## 开发建议 (Development Tips)
 
 ### 添加新主题
 在 `src/config/themes.ts` 的 THEMES 中添加新的主题配置：
@@ -151,15 +153,15 @@ export const defaultMusicConfig: MusicConfig = {
 export const DEFAULT_MUSIC_VOLUME = 0.5;
 ```
 
-## 🤝 贡献 (Contributing)
+## 贡献 (Contributing)
 
 欢迎提交 Issue 或 Pull Request ，请确保遵循现有的代码风格。
 
-## 📄 许可证 (License)
+## 许可证 (License)
 
 [MIT](LICENSE) © 2025 ChuwuYo
 
-## 📝 鸣谢 (Acknowledgments)
+## 鸣谢 (Acknowledgments)
 
 - [Gemini](https://gemini.google.com/) - 用于初期界面代码生成和优化、文档撰写
 - [TailwindCSS](https://tailwindcss.com/)
