@@ -47,13 +47,17 @@ export function PWAPrompt({ language }: PWAPromptProps) {
     useEffect(() => {
         if (!("serviceWorker" in navigator)) return;
 
-        // 使用 ref 记录初始 controller 状态，确保只在后续更新时提示
-        // 如果在组件挂载时 controller 为空，说明是首次安装，不应该提示更新
-        const hadController = !!navigator.serviceWorker.controller;
+        // 使用 ref 记录 controller 状态
+        // 初始值为 true 表示已有 controller (非首次安装)，或者 false (首次安装)
+        // 使用 mutable 变量而不是 const，以便在首次安装完成后更新状态，
+        // 从而确保后续的版本更新能够正常触发提示。
+        let hadController = !!navigator.serviceWorker.controller;
 
         const handleControllerChange = () => {
             if (!hadController) {
-                // 如果初始没有 controller，说明是首次安装引发的变更，忽略
+                // 如果之前没有 controller，说明是首次安装引发的变更
+                // 忽略本次提示，但标记为已拥有 controller，以便下次更新时提示
+                hadController = true;
                 return;
             }
 
