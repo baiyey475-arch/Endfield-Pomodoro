@@ -122,8 +122,9 @@ export const translations = {
         UNMUTE: "UNMUTE",
 
         // PWA
-        pwa_updated: "Updated successfully!",
+        pwa_updated: "Update ready. Refresh to apply.",
         pwa_offline: "OFFLINE MODE",
+        pwa_close: "GOT IT",
 
         // Footer
         TOTAL_STUDY_TIME: "SESSION OPERATION TIME",
@@ -253,8 +254,9 @@ export const translations = {
         UNMUTE: "取消静音",
 
         // PWA
-        pwa_updated: "已更新成功！",
+        pwa_updated: "新版本已就绪，刷新后生效。",
         pwa_offline: "离线模式",
+        pwa_close: "了解",
 
         // Footer
         TOTAL_STUDY_TIME: "本次累计作业时长",

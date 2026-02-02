@@ -47,18 +47,20 @@ export function PWAPrompt({ language }: PWAPromptProps) {
     useEffect(() => {
         if (!("serviceWorker" in navigator)) return;
 
-        let timeoutId: number | null = null;
+        // 使用 ref 记录初始 controller 状态，确保只在后续更新时提示
+        // 如果在组件挂载时 controller 为空，说明是首次安装，不应该提示更新
+        const hadController = !!navigator.serviceWorker.controller;
 
         const handleControllerChange = () => {
+            if (!hadController) {
+                // 如果初始没有 controller，说明是首次安装引发的变更，忽略
+                return;
+            }
+
             console.log(
                 "[PWA] Controller changed, showing update notification...",
             );
             setShowUpdated(true);
-
-            // 3 秒后自动刷新页面
-            timeoutId = window.setTimeout(() => {
-                window.location.reload();
-            }, 3000);
         };
 
         navigator.serviceWorker.addEventListener(
@@ -71,9 +73,6 @@ export function PWAPrompt({ language }: PWAPromptProps) {
                 "controllerchange",
                 handleControllerChange,
             );
-            if (timeoutId !== null) {
-                clearTimeout(timeoutId);
-            }
         };
     }, []);
 
@@ -121,11 +120,19 @@ export function PWAPrompt({ language }: PWAPromptProps) {
             role="status"
             aria-live="polite"
         >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
                 <i className="ri-check-line text-theme-success text-lg flex-shrink-0" />
-                <p className="text-theme-text font-mono text-xs font-bold">
+                <p className="text-theme-text font-mono text-xs font-bold flex-grow">
                     {t("pwa_updated")}
                 </p>
+                <button
+                    onClick={() => setShowUpdated(false)}
+                    className="p-1 hover:bg-theme-primary/10 rounded transition-colors group"
+                    aria-label={t("pwa_close") || "Close"}
+                    title={t("pwa_close") || "Close"}
+                >
+                    <i className="ri-close-line text-theme-text/60 group-hover:text-theme-text text-lg" />
+                </button>
             </div>
         </div>
     );
