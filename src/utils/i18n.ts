@@ -124,7 +124,7 @@ export const translations = {
         // PWA
         pwa_updated: "Update ready. Refresh to apply.",
         pwa_offline: "OFFLINE MODE",
-        pwa_close: "GOT IT",
+        pwa_close: "Close",
 
         // Footer
         TOTAL_STUDY_TIME: "SESSION OPERATION TIME",
@@ -256,7 +256,7 @@ export const translations = {
         // PWA
         pwa_updated: "新版本已就绪，刷新后生效。",
         pwa_offline: "离线模式",
-        pwa_close: "了解",
+        pwa_close: "关闭",
 
         // Footer
         TOTAL_STUDY_TIME: "本次累计作业时长",
