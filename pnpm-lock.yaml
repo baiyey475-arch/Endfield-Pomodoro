@@ -28,7 +28,7 @@ importers:
         version: 17.6.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       reanimated-color-picker:
         specifier: ^4.2.0
-        version: 4.2.0(react-native-gesture-handler@2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native-reanimated@4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4)
+        version: 4.2.0(react-native-gesture-handler@2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-reanimated@4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       remixicon:
         specifier: ^4.9.1
         version: 4.9.1
@@ -50,10 +50,10 @@ importers:
         version: 25.2.2
       '@types/react':
         specifier: ^19.2.10
-        version: 19.2.13
+        version: 19.2.14
       '@types/react-dom':
         specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.13)
+        version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: ^5.1.2
         version: 5.1.4(vite@7.3.1(@types/node@25.2.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.46.0)(yaml@2.8.2))
@@ -1443,13 +1443,16 @@ packages:
   '@types/node@25.2.2':
     resolution: {integrity: sha512-BkmoP5/FhRYek5izySdkOneRyXYN35I860MFAGupTdebyE66uZaR+bXLHq8k4DirE5DwQi3NuhvRU1jqTVwUrQ==}
 
+  '@types/node@25.2.3':
+    resolution: {integrity: sha512-m0jEgYlYz+mDJZ2+F4v8D1AyQb+QzsNqRuI7xg1VQX/KlKS0qT9r1Mo16yo5F/MtifXFgaofIFsdFMox2SxIbQ==}
+
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
     peerDependencies:
       '@types/react': ^19.2.0
 
-  '@types/react@19.2.13':
-    resolution: {integrity: sha512-KkiJeU6VbYbUOp5ITMIc7kBfqlYkKA5KhEHVrGMmUUMt7NeaZg65ojdPk+FtNrBAOXNVM5QM72jnADjM+XVRAQ==}
+  '@types/react@19.2.14':
+    resolution: {integrity: sha512-ilcTH/UniCkMdtexkoCN0bI7pMcJDvmQFPvuPvmEaYA/NSfFTAgdUSLAoVjaRJm7+6PvcM+q1zYOwS4wTYMF9w==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -2614,8 +2617,8 @@ packages:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
 
-  lru-cache@11.2.5:
-    resolution: {integrity: sha512-vFrFJkWtJvJnD5hg+hJvVE8Lh/TcMzKnTgCWmtBipwI5yLX/iX+5UB2tfuyODF5E7k9xEzMdYgGqaSb1c0c5Yw==}
+  lru-cache@11.2.6:
+    resolution: {integrity: sha512-ESL2CrkS/2wTPfuend7Zhkzo2u0daGJ/A2VucJOgQ/C48S/zB8MMeMHSGKYpXhIjbPxfuezITkaBH1wqv00DDQ==}
     engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
@@ -3206,8 +3209,9 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
 
-  smob@1.5.0:
-    resolution: {integrity: sha512-g6T+p7QO8npa+/hNx9ohv1E5pVCmWrVCUzUXJyLdMmftX6ER0oiWY/w9knEonLpnOp6b6FenKnMfR8gqwWdwig==}
+  smob@1.6.1:
+    resolution: {integrity: sha512-KAkBqZl3c2GvNgNhcoyJae1aKldDW0LO279wF9bk1PnluRTETKBq0WyzRXxEhoQLk56yHaOY4JCBEKDuJIET5g==}
+    engines: {node: '>=20.0.0'}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -4669,14 +4673,14 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       jest-mock: 29.7.0
 
   '@jest/fake-timers@29.7.0':
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -4710,7 +4714,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -4796,14 +4800,14 @@ snapshots:
 
   '@react-native/normalize-colors@0.82.1': {}
 
-  '@react-native/virtualized-lists@0.82.1(@types/react@19.2.13)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4)':
+  '@react-native/virtualized-lists@0.82.1(@types/react@19.2.14)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)':
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
       react: 19.2.4
-      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4)
+      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4)
     optionalDependencies:
-      '@types/react': 19.2.13
+      '@types/react': 19.2.14
 
   '@rolldown/pluginutils@1.0.0-rc.3': {}
 
@@ -4837,7 +4841,7 @@ snapshots:
   '@rollup/plugin-terser@0.4.4(rollup@2.79.2)':
     dependencies:
       serialize-javascript: 6.0.2
-      smob: 1.5.0
+      smob: 1.6.1
       terser: 5.46.0
     optionalDependencies:
       rollup: 2.79.2
@@ -5055,7 +5059,7 @@ snapshots:
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
 
   '@types/hammerjs@2.0.46': {}
 
@@ -5077,11 +5081,15 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
-  '@types/react-dom@19.2.3(@types/react@19.2.13)':
+  '@types/node@25.2.3':
     dependencies:
-      '@types/react': 19.2.13
+      undici-types: 7.16.0
 
-  '@types/react@19.2.13':
+  '@types/react-dom@19.2.3(@types/react@19.2.14)':
+    dependencies:
+      '@types/react': 19.2.14
+
+  '@types/react@19.2.14':
     dependencies:
       csstype: 3.2.3
 
@@ -5431,7 +5439,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -5440,7 +5448,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -6224,7 +6232,7 @@ snapshots:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
@@ -6234,7 +6242,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@types/graceful-fs': 4.1.9
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -6261,7 +6269,7 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       jest-util: 29.7.0
 
   jest-regex-util@29.6.3: {}
@@ -6269,7 +6277,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -6286,7 +6294,7 @@ snapshots:
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 25.2.2
+      '@types/node': 25.2.3
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -6413,7 +6421,7 @@ snapshots:
     dependencies:
       js-tokens: 4.0.0
 
-  lru-cache@11.2.5: {}
+  lru-cache@11.2.6: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -6782,7 +6790,7 @@ snapshots:
 
   path-scurry@2.0.1:
     dependencies:
-      lru-cache: 11.2.5
+      lru-cache: 11.2.6
       minipass: 7.1.2
 
   picocolors@1.1.1: {}
@@ -6846,29 +6854,29 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-native-gesture-handler@2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4):
+  react-native-gesture-handler@2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4):
     dependencies:
       '@egjs/hammerjs': 2.0.17
       hoist-non-react-statics: 3.3.2
       invariant: 2.2.4
       react: 19.2.4
-      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4)
+      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4)
 
-  react-native-is-edge-to-edge@1.2.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4):
+  react-native-is-edge-to-edge@1.2.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4):
     dependencies:
       react: 19.2.4
-      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4)
+      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4)
 
-  react-native-reanimated@4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4):
+  react-native-reanimated@4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4):
     dependencies:
       '@babel/core': 7.29.0
       react: 19.2.4
-      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4)
-      react-native-is-edge-to-edge: 1.2.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4)
-      react-native-worklets: 0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4)
+      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4)
+      react-native-is-edge-to-edge: 1.2.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
+      react-native-worklets: 0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       semver: 7.7.2
 
-  react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4):
+  react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4):
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-transform-arrow-functions': 7.27.1(@babel/core@7.29.0)
@@ -6882,12 +6890,12 @@ snapshots:
       '@babel/preset-typescript': 7.28.5(@babel/core@7.29.0)
       convert-source-map: 2.0.0
       react: 19.2.4
-      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4)
+      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4)
       semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
 
-  react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4):
+  react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4):
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.82.1
@@ -6896,7 +6904,7 @@ snapshots:
       '@react-native/gradle-plugin': 0.82.1
       '@react-native/js-polyfills': 0.82.1
       '@react-native/normalize-colors': 0.82.1
-      '@react-native/virtualized-lists': 0.82.1(@types/react@19.2.13)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4)
+      '@react-native/virtualized-lists': 0.82.1(@types/react@19.2.14)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
       abort-controller: 3.0.0
       anser: 1.4.10
       ansi-regex: 5.0.1
@@ -6926,7 +6934,7 @@ snapshots:
       ws: 6.2.3
       yargs: 17.7.2
     optionalDependencies:
-      '@types/react': 19.2.13
+      '@types/react': 19.2.14
     transitivePeerDependencies:
       - '@babel/core'
       - '@react-native-community/cli'
@@ -6965,12 +6973,12 @@ snapshots:
 
   react@19.2.4: {}
 
-  reanimated-color-picker@4.2.0(react-native-gesture-handler@2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native-reanimated@4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4):
+  reanimated-color-picker@4.2.0(react-native-gesture-handler@2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native-reanimated@4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4):
     dependencies:
       react: 19.2.4
-      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4)
-      react-native-gesture-handler: 2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4)
-      react-native-reanimated: 4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.13)(react@19.2.4))(react@19.2.4)
+      react-native: 0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4)
+      react-native-gesture-handler: 2.29.1(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
+      react-native-reanimated: 4.1.5(@babel/core@7.29.0)(react-native-worklets@0.6.1(@babel/core@7.29.0)(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4))(react-native@0.82.1(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
 
   reflect.getprototypeof@1.0.10:
     dependencies:
@@ -7208,7 +7216,7 @@ snapshots:
 
   slash@3.0.0: {}
 
-  smob@1.5.0: {}
+  smob@1.6.1: {}
 
   source-map-js@1.2.1: {}
 
