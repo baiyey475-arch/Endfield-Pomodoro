@@ -75,6 +75,7 @@ export const useOnlinePlayer = (
     });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const retryTimerRef = useRef<number | null>(null);
     const handleNextRef = useRef<((isAuto: boolean) => void) | null>(null);
     const consecutiveErrorsRef = useRef(0);
     // 用于标记当前歌曲是否已经尝试过单曲回退
@@ -143,7 +144,7 @@ export const useOnlinePlayer = (
 
             if (playlist.length === 0) return;
 
-            let nextIndex = currentIndex;
+            let nextIndex: number;
 
             if (playMode === PlayMode.RANDOM) {
                 nextIndex = getNextRandomIndex();
@@ -195,6 +196,10 @@ export const useOnlinePlayer = (
             setIsLoading(false);
             setError(null); // Clear error on success
             consecutiveErrorsRef.current = 0; // 重置连续错误计数
+            if (retryTimerRef.current !== null) {
+                clearTimeout(retryTimerRef.current);
+                retryTimerRef.current = null;
+            }
         };
         const handleWaiting = () => setIsLoading(true);
         const handleError = () => {
@@ -283,14 +288,22 @@ export const useOnlinePlayer = (
                 console.error(
                     "Too many consecutive errors, stopping playback.",
                 );
+                if (retryTimerRef.current !== null) {
+                    clearTimeout(retryTimerRef.current);
+                    retryTimerRef.current = null;
+                }
                 setIsPlaying(false);
                 return;
             }
 
-            setTimeout(() => {
+            if (retryTimerRef.current !== null) {
+                clearTimeout(retryTimerRef.current);
+            }
+            retryTimerRef.current = window.setTimeout(() => {
                 if (isMounted) {
                     handleNextRef.current?.(true);
                 }
+                retryTimerRef.current = null;
             }, NEXT_TRACK_RETRY_DELAY_MS);
         };
 
@@ -317,6 +330,10 @@ export const useOnlinePlayer = (
         return () => {
             isMounted = false;
             audio.pause();
+            if (retryTimerRef.current !== null) {
+                clearTimeout(retryTimerRef.current);
+                retryTimerRef.current = null;
+            }
             // 注意：这里不要清空 src，因为如果这是被交换出去的 audio，它可能马上要被用作 preload
             // 或者如果这是 preload 进来的 audio，我们也不希望清空它
             // 只有当组件卸载或者真正销毁时才需要清理，但 React Effect cleanup 在依赖变化时也会运行。
@@ -368,14 +385,11 @@ export const useOnlinePlayer = (
         if (playlist.length <= 1) return;
 
         const timerId = setTimeout(() => {
-            let nextIndex = -1;
-
-            if (playMode === PlayMode.RANDOM) {
-                // 使用 peek 获取下一首随机索引，不改变洗牌状态
-                nextIndex = peekNextRandomIndex();
-            } else {
-                nextIndex = (currentIndex + 1) % playlist.length;
-            }
+            const nextIndex =
+                playMode === PlayMode.RANDOM
+                    ? // 使用 peek 获取下一首随机索引，不改变洗牌状态
+                      peekNextRandomIndex()
+                    : (currentIndex + 1) % playlist.length;
 
             if (nextIndex === -1) return;
 
