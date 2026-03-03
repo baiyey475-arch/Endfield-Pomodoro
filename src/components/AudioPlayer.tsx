@@ -50,6 +50,8 @@ const AudioPlayer: React.FC<{
 
     // 离线时自动切换到本地模式，在线时显示提示
     useEffect(() => {
+        let timer: number | null = null;
+
         if (!isOnline && audioSource === "online") {
             queueMicrotask(() => setAudioSource("local"));
         } else if (
@@ -58,13 +60,19 @@ const AudioPlayer: React.FC<{
             audioSource === "local"
         ) {
             queueMicrotask(() => setShowOnlineToast(true));
-            const timer = setTimeout(
+            timer = window.setTimeout(
                 () => setShowOnlineToast(false),
                 TOAST_DURATION_MS,
             );
-            return () => clearTimeout(timer);
         }
+
         prevOnlineRef.current = isOnline;
+
+        return () => {
+            if (timer !== null) {
+                clearTimeout(timer);
+            }
+        };
     }, [isOnline, audioSource]);
 
     const [showPlaylist, setShowPlaylist] = useState(false);
