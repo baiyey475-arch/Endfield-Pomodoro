@@ -80,6 +80,9 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                 const adapter = adapters[adapterIndex];
                 if (controller.signal.aborted) return;
 
+                const requestController = new AbortController();
+                const onAbort = () => requestController.abort();
+                controller.signal.addEventListener("abort", onAbort);
                 let timeoutId: ReturnType<typeof setTimeout> | null = null;
                 try {
                     const url = adapter.buildUrl({ server, type, id });
@@ -95,15 +98,14 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                     // 使用 Promise.race 来处理超时，并在完成后清理 setTimeout
                     const response = await Promise.race([
                         fetch(url, {
-                            signal: controller.signal,
+                            signal: requestController.signal,
                             ...safeFetchOptions,
                         }),
                         new Promise<never>((_, reject) => {
-                            timeoutId = setTimeout(
-                                () =>
-                                    reject(new Error("API request timed out")),
-                                API_TIMEOUT_MS,
-                            );
+                            timeoutId = setTimeout(() => {
+                                requestController.abort();
+                                reject(new Error("API request timed out"));
+                            }, API_TIMEOUT_MS);
                         }),
                     ]);
 
@@ -128,8 +130,17 @@ export const useMusicData = ({ server, type, id }: UseMusicDataProps) => {
                     if (controller.signal.aborted) {
                         return;
                     }
+                    // 内部中止（超时）直接尝试下一个适配器
+                    if (
+                        err instanceof DOMException &&
+                        err.name === "AbortError"
+                    ) {
+                        continue;
+                    }
                     // 其他错误（如超时、网络问题），记录并尝试下一个适配器
                     console.warn(`API adapter failed:`, err);
+                } finally {
+                    controller.signal.removeEventListener("abort", onAbort);
                 }
             }
 

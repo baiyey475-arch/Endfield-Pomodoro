@@ -31,6 +31,13 @@ const getMusicTypeOptions = (t: ReturnType<typeof useTranslation>) => [
     { value: "playlist", label: t("TYPE_PLAYLIST") },
 ];
 
+const parseDurationInput = (value: string, previous: number): number => {
+    if (value.trim() === "") return previous;
+    const next = Number(value);
+    if (!Number.isFinite(next)) return previous;
+    return Math.max(1, Math.floor(next));
+};
+
 const SettingsPanel: React.FC<SettingsPanelProps> = ({
     settings,
     tempMusicConfig,
@@ -66,8 +73,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                     onChange={(e) =>
                                         onSettingsChange({
                                             ...settings,
-                                            workDuration: Number(
+                                            workDuration: parseDurationInput(
                                                 e.target.value,
+                                                settings.workDuration,
                                             ),
                                         })
                                     }
@@ -84,9 +92,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                     onChange={(e) =>
                                         onSettingsChange({
                                             ...settings,
-                                            shortBreakDuration: Number(
-                                                e.target.value,
-                                            ),
+                                            shortBreakDuration:
+                                                parseDurationInput(
+                                                    e.target.value,
+                                                    settings.shortBreakDuration,
+                                                ),
                                         })
                                     }
                                 />
@@ -102,9 +112,11 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                     onChange={(e) =>
                                         onSettingsChange({
                                             ...settings,
-                                            longBreakDuration: Number(
-                                                e.target.value,
-                                            ),
+                                            longBreakDuration:
+                                                parseDurationInput(
+                                                    e.target.value,
+                                                    settings.longBreakDuration,
+                                                ),
                                         })
                                     }
                                 />
