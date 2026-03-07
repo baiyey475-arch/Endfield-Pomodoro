@@ -1,4 +1,4 @@
 {
-    "installCommand": "corepack enable && corepack prepare \"$(node -p \"require('./package.json').packageManager\")\" --activate && pnpm --version && pnpm install --frozen-lockfile",
-    "buildCommand": "pnpm --version && pnpm build"
+    "installCommand": "pnpm install --frozen-lockfile",
+    "buildCommand": "pnpm build"
 }
