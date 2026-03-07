@@ -446,7 +446,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                         {/* 时间文本 */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 select-none">
                             <span
-                                className={`text-5xl md:text-7xl font-mono font-bold text-theme-text drop-shadow-2xl tabular-nums transition-transform will-change-transform select-none`}
+                                className={`text-5xl md:text-7xl font-mono font-bold text-theme-text drop-shadow-2xl tabular-nums transition-transform will-change-transform`}
                                 style={{
                                     transform: isActive
                                         ? "scale(1.05)"
@@ -458,7 +458,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                             >
                                 {formatTime(timeLeft)}
                             </span>
-                            <span className="text-xs text-theme-dim font-mono mt-2 tracking-[0.3em] uppercase animate-pulse select-none">
+                            <span className="text-xs text-theme-dim font-mono mt-2 tracking-[0.3em] uppercase animate-pulse">
                                 {t("TIME_REMAINING")}
                             </span>
                         </div>
