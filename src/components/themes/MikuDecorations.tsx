@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import mikuCharImg from "../../assets/images/MIKU1.webp";
 import mikuLogoImg from "../../assets/images/MIKULogo.svg";
 import { useIsMobile } from "../../hooks/useIsMobile";
@@ -6,53 +6,51 @@ import { ThemePreset } from "../../types";
 
 // ========== 背景效果组件 ==========
 
-interface MikuHexPatternProps {
-    mousePos?: { x: number; y: number };
-}
+// 六边形网格背景 - 支持鼠标位置高亮
+const MikuHexPattern: React.FC = () => {
+    const isMobile = useIsMobile();
+    const outerRef = React.useRef<HTMLDivElement>(null);
+    const innerRef = React.useRef<HTMLDivElement>(null);
 
-// Miku 六边形网格背景 - 支持鼠标位置高亮
-const MikuHexPattern: React.FC<MikuHexPatternProps> = ({ mousePos }) => (
-    <div className="absolute inset-0">
-        {/* 基础六角形网格 - primary color */}
-        <svg
-            width="100%"
-            height="100%"
-            className="absolute inset-0 opacity-[0.15]"
-        >
-            <defs>
-                <pattern
-                    id="hex-grid-base"
-                    width="40"
-                    height="69.28"
-                    patternUnits="userSpaceOnUse"
-                    patternTransform="scale(0.5)"
-                >
-                    <path
-                        d="M20 0L40 11.54L40 34.64L20 46.18L0 34.64L0 11.54Z"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1"
-                    />
-                </pattern>
-            </defs>
-            <rect
-                width="100%"
-                height="100%"
-                fill="url(#hex-grid-base)"
-                style={{ color: "var(--color-primary)" }}
-            />
-        </svg>
-        {/* 鼠标位置高亮六角形 - secondary color 荧光效果 */}
-        {mousePos && (
+    React.useEffect(() => {
+        if (isMobile) return;
+
+        let animationFrameId: number;
+        let x = -1000;
+        let y = -1000;
+        const radius = 180;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            x = e.clientX;
+            y = e.clientY;
+
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(() => {
+                if (outerRef.current && innerRef.current) {
+                    outerRef.current.style.transform = `translate3d(${x - radius}px, ${y - radius}px, 0)`;
+                    innerRef.current.style.transform = `translate3d(${-(x - radius)}px, ${-(y - radius)}px, 0)`;
+                }
+            });
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            cancelAnimationFrame(animationFrameId);
+        };
+    }, [isMobile]);
+
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* 基础六角形网格 - primary color */}
             <svg
                 width="100%"
                 height="100%"
-                className="absolute inset-0"
-                style={{ pointerEvents: "none" }}
+                className="absolute inset-0 opacity-[0.15]"
             >
                 <defs>
                     <pattern
-                        id="hex-grid-highlight"
+                        id="hex-grid-base"
                         width="40"
                         height="69.28"
                         patternUnits="userSpaceOnUse"
@@ -61,79 +59,109 @@ const MikuHexPattern: React.FC<MikuHexPatternProps> = ({ mousePos }) => (
                         <path
                             d="M20 0L40 11.54L40 34.64L20 46.18L0 34.64L0 11.54Z"
                             fill="none"
-                            stroke="var(--color-highlight)"
-                            strokeWidth="2"
+                            stroke="currentColor"
+                            strokeWidth="1"
                         />
                     </pattern>
-                    <radialGradient
-                        id="mouse-glow"
-                        cx={mousePos.x}
-                        cy={mousePos.y}
-                        r="180"
-                        gradientUnits="userSpaceOnUse"
-                    >
-                        <stop offset="0%" stopColor="white" stopOpacity="1" />
-                        <stop
-                            offset="40%"
-                            stopColor="white"
-                            stopOpacity="0.6"
-                        />
-                        <stop
-                            offset="70%"
-                            stopColor="white"
-                            stopOpacity="0.3"
-                        />
-                        <stop offset="100%" stopColor="white" stopOpacity="0" />
-                    </radialGradient>
-                    <mask id="mouse-mask">
-                        <rect
-                            width="100%"
-                            height="100%"
-                            fill="url(#mouse-glow)"
-                        />
-                    </mask>
-                    {/* 线条发光滤镜 */}
-                    <filter
-                        id="line-glow"
-                        x="-50%"
-                        y="-50%"
-                        width="200%"
-                        height="200%"
-                    >
-                        <feDropShadow
-                            dx="0"
-                            dy="0"
-                            stdDeviation="2"
-                            floodColor="var(--color-highlight)"
-                            floodOpacity="0.8"
-                        />
-                        <feDropShadow
-                            dx="0"
-                            dy="0"
-                            stdDeviation="4"
-                            floodColor="var(--color-highlight)"
-                            floodOpacity="0.4"
-                        />
-                        <feDropShadow
-                            dx="0"
-                            dy="0"
-                            stdDeviation="6"
-                            floodColor="var(--color-highlight)"
-                            floodOpacity="0.2"
-                        />
-                    </filter>
                 </defs>
                 <rect
                     width="100%"
                     height="100%"
-                    fill="url(#hex-grid-highlight)"
-                    mask="url(#mouse-mask)"
-                    filter="url(#line-glow)"
+                    fill="url(#hex-grid-base)"
+                    style={{ color: "var(--color-primary)" }}
                 />
             </svg>
-        )}
-    </div>
-);
+
+            {/* 鼠标位置高亮六角形 - hardware accelerated spotlight */}
+            {!isMobile && (
+                <div
+                    ref={outerRef}
+                    className="absolute top-0 left-0 pointer-events-none"
+                    style={{
+                        width: "360px",
+                        height: "360px",
+                        transform: "translate3d(-1000px, -1000px, 0)",
+                        willChange: "transform",
+                        maskImage:
+                            "radial-gradient(circle at center, white 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.3) 70%, transparent 100%)",
+                        WebkitMaskImage:
+                            "radial-gradient(circle at center, white 0%, rgba(255,255,255,0.6) 40%, rgba(255,255,255,0.3) 70%, transparent 100%)",
+                    }}
+                >
+                    <div
+                        ref={innerRef}
+                        className="absolute top-0 left-0"
+                        style={{
+                            width: "100vw",
+                            height: "100vh",
+                            transform: "translate3d(1000px, 1000px, 0)",
+                            willChange: "transform",
+                        }}
+                    >
+                        <svg
+                            width="100%"
+                            height="100%"
+                            className="absolute inset-0"
+                        >
+                            <defs>
+                                <pattern
+                                    id="hex-grid-highlight"
+                                    width="40"
+                                    height="69.28"
+                                    patternUnits="userSpaceOnUse"
+                                    patternTransform="scale(0.5)"
+                                >
+                                    <path
+                                        d="M20 0L40 11.54L40 34.64L20 46.18L0 34.64L0 11.54Z"
+                                        fill="none"
+                                        stroke="var(--color-highlight)"
+                                        strokeWidth="2"
+                                    />
+                                </pattern>
+                                {/* 线条发光滤镜 */}
+                                <filter
+                                    id="line-glow"
+                                    x="-50%"
+                                    y="-50%"
+                                    width="200%"
+                                    height="200%"
+                                >
+                                    <feDropShadow
+                                        dx="0"
+                                        dy="0"
+                                        stdDeviation="2"
+                                        floodColor="var(--color-highlight)"
+                                        floodOpacity="0.8"
+                                    />
+                                    <feDropShadow
+                                        dx="0"
+                                        dy="0"
+                                        stdDeviation="4"
+                                        floodColor="var(--color-highlight)"
+                                        floodOpacity="0.4"
+                                    />
+                                    <feDropShadow
+                                        dx="0"
+                                        dy="0"
+                                        stdDeviation="6"
+                                        floodColor="var(--color-highlight)"
+                                        floodOpacity="0.2"
+                                    />
+                                </filter>
+                            </defs>
+                            <rect
+                                width="100%"
+                                height="100%"
+                                fill="url(#hex-grid-highlight)"
+                                filter="url(#line-glow)"
+                            />
+                        </svg>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 // Miku 频谱条动画
 const MikuEqualizerBars = () => {
@@ -159,10 +187,12 @@ const MikuEqualizerBars = () => {
             </div>
             <style>{`
                 @keyframes equalizer {
-                    0% { height: 10%; opacity: 0.3; }
-                    100% { height: 60%; opacity: 0.8; }
+                    0% { transform: scaleY(0.16); opacity: 0.3; }
+                    100% { transform: scaleY(1); opacity: 0.8; }
                 }
                 .animate-equalizer {
+                    height: 60%;
+                    transform-origin: bottom center;
                     animation: equalizer 1s infinite ease-in-out alternate;
                     animation-delay: calc(var(--bar-index) * -0.12s);
                 }
@@ -173,33 +203,9 @@ const MikuEqualizerBars = () => {
 
 // Miku 背景层容器 - 自带鼠标跟踪
 export const MikuBackgroundLayer: React.FC = () => {
-    const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
-        null,
-    );
-    const isMobile = useIsMobile();
-
-    useEffect(() => {
-        if (isMobile) return;
-
-        let animationFrameId: number;
-        const handleMouseMove = (e: MouseEvent) => {
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = requestAnimationFrame(() => {
-                setMousePos({ x: e.clientX, y: e.clientY });
-            });
-        };
-        window.addEventListener("mousemove", handleMouseMove);
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            cancelAnimationFrame(animationFrameId);
-        };
-    }, [isMobile]);
-
     return (
         <>
-            <MikuHexPattern
-                mousePos={isMobile ? undefined : (mousePos ?? undefined)}
-            />
+            <MikuHexPattern />
             <div
                 className="absolute -top-20 -right-20 w-96 h-96 border border-theme-highlight rounded-full opacity-20 animate-spin-slow"
                 style={{ borderStyle: "dashed", animationDuration: "60s" }}
