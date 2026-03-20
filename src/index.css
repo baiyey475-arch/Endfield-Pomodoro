@@ -41,6 +41,151 @@
   --color-dim: #7a7a7a;
   --color-success: #16a34a;
   --color-error: #dc2626;
+
+  --text-ui-3xs: 8px;
+  --text-ui-2xs: 9px;
+  --text-ui-micro: 10px;
+  --text-ui-xs: 12px;
+  --text-ui-sm: 14px;
+  --text-ui-base: 15px;
+  --text-ui-lg: 18px;
+  --text-ui-xl: 20px;
+  --text-ui-2xl: 24px;
+  --text-ui-display: 48px;
+  --text-ui-display-xl: 64px;
+
+  --icon-ui-xs: 12px;
+  --icon-ui-sm: 14px;
+  --icon-ui-md: 16px;
+  --icon-ui-lg: 18px;
+  --icon-ui-xl: 20px;
+  --icon-ui-2xl: 24px;
+  --icon-ui-display: 48px;
+}
+
+html {
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+@utility font-ui-sans {
+  font-family: var(--font-sans);
+}
+
+@utility font-ui-mono {
+  font-family: var(--font-mono);
+}
+
+@utility text-ui-3xs {
+  font-size: var(--text-ui-3xs);
+}
+
+@utility text-ui-2xs {
+  font-size: var(--text-ui-2xs);
+}
+
+@utility text-ui-micro {
+  font-size: var(--text-ui-micro);
+}
+
+@utility text-ui-xs {
+  font-size: var(--text-ui-xs);
+}
+
+@utility text-ui-sm {
+  font-size: var(--text-ui-sm);
+}
+
+@utility text-ui-base {
+  font-size: var(--text-ui-base);
+}
+
+@utility text-ui-lg {
+  font-size: var(--text-ui-lg);
+}
+
+@utility text-ui-xl {
+  font-size: var(--text-ui-xl);
+}
+
+@utility text-ui-2xl {
+  font-size: var(--text-ui-2xl);
+}
+
+@utility text-ui-display {
+  font-size: var(--text-ui-display);
+}
+
+@utility text-ui-display-xl {
+  font-size: var(--text-ui-display-xl);
+}
+
+@utility tracking-ui-tight {
+  letter-spacing: -0.025em;
+}
+
+@utility tracking-ui-wider {
+  letter-spacing: 0.05em;
+}
+
+@utility tracking-ui-widest {
+  letter-spacing: 0.1em;
+}
+
+@utility tracking-ui-panel {
+  letter-spacing: 0.2em;
+}
+
+@utility tracking-ui-signal {
+  letter-spacing: 0.3em;
+}
+
+@utility leading-ui-none {
+  line-height: 1;
+}
+
+@utility leading-ui-tight {
+  line-height: 1.25;
+}
+
+@utility leading-ui-grid {
+  line-height: 0.75rem;
+}
+
+@utility icon-ui-xs {
+  font-size: var(--icon-ui-xs);
+  line-height: 1;
+}
+
+@utility icon-ui-sm {
+  font-size: var(--icon-ui-sm);
+  line-height: 1;
+}
+
+@utility icon-ui-md {
+  font-size: var(--icon-ui-md);
+  line-height: 1;
+}
+
+@utility icon-ui-lg {
+  font-size: var(--icon-ui-lg);
+  line-height: 1;
+}
+
+@utility icon-ui-xl {
+  font-size: var(--icon-ui-xl);
+  line-height: 1;
+}
+
+@utility icon-ui-2xl {
+  font-size: var(--icon-ui-2xl);
+  line-height: 1;
+}
+
+@utility icon-ui-display {
+  font-size: var(--icon-ui-display);
+  line-height: 1;
 }
 
 /* 基础样式 */

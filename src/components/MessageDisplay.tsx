@@ -23,14 +23,14 @@ const MessageDisplay: React.FC<MessageDisplayProps> = ({
 
     return (
         <div className="flex flex-col items-center justify-center gap-2">
-            <div className="relative text-xs font-mono text-theme-primary">
+            <div className="relative text-ui-xs font-ui-mono text-theme-primary">
                 <div className="absolute inset-0 data-flow-bg"></div>
                 <div className="relative animate-pulse">{t(messageKey)}</div>
             </div>
             {actionButton && (
                 <button
                     onClick={actionButton.onClick}
-                    className="text-[10px] font-mono px-2 py-1 text-theme-primary border border-theme-primary/50 hover:border-theme-primary hover:bg-theme-primary/10 transition-all rounded-sm"
+                    className="text-ui-micro font-ui-mono px-2 py-1 text-theme-primary border border-theme-primary/50 hover:border-theme-primary hover:bg-theme-primary/10 transition-all rounded-sm"
                 >
                     {t(actionButton.textKey)}
                 </button>

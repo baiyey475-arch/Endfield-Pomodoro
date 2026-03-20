@@ -44,7 +44,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
             >
                 {/* 勾选图标 */}
                 <i
-                    className="ri-check-line text-xs font-bold text-theme-base transition-all duration-150"
+                    className="ri-check-line icon-ui-xs font-bold text-theme-base transition-all duration-150"
                     style={{
                         opacity: checked ? 1 : 0,
                         transform: checked ? "scale(1)" : "scale(0.5)",
@@ -60,7 +60,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
             {/* 标签文字 */}
             <span
                 className={`
-          text-xs font-mono uppercase tracking-wider truncate flex-1
+          text-ui-xs font-ui-mono uppercase tracking-ui-wider truncate flex-1
           transition-colors duration-150
           ${
               checked

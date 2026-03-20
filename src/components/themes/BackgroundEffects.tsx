@@ -4,16 +4,16 @@
 export const OriginGrid = () => (
     <>
         <div
-            className="absolute inset-0 opacity-[0.03]"
+            className="absolute inset-0 opacity-[0.08]"
             style={{
                 backgroundImage:
                     "linear-gradient(var(--color-primary) 1px, transparent 1px), linear-gradient(90deg, var(--color-primary) 1px, transparent 1px)",
                 backgroundSize: "40px 40px",
             }}
         ></div>
-        <div className="absolute top-20 left-10 w-32 h-[1px] bg-theme-dim/20"></div>
-        <div className="absolute bottom-20 right-10 w-64 h-[1px] bg-theme-dim/20"></div>
-        <div className="absolute -bottom-64 -left-64 w-[600px] h-[600px] border border-theme-dim/5 rounded-full pointer-events-none"></div>
+        <div className="absolute top-20 left-10 w-32 h-[1px] bg-theme-dim/30"></div>
+        <div className="absolute bottom-20 right-10 w-64 h-[1px] bg-theme-dim/30"></div>
+        <div className="absolute -bottom-64 -left-64 w-[600px] h-[600px] border border-theme-dim/20 rounded-full pointer-events-none"></div>
     </>
 );
 
@@ -38,19 +38,69 @@ export const AbyssalGrid = () => (
  */
 export const NeonGrid = () => (
     <>
+        <style>{`
+            @keyframes neon-grid-move {
+                0% { background-position: 0 0, 0 0, 0 0; }
+                100% { background-position: 0 0, 0 40px, 0 0; }
+            }
+            .synthwave-sun {
+                background: linear-gradient(180deg, #ffe53b 0%, #ff9800 45%, #ff5722 75%, #e91e63 100%);
+                mask-image: linear-gradient(
+                    to bottom,
+                    black 0%, black 50%, 
+                    transparent 50%, transparent 53%, 
+                    black 53%, black 60%, 
+                    transparent 60%, transparent 64%, 
+                    black 64%, black 70%, 
+                    transparent 70%, transparent 75%, 
+                    black 75%, black 80%, 
+                    transparent 80%, transparent 86%, 
+                    black 86%, black 90%, 
+                    transparent 90%, transparent 100%
+                );
+                -webkit-mask-image: linear-gradient(
+                    to bottom,
+                    black 0%, black 50%, 
+                    transparent 50%, transparent 53%, 
+                    black 53%, black 60%, 
+                    transparent 60%, transparent 64%, 
+                    black 64%, black 70%, 
+                    transparent 70%, transparent 75%, 
+                    black 75%, black 80%, 
+                    transparent 80%, transparent 86%, 
+                    black 86%, black 90%, 
+                    transparent 90%, transparent 100%
+                );
+            }
+        `}</style>
+        
+        {/* Synthwave 夕阳 */}
+        <div className="absolute left-1/2 bottom-[10%] -translate-x-1/2 w-[240px] h-[240px] md:w-[320px] md:h-[320px] opacity-90 pointer-events-none">
+            {/* 太阳本体带边缘模糊和内部发光 */}
+            <div className="synthwave-sun w-full h-full rounded-full shadow-[0_0_120px_rgba(255,87,34,0.6),inset_0_0_40px_rgba(255,229,59,0.5)] blur-[2px]" />
+            {/* 复古泛光、边缘溢出与发光扭曲叠加层 */}
+            <div className="synthwave-sun absolute inset-0 w-full h-full rounded-full mix-blend-screen blur-[8px] opacity-80" />
+            {/* 核心虚化过曝高光 */}
+            <div className="synthwave-sun absolute inset-[10%] rounded-full mix-blend-overlay blur-[12px] opacity-60" />
+            {/* 最外层的氛围光晕 */}
+            <div className="absolute inset-[-20%] rounded-full bg-[#ff5722] opacity-30 blur-[70px]" />
+        </div>
+
         <div
-            className="absolute inset-0 opacity-20"
+            className="absolute inset-0 opacity-20 pointer-events-none"
             style={{
                 background:
                     "linear-gradient(transparent 0%, var(--color-base) 100%), linear-gradient(0deg, var(--color-primary) 1px, transparent 1px), linear-gradient(90deg, var(--color-primary) 1px, transparent 1px)",
-                backgroundSize: "40px 40px",
+                backgroundSize: "100% 100%, 40px 40px, 40px 40px",
                 transform:
                     "perspective(500px) rotateX(60deg) translateY(100px) translateZ(-100px)",
                 transformOrigin: "bottom",
+                animation: "neon-grid-move 1.5s linear infinite",
             }}
         ></div>
-        <div className="absolute top-0 w-full h-full bg-gradient-to-b from-theme-base via-transparent to-theme-primary/10"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-theme-primary/20 blur-[100px]"></div>
+
+        <div className="absolute top-0 w-full h-full bg-gradient-to-b from-theme-base via-transparent to-theme-primary/10 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-theme-primary/20 blur-[100px] pointer-events-none"></div>
     </>
 );
 
@@ -80,7 +130,7 @@ const matrixColumns = generateMatrixColumns();
  */
 export const MatrixRain = () => {
     return (
-        <div className="absolute inset-0 overflow-hidden opacity-20 font-mono text-[10px] leading-3 text-theme-primary select-none pointer-events-none break-all">
+        <div className="absolute inset-0 overflow-hidden opacity-20 font-ui-mono text-ui-micro leading-ui-grid text-theme-primary select-none pointer-events-none break-all">
             {matrixColumns.map((col) => (
                 <div
                     key={col.id}

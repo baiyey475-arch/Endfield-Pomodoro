@@ -55,15 +55,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             >
                 <div className="space-y-10">
                     <div className="space-y-4">
-                        <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+                        <h3 className="text-theme-primary font-ui-mono text-ui-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
                             <span>{t("CYCLE_PARAMETERS")}</span>
-                            <span className="text-[10px] opacity-50">
+                            <span className="text-ui-micro opacity-50">
                                 CONFIG_SECTOR_01
                             </span>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("WORK_DURATION")}
                                 </label>
                                 <Input
@@ -82,7 +82,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("SHORT_BREAK_DURATION")}
                                 </label>
                                 <Input
@@ -102,7 +102,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("LONG_BREAK_DURATION")}
                                 </label>
                                 <Input
@@ -125,15 +125,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+                        <h3 className="text-theme-primary font-ui-mono text-ui-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
                             <span>{t("INTERFACE_CUSTOMIZATION")}</span>
-                            <span className="text-[10px] opacity-50">
+                            <span className="text-ui-micro opacity-50">
                                 CONFIG_SECTOR_02
                             </span>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("LANGUAGE")}
                                 </label>
                                 <CustomSelect
@@ -157,7 +157,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("THEME")}
                                 </label>
                                 <CustomSelect
@@ -212,9 +212,9 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+                        <h3 className="text-theme-primary font-ui-mono text-ui-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
                             <span>{t("AUTOMATION_FEEDBACK")}</span>
-                            <span className="text-[10px] opacity-50">
+                            <span className="text-ui-micro opacity-50">
                                 CONFIG_SECTOR_03
                             </span>
                         </h3>
@@ -295,15 +295,15 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="text-theme-primary font-mono text-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
+                        <h3 className="text-theme-primary font-ui-mono text-ui-sm uppercase border-b border-theme-highlight pb-2 flex justify-between">
                             <span>{t("ONLINE_MUSIC_CONFIG")}</span>
-                            <span className="text-[10px] opacity-50">
+                            <span className="text-ui-micro opacity-50">
                                 CONFIG_SECTOR_04
                             </span>
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("PLATFORM")}
                                 </label>
                                 <CustomSelect
@@ -313,16 +313,16 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                         onMusicConfigChange("server", value)
                                     }
                                 />
-                                <div className="mt-2 text-sm text-theme-primary font-mono inline-flex items-center gap-1 px-2 py-1 border border-theme-highlight/80 bg-theme-surface/20">
+                                <div className="mt-2 text-ui-sm text-theme-primary font-ui-mono inline-flex items-center gap-1 px-2 py-1 border border-theme-highlight/80 bg-theme-surface/20">
                                     <i
-                                        className="ri-alarm-warning-line text-sm"
+                                        className="ri-alarm-warning-line icon-ui-sm"
                                         aria-hidden="true"
                                     ></i>
                                     <span>{t("PLATFORM_NOTICE")}</span>
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("TYPE")}
                                 </label>
                                 <CustomSelect
@@ -334,7 +334,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 />
                             </div>
                             <div>
-                                <label className="block text-[10px] font-mono text-theme-dim mb-2 uppercase tracking-wider">
+                                <label className="block text-ui-micro font-ui-mono text-theme-dim mb-2 uppercase tracking-ui-wider">
                                     {t("ID")}
                                 </label>
                                 <Input
@@ -354,16 +354,16 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                             <Button
                                 variant="ghost"
                                 onClick={onResetMusicConfig}
-                                className="px-4 py-1.5 text-xs font-mono tracking-wider"
+                                className="px-4 py-1.5 text-ui-xs font-ui-mono tracking-ui-wider"
                                 title={t("RESET_MUSIC_CONFIG")}
                                 aria-label={t("RESET_MUSIC_CONFIG")}
                             >
-                                <i className="ri-refresh-line text-base"></i>
+                                <i className="ri-refresh-line icon-ui-md"></i>
                             </Button>
                             <Button
                                 variant="primary"
                                 onClick={onApplyMusicConfig}
-                                className="px-6 py-1.5 text-xs font-mono tracking-wider"
+                                className="px-6 py-1.5 text-ui-xs font-ui-mono tracking-ui-wider"
                             >
                                 {t("APPLY_SETTINGS")}
                             </Button>

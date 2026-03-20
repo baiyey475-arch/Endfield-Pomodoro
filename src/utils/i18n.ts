@@ -128,7 +128,7 @@ export const translations = {
 
         // Footer
         TOTAL_STUDY_TIME: "SESSION OPERATION TIME",
-        COPYRIGHT: "© 2025 ENDFIELD PROTOCOL. ALL RIGHTS RESERVED.",
+        COPYRIGHT: "© 2026 ALL RIGHTS RESERVED.",
         HOURS: "H",
         MINUTES: "M",
         SECONDS: "S",
@@ -260,7 +260,7 @@ export const translations = {
 
         // Footer
         TOTAL_STUDY_TIME: "本次累计作业时长",
-        COPYRIGHT: "© 2025 末端协议. 版权所有.",
+        COPYRIGHT: "© 2026 版权所有.",
         HOURS: "小时",
         MINUTES: "分钟",
         SECONDS: "秒",

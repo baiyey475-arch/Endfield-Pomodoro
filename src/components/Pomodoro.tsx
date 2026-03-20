@@ -328,16 +328,19 @@ const Pomodoro: React.FC<PomodoroProps> = ({
     };
 
     return (
-        <Panel className="w-full h-full p-8" title={t("CHRONO_MODULE")}>
-            <div className="flex flex-col h-full w-full items-center justify-between relative">
+        <Panel
+            className="w-full h-full min-h-full p-6 md:p-8"
+            title={t("CHRONO_MODULE")}
+        >
+            <div className="flex flex-col h-full w-full items-center gap-6 relative">
                 {/* 顶部信息 */}
                 <div className="w-full flex justify-between items-start border-b border-theme-highlight/30 pb-4 shrink-0">
                     <div className="flex flex-col">
-                        <span className="text-[10px] text-theme-dim tracking-widest uppercase mb-1">
+                        <span className="text-ui-micro text-theme-dim tracking-ui-widest uppercase mb-1">
                             {t("STATUS")}
                         </span>
                         <div
-                            className={`text-xl font-mono font-bold tracking-widest ${isActive ? (mode === TimerMode.WORK ? "text-theme-primary" : "text-theme-secondary") : "text-theme-dim"}`}
+                            className={`text-ui-xl font-ui-mono font-bold tracking-ui-widest ${isActive ? (mode === TimerMode.WORK ? "text-theme-primary" : "text-theme-secondary") : "text-theme-dim"}`}
                         >
                             {getStatusText()}
                         </div>
@@ -349,13 +352,13 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                             onClick={() => onSessionsUpdate(0)}
                             title={t("RESET_SESSIONS")}
                         >
-                            <i className="ri-refresh-line text-lg"></i>
+                            <i className="ri-refresh-line icon-ui-lg"></i>
                         </Button>
                         <div className="text-right">
-                            <span className="text-[10px] text-theme-dim tracking-widest uppercase mb-1 block">
+                            <span className="text-ui-micro text-theme-dim tracking-ui-widest uppercase mb-1 block">
                                 {t("SESSIONS_COMPLETED")}
                             </span>
-                            <div className="text-2xl font-mono text-theme-text">
+                            <div className="text-ui-2xl font-ui-mono text-theme-text">
                                 {sessionCount.toString().padStart(2, "0")}
                             </div>
                         </div>
@@ -363,8 +366,8 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                 </div>
 
                 {/* 计时器显示 */}
-                <div className="flex-1 w-full flex items-center justify-center relative py-8 min-h-0">
-                    <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center shrink-0 group">
+                <div className="flex-1 w-full flex items-center justify-center relative py-8 md:py-10 min-h-[22rem] md:min-h-[27rem]">
+                    <div className="relative w-[256px] h-[256px] md:w-[320px] md:h-[320px] flex items-center justify-center shrink-0 group max-w-full max-h-full">
                         {/* 脉冲背景环（呼吸效果） */}
                         {isActive && (
                             <div className="absolute inset-0 rounded-full border-2 border-theme-primary/30 animate-ping-slow"></div>
@@ -446,7 +449,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                         {/* 时间文本 */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 select-none">
                             <span
-                                className={`text-5xl md:text-7xl font-mono font-bold text-theme-text drop-shadow-2xl tabular-nums transition-transform will-change-transform`}
+                                className={`text-ui-display md:text-ui-display-xl font-ui-mono font-bold text-theme-text drop-shadow-2xl tabular-nums transition-transform will-change-transform`}
                                 style={{
                                     transform: isActive
                                         ? "scale(1.05)"
@@ -458,7 +461,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                             >
                                 {formatTime(timeLeft)}
                             </span>
-                            <span className="text-xs text-theme-dim font-mono mt-2 tracking-[0.3em] uppercase animate-pulse">
+                            <span className="text-ui-xs text-theme-dim font-ui-mono mt-2 tracking-ui-signal uppercase animate-pulse">
                                 {t("TIME_REMAINING")}
                             </span>
                         </div>
@@ -466,9 +469,9 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                 </div>
 
                 {/* 控制 */}
-                <div className="w-full grid grid-cols-4 gap-4 mt-4 shrink-0">
+                <div className="w-full grid grid-cols-4 gap-4 shrink-0">
                     <div
-                        className={`col-span-2 h-14 relative ${!isActive ? "group" : ""}`}
+                        className={`col-span-2 h-[56px] relative ${!isActive ? "group" : ""}`}
                     >
                         {!isActive && (
                             <div className="absolute -inset-[3px] overflow-hidden clip-path-slant z-0 bg-theme-dim/10">
@@ -478,7 +481,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                         <Button
                             onClick={toggleTimer}
                             variant={isActive ? "secondary" : "primary"}
-                            className="w-full h-full text-lg relative z-10"
+                            className="w-full h-full text-ui-lg relative z-10"
                             title={isActive ? t("PAUSE") : t("INITIALIZE")}
                         >
                             {isActive ? t("PAUSE") : t("INITIALIZE")}
@@ -487,20 +490,20 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                     <Button
                         onClick={resetTimer}
                         variant="ghost"
-                        className="col-span-1 h-14 border border-theme-highlight/30 hover:border-theme-primary"
+                        className="col-span-1 h-[56px] border border-theme-highlight/30 hover:border-theme-primary"
                         title={t("RESET_TIMER")}
                         aria-label={t("RESET_TIMER")}
                     >
-                        <i className="ri-restart-line text-2xl"></i>
+                        <i className="ri-restart-line icon-ui-2xl"></i>
                     </Button>
                     <Button
                         onClick={handleComplete}
                         variant="ghost"
-                        className="col-span-1 h-14 border border-theme-highlight/30 hover:border-theme-primary"
+                        className="col-span-1 h-[56px] border border-theme-highlight/30 hover:border-theme-primary"
                         title={t("SKIP_TIMER")}
                         aria-label={t("SKIP_TIMER")}
                     >
-                        <i className="ri-skip-forward-line text-2xl"></i>
+                        <i className="ri-skip-forward-line icon-ui-2xl"></i>
                     </Button>
                 </div>
             </div>

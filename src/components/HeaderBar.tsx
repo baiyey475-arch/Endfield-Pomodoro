@@ -24,7 +24,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
         <header className="fixed top-0 left-0 right-0 z-40 select-none border-b border-theme-highlight/30 bg-theme-base/80 backdrop-blur-md shadow-lg">
             <div className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 max-w-[1920px] mx-auto">
                 <div className="flex items-center gap-4 group cursor-default">
-                    <div className="relative hidden md:flex items-center">
+                    <div className="relative flex items-center">
                         <div className="w-1 h-10 bg-theme-primary" />
                         <div className="w-3 h-10 bg-theme-primary/20 ml-0.5" />
                         <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-theme-primary/50" />
@@ -32,8 +32,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
 
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                            <div className="w-1 h-6 bg-theme-primary md:hidden" />
-                            <h1 className="text-lg md:text-xl font-bold font-sans tracking-tight leading-none text-theme-text uppercase flex items-center">
+                            <h1 className="text-ui-xl font-bold font-ui-sans tracking-ui-tight leading-ui-none text-theme-text uppercase flex items-center">
                                 <span className="text-theme-dim font-normal mr-1">
                                     [
                                 </span>
@@ -49,24 +48,24 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
                             </h1>
                         </div>
 
-                        <div className="hidden md:flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-2 mt-1">
                             <span
-                                className="text-[10px] font-mono tracking-widest text-hover-fill"
+                                className="text-ui-micro font-ui-mono tracking-ui-widest text-hover-fill"
                                 data-text="PROTOCOL"
                             >
                                 PROTOCOL
                             </span>
-                            <span className="text-theme-dim text-[10px]">
+                            <span className="text-theme-dim text-ui-micro">
                                 •
                             </span>
-                            <span className="text-[10px] font-mono text-theme-dim tracking-wider">
+                            <span className="text-ui-micro font-ui-mono text-theme-dim tracking-ui-wider">
                                 V{version}
                             </span>
-                            <span className="text-theme-dim text-[10px]">
+                            <span className="text-theme-dim text-ui-micro">
                                 //
                             </span>
                             <span
-                                className={`text-[10px] font-mono ${isOnline ? "text-theme-success" : "text-theme-error"}`}
+                                className={`text-ui-micro font-ui-mono ${isOnline ? "text-theme-success" : "text-theme-error"}`}
                             >
                                 {isOnline ? "ONLINE" : "OFFLINE"}
                             </span>
@@ -83,16 +82,16 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
                                     : "ghost"
                             }
                             onClick={() => onViewChange(View.DASHBOARD)}
-                            className={`text-xs h-8 px-3 md:px-4 py-0 rounded-sm ${currentView === View.DASHBOARD ? "" : "text-theme-dim"}`}
+                            className={`text-ui-xs h-8 px-3 md:px-4 py-0 rounded-sm ${currentView === View.DASHBOARD ? "" : "text-theme-dim"}`}
                             title={t("DASHBOARD")}
                             aria-label={t("DASHBOARD")}
                         >
                             <span className="md:hidden" aria-hidden="true">
-                                <i className="ri-dashboard-line text-lg font-normal"></i>
+                                <i className="ri-dashboard-line icon-ui-lg font-normal"></i>
                             </span>
                             <span className="hidden md:flex items-center gap-1">
-                                <i className="ri-dashboard-line text-lg leading-none font-normal"></i>
-                                <span className="leading-none">
+                                <i className="ri-dashboard-line icon-ui-lg leading-none font-normal"></i>
+                                <span className="leading-ui-none">
                                     {t("DASHBOARD")}
                                 </span>
                             </span>
@@ -105,24 +104,24 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
                                     : "ghost"
                             }
                             onClick={() => onViewChange(View.SETTINGS)}
-                            className={`text-xs h-8 px-3 md:px-4 py-0 rounded-sm ${currentView === View.SETTINGS ? "" : "text-theme-dim"}`}
+                            className={`text-ui-xs h-8 px-3 md:px-4 py-0 rounded-sm ${currentView === View.SETTINGS ? "" : "text-theme-dim"}`}
                             title={t("SYSTEM_CONFIG")}
                             aria-label={t("SYSTEM_CONFIG")}
                         >
                             <span className="md:hidden" aria-hidden="true">
-                                <i className="ri-settings-3-line text-lg font-normal"></i>
+                                <i className="ri-settings-3-line icon-ui-lg font-normal"></i>
                             </span>
                             <span className="hidden md:flex items-center gap-1">
-                                <i className="ri-settings-3-line text-lg leading-none font-normal"></i>
-                                <span className="leading-none">
+                                <i className="ri-settings-3-line icon-ui-lg leading-none font-normal"></i>
+                                <span className="leading-ui-none">
                                     {t("SYSTEM_CONFIG")}
                                 </span>
                             </span>
                         </Button>
                     </div>
 
-                    <div className="hidden md:flex flex-col items-end text-[10px] font-mono text-theme-dim border-l border-theme-highlight/30 pl-6">
-                        <span className="text-theme-primary text-base leading-none tracking-widest">
+                    <div className="hidden md:flex flex-col items-end text-ui-micro font-ui-mono text-theme-dim border-l border-theme-highlight/30 pl-6">
+                        <span className="text-theme-primary text-ui-base leading-ui-none tracking-ui-widest">
                             {now.toLocaleTimeString("en-US", { hour12: false })}
                         </span>
                         <span className="opacity-70">

@@ -38,7 +38,7 @@ export const TacticalForeground: React.FC<{ mousePos: MousePos }> = ({
                 <div className="w-1 h-1 bg-theme-primary"></div>
             </div>
         </div>
-        <div className="absolute bottom-4 right-4 font-mono text-[10px] text-theme-primary/70">
+        <div className="absolute bottom-4 right-4 font-ui-mono text-ui-micro text-theme-primary/70">
             TARGET_COORDS: [{mousePos.x}, {mousePos.y}]
         </div>
     </div>
