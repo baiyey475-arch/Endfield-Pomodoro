@@ -4,16 +4,16 @@
 export const OriginGrid = () => (
     <>
         <div
-            className="absolute inset-0 opacity-[0.03]"
+            className="absolute inset-0 opacity-[0.08]"
             style={{
                 backgroundImage:
                     "linear-gradient(var(--color-primary) 1px, transparent 1px), linear-gradient(90deg, var(--color-primary) 1px, transparent 1px)",
                 backgroundSize: "40px 40px",
             }}
         ></div>
-        <div className="absolute top-20 left-10 w-32 h-[1px] bg-theme-dim/20"></div>
-        <div className="absolute bottom-20 right-10 w-64 h-[1px] bg-theme-dim/20"></div>
-        <div className="absolute -bottom-64 -left-64 w-[600px] h-[600px] border border-theme-dim/5 rounded-full pointer-events-none"></div>
+        <div className="absolute top-20 left-10 w-32 h-[1px] bg-theme-dim/30"></div>
+        <div className="absolute bottom-20 right-10 w-64 h-[1px] bg-theme-dim/30"></div>
+        <div className="absolute -bottom-64 -left-64 w-[600px] h-[600px] border border-theme-dim/20 rounded-full pointer-events-none"></div>
     </>
 );
 
