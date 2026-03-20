@@ -24,7 +24,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
         <header className="fixed top-0 left-0 right-0 z-40 select-none border-b border-theme-highlight/30 bg-theme-base/80 backdrop-blur-md shadow-lg">
             <div className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 max-w-[1920px] mx-auto">
                 <div className="flex items-center gap-4 group cursor-default">
-                    <div className="relative hidden md:flex items-center">
+                    <div className="relative flex items-center">
                         <div className="w-1 h-10 bg-theme-primary" />
                         <div className="w-3 h-10 bg-theme-primary/20 ml-0.5" />
                         <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-theme-primary/50" />
@@ -32,8 +32,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
 
                     <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                            <div className="w-1 h-6 bg-theme-primary md:hidden" />
-                            <h1 className="text-lg md:text-xl font-bold font-sans tracking-tight leading-none text-theme-text uppercase flex items-center">
+                            <h1 className="text-xl font-bold font-sans tracking-tight leading-none text-theme-text uppercase flex items-center">
                                 <span className="text-theme-dim font-normal mr-1">
                                     [
                                 </span>
@@ -49,7 +48,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
                             </h1>
                         </div>
 
-                        <div className="hidden md:flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-2 mt-1">
                             <span
                                 className="text-[10px] font-mono tracking-widest text-hover-fill"
                                 data-text="PROTOCOL"

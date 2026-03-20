@@ -9,21 +9,21 @@ import { useIsMobile } from "../hooks/useIsMobile";
 import { ThemePreset } from "../types";
 // 主题效果
 import {
+    AbyssalForeground,
+    AbyssalGrid,
+    AzureForeground,
+    AzureGrid,
+    IndustrialForeground,
+    IndustrialGrid,
+    MatrixRain,
     MikuBackgroundLayer,
     MikuForegroundLayer,
-    AbyssalGrid,
-    IndustrialGrid,
-    AzureGrid,
-    MatrixRain,
     NeonGrid,
+    OriginForeground,
     OriginGrid,
     RoyalParticles,
-    TacticalGrid,
-    AbyssalForeground,
-    IndustrialForeground,
-    AzureForeground,
-    OriginForeground,
     TacticalForeground,
+    TacticalGrid,
 } from "./themes";
 
 /**

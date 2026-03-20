@@ -43,6 +43,12 @@
   --color-error: #dc2626;
 }
 
+html {
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 /* 基础样式 */
 body {
   @apply bg-theme-base text-theme-text overflow-hidden;

@@ -172,9 +172,9 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
     const renderedCoverUrl = coverUrl ? displayCoverUrl : undefined;
 
     return (
-        <div className="flex flex-col h-full w-full relative">
+        <div className="flex flex-col h-full w-full relative gap-3">
             {/* 主要显示区域 */}
-            <div className="flex-1 min-h-0 flex flex-col justify-center mb-2">
+            <div className="flex-1 min-h-0 flex flex-col justify-start">
                 {/* 顶部信息栏 */}
                 <div className="flex justify-between items-end border-b border-theme-highlight/30 pb-2 mb-2">
                     <div className="flex flex-col overflow-hidden mr-4 flex-1">

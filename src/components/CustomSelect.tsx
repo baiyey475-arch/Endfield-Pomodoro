@@ -49,7 +49,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                 title={selectedOption?.label || value}
                 aria-expanded={isOpen}
                 aria-haspopup="listbox"
-                className="w-full bg-theme-highlight/20 border border-theme-highlight text-theme-text font-mono text-sm px-4 h-form-control focus:outline-none focus:border-theme-primary hover:bg-theme-highlight/10 transition-all duration-300 flex items-center justify-between group cursor-pointer"
+                className="w-full bg-theme-highlight/20 border border-theme-highlight text-theme-text font-mono text-sm leading-none px-4 h-form-control focus:outline-none focus:border-theme-primary hover:bg-theme-highlight/10 transition-all duration-300 flex items-center justify-between group cursor-pointer"
             >
                 <span className="truncate">
                     {selectedOption?.label || value}
@@ -75,7 +75,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                                 onChange(option.value);
                                 setIsOpen(false);
                             }}
-                            className={`w-full text-left px-4 py-3 font-mono text-sm transition-all duration-200 border-b border-theme-highlight/30 border-l-2 last:border-b-0 cursor-pointer ${
+                            className={`w-full text-left px-4 min-h-form-control font-mono text-sm leading-none transition-all duration-200 border-b border-theme-highlight/30 border-l-2 last:border-b-0 cursor-pointer ${
                                 option.value === value
                                     ? "bg-theme-primary/20 text-theme-primary border-l-theme-primary"
                                     : "text-theme-text border-l-transparent hover:bg-theme-highlight/20 hover:text-theme-primary hover:border-l-theme-primary"

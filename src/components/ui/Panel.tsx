@@ -6,7 +6,7 @@ export const Panel: React.FC<{
     title?: React.ReactNode;
 }> = ({ children, className = "", title }) => (
     <div
-        className={`relative bg-theme-surface/80 border border-theme-highlight backdrop-blur-md ${className} shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300`}
+        className={`relative bg-theme-surface/80 border border-theme-highlight backdrop-blur-md min-h-0 ${className} shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300`}
     >
         {title && (
             <div className="absolute -top-3 left-4 bg-theme-base px-2 text-[10px] font-mono text-theme-primary uppercase tracking-[0.2em] border border-theme-primary/30 flex items-center gap-2 shadow-sm z-20">
@@ -25,6 +25,6 @@ export const Panel: React.FC<{
         <div className="absolute top-1/2 left-0 w-1 h-8 -translate-y-1/2 bg-theme-highlight/50"></div>
         <div className="absolute top-1/2 right-0 w-1 h-8 -translate-y-1/2 bg-theme-highlight/50"></div>
 
-        <div className="relative z-10 h-full w-full">{children}</div>
+        <div className="relative z-10 h-full min-h-0 w-full">{children}</div>
     </div>
 );

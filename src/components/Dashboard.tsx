@@ -21,8 +21,8 @@ const Dashboard: React.FC<DashboardProps> = ({
     onTick,
 }) => {
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto max-w-7xl mx-auto w-full">
-            <div className="lg:col-span-7 flex flex-col h-auto min-h-[420px] md:h-[500px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start lg:items-stretch max-w-7xl mx-auto w-full">
+            <div className="lg:col-span-7 flex flex-col min-h-[36rem] lg:min-h-[42rem] xl:min-h-[44rem] h-full">
                 <Pomodoro
                     settings={settings}
                     sessionCount={sessionCount}
@@ -31,11 +31,11 @@ const Dashboard: React.FC<DashboardProps> = ({
                 />
             </div>
 
-            <div className="lg:col-span-5 flex flex-col gap-6 h-auto">
-                <div className="h-auto min-h-[220px]">
+            <div className="lg:col-span-5 flex flex-col lg:grid lg:grid-rows-[minmax(0,1fr)_15rem] gap-6 min-h-[32rem] lg:min-h-[42rem] xl:min-h-[44rem] h-full">
+                <div className="min-h-[18rem] lg:min-h-0 h-full">
                     <TaskManager language={settings.language} />
                 </div>
-                <div className="h-auto min-h-[180px] md:h-48 shrink-0">
+                <div className="min-h-[14rem] lg:h-[15rem] shrink-0">
                     <AudioPlayer
                         language={settings.language}
                         musicConfig={settings.musicConfig}

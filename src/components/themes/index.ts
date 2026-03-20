@@ -3,8 +3,8 @@
  */
 export {
     AbyssalGrid,
-    IndustrialGrid,
     AzureGrid,
+    IndustrialGrid,
     MatrixRain,
     NeonGrid,
     OriginGrid,
@@ -14,14 +14,14 @@ export {
 
 export {
     AbyssalForeground,
-    IndustrialForeground,
     AzureForeground,
+    IndustrialForeground,
     OriginForeground,
     TacticalForeground,
 } from "./ForegroundEffects";
 
 export {
     MikuBackgroundLayer,
-    MikuForegroundLayer,
     MikuDecorations,
+    MikuForegroundLayer,
 } from "./MikuDecorations";

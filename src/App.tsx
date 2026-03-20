@@ -3,10 +3,10 @@ import pkg from "../package.json";
 import Dashboard from "./components/Dashboard";
 import FooterStats from "./components/FooterStats";
 import HeaderBar from "./components/HeaderBar";
-import { MikuDecorations } from "./components/themes";
 import { PWAPrompt } from "./components/PWAPrompt";
 import SettingsPanel from "./components/SettingsPanel";
 import { BackgroundLayer, ForegroundLayer } from "./components/TerminalUI";
+import { MikuDecorations } from "./components/themes";
 import { defaultMusicConfig } from "./config/musicConfig";
 import { THEMES } from "./config/themes";
 import {

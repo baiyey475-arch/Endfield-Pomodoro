@@ -328,8 +328,11 @@ const Pomodoro: React.FC<PomodoroProps> = ({
     };
 
     return (
-        <Panel className="w-full h-full p-8" title={t("CHRONO_MODULE")}>
-            <div className="flex flex-col h-full w-full items-center justify-between relative">
+        <Panel
+            className="w-full h-full min-h-full p-6 md:p-8"
+            title={t("CHRONO_MODULE")}
+        >
+            <div className="flex flex-col h-full w-full items-center gap-6 relative">
                 {/* 顶部信息 */}
                 <div className="w-full flex justify-between items-start border-b border-theme-highlight/30 pb-4 shrink-0">
                     <div className="flex flex-col">
@@ -363,8 +366,8 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                 </div>
 
                 {/* 计时器显示 */}
-                <div className="flex-1 w-full flex items-center justify-center relative py-8 min-h-0">
-                    <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center shrink-0 group">
+                <div className="flex-1 w-full flex items-center justify-center relative py-8 md:py-10 min-h-[22rem] md:min-h-[27rem]">
+                    <div className="relative w-[256px] h-[256px] md:w-[320px] md:h-[320px] flex items-center justify-center shrink-0 group max-w-full max-h-full">
                         {/* 脉冲背景环（呼吸效果） */}
                         {isActive && (
                             <div className="absolute inset-0 rounded-full border-2 border-theme-primary/30 animate-ping-slow"></div>
@@ -466,9 +469,9 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                 </div>
 
                 {/* 控制 */}
-                <div className="w-full grid grid-cols-4 gap-4 mt-4 shrink-0">
+                <div className="w-full grid grid-cols-4 gap-4 shrink-0">
                     <div
-                        className={`col-span-2 h-14 relative ${!isActive ? "group" : ""}`}
+                        className={`col-span-2 h-[56px] relative ${!isActive ? "group" : ""}`}
                     >
                         {!isActive && (
                             <div className="absolute -inset-[3px] overflow-hidden clip-path-slant z-0 bg-theme-dim/10">
@@ -487,7 +490,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                     <Button
                         onClick={resetTimer}
                         variant="ghost"
-                        className="col-span-1 h-14 border border-theme-highlight/30 hover:border-theme-primary"
+                        className="col-span-1 h-[56px] border border-theme-highlight/30 hover:border-theme-primary"
                         title={t("RESET_TIMER")}
                         aria-label={t("RESET_TIMER")}
                     >
@@ -496,7 +499,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                     <Button
                         onClick={handleComplete}
                         variant="ghost"
-                        className="col-span-1 h-14 border border-theme-highlight/30 hover:border-theme-primary"
+                        className="col-span-1 h-[56px] border border-theme-highlight/30 hover:border-theme-primary"
                         title={t("SKIP_TIMER")}
                         aria-label={t("SKIP_TIMER")}
                     >

@@ -75,14 +75,14 @@ const FooterStats: React.FC<FooterStatsProps> = ({
                 </div>
                 <div className="flex items-center gap-4 opacity-60 hover:opacity-100 transition-opacity">
                     <span>{t("COPYRIGHT")}</span>
-                    <span className="hidden md:inline text-theme-highlight">
+                    <span className="inline text-theme-highlight">
                         |
                     </span>
                     <a
                         href="https://github.com/ChuwuYo/Endfield-Pomodoro"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hidden md:flex items-center gap-1 hover:text-theme-primary transition-colors"
+                        className="inline-flex items-center gap-1 hover:text-theme-primary transition-colors"
                     >
                         <i className="ri-github-fill"></i>
                         <span>@ChuwuYo</span>

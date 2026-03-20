@@ -133,7 +133,7 @@ const AudioPlayer: React.FC<{
 
     return (
         <Panel
-            className="p-4 h-full min-h-[160px] relative"
+            className="p-6 h-full min-h-[14rem] relative"
             title={
                 <div className="flex items-center justify-between w-full">
                     <span>{t("AUDIO_MODULE")}</span>
