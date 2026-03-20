@@ -80,7 +80,7 @@ const matrixColumns = generateMatrixColumns();
  */
 export const MatrixRain = () => {
     return (
-        <div className="absolute inset-0 overflow-hidden opacity-20 font-mono text-[10px] leading-3 text-theme-primary select-none pointer-events-none break-all">
+        <div className="absolute inset-0 overflow-hidden opacity-20 font-ui-mono text-ui-micro leading-ui-grid text-theme-primary select-none pointer-events-none break-all">
             {matrixColumns.map((col) => (
                 <div
                     key={col.id}

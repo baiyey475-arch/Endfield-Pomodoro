@@ -199,7 +199,7 @@ const App: React.FC = () => {
     }, []);
 
     return (
-        <div className="h-[100dvh] bg-theme-base text-theme-text font-sans selection:bg-theme-primary selection:text-theme-base flex flex-col overflow-hidden transition-colors duration-500 relative cursor-default">
+        <div className="h-[100dvh] bg-theme-base text-theme-text font-ui-sans selection:bg-theme-primary selection:text-theme-base flex flex-col overflow-hidden transition-colors duration-500 relative cursor-default">
             {/* 背景视觉效果 (Z-0) */}
             <BackgroundLayer theme={settings.theme} />
 

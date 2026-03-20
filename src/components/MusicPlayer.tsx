@@ -168,7 +168,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
         return (
             <div className="flex flex-col items-center justify-center h-full text-red-500">
                 <i className="ri-error-warning-line text-xl mb-1"></i>
-                <div className="text-xs font-mono">{t("CONNECTION_LOST")}</div>
+                <div className="text-ui-xs font-ui-mono">
+                    {t("CONNECTION_LOST")}
+                </div>
             </div>
         );
     }
@@ -177,7 +179,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
         return (
             <div className="flex flex-col items-center justify-center h-full text-theme-dim">
                 <i className="ri-disc-line text-xl mb-1"></i>
-                <div className="text-xs font-mono">{t("NO_TRACK")}</div>
+                <div className="text-ui-xs font-ui-mono">{t("NO_TRACK")}</div>
             </div>
         );
     }
@@ -209,7 +211,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
             {/* 播放列表 (绝对定位覆盖) */}
             {isListOpen && (
                 <div className="absolute top-full left-0 right-0 mt-2 bg-theme-surface/95 backdrop-blur-md border border-theme-primary/30 rounded-md z-50 max-h-60 overflow-hidden shadow-xl">
-                    <div className="sticky top-0 bg-theme-surface/95 border-b border-theme-highlight/20 p-2 flex justify-between items-center text-xs text-theme-dim">
+                    <div className="sticky top-0 bg-theme-surface/95 border-b border-theme-highlight/20 p-2 flex justify-between items-center text-ui-xs text-theme-dim">
                         <span>
                             {t("PLAYLIST_TITLE")} [{playlist.length}]
                         </span>
@@ -231,14 +233,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
                                     if (el) itemRefs.current.set(index, el);
                                     else itemRefs.current.delete(index);
                                 }}
-                                className={`flex items-center p-2 hover:bg-theme-highlight/10 cursor-pointer text-xs border-b border-theme-highlight/5 last:border-0 ${index === player.currentIndex ? "text-theme-primary bg-theme-primary/5" : "text-theme-text"}`}
+                                className={`flex items-center p-2 hover:bg-theme-highlight/10 cursor-pointer text-ui-xs border-b border-theme-highlight/5 last:border-0 ${index === player.currentIndex ? "text-theme-primary bg-theme-primary/5" : "text-theme-text"}`}
                                 onClick={() => {
                                     // 保持当前播放状态：如果正在播放则继续播放，如果暂停则保持暂停
                                     player.playTrack(index, true);
                                     // 不关闭播放列表
                                 }}
                             >
-                                <span className="w-6 text-theme-dim font-mono">
+                                <span className="w-6 text-theme-dim font-ui-mono">
                                     {String(index + 1).padStart(2, "0")}
                                 </span>
                                 <span className="flex-1 truncate mr-2">

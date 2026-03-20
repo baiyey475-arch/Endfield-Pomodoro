@@ -9,7 +9,7 @@ export const Panel: React.FC<{
         className={`relative bg-theme-surface/80 border border-theme-highlight backdrop-blur-md min-h-0 ${className} shadow-[0_4px_20px_rgba(0,0,0,0.5)] transition-all duration-300`}
     >
         {title && (
-            <div className="absolute -top-3 left-4 bg-theme-base px-2 text-[10px] font-mono text-theme-primary uppercase tracking-[0.2em] border border-theme-primary/30 flex items-center gap-2 shadow-sm z-20">
+            <div className="absolute -top-3 left-4 bg-theme-base px-2 text-ui-micro font-ui-mono text-theme-primary uppercase tracking-ui-panel border border-theme-primary/30 flex items-center gap-2 shadow-sm z-20">
                 <span className="w-1.5 h-1.5 bg-theme-primary animate-pulse"></span>
                 {title}
             </div>

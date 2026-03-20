@@ -85,7 +85,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
         <Panel className="h-full min-h-[16rem] p-6" title={t("TASK_MODULE")}>
             <div className="flex flex-col h-full w-full relative">
                 {/* Header Info with Counter */}
-                <div className="absolute -top-2 right-0 text-[10px] font-mono tracking-widest text-theme-dim">
+                <div className="absolute -top-2 right-0 text-ui-micro font-ui-mono tracking-ui-widest text-theme-dim">
                     {t("CAPACITY")}:{" "}
                     <span
                         className={`${isFull ? "text-red-500" : "text-theme-primary"}`}
@@ -126,7 +126,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                                 <div className="text-4xl mb-2 opacity-50">
                                     <i className="ri-flashlight-line text-5xl"></i>
                                 </div>
-                                <span className="font-mono text-xs tracking-widest uppercase">
+                                <span className="font-ui-mono text-ui-xs tracking-ui-widest uppercase">
                                     {t("NO_TASKS")}
                                 </span>
                             </div>
@@ -150,7 +150,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                                             )}
                                         </button>
                                         <span
-                                            className={`font-mono text-sm truncate transition-all ${task.completed ? "line-through text-theme-dim" : "text-theme-text"}`}
+                                            className={`font-ui-mono text-ui-sm truncate transition-all ${task.completed ? "line-through text-theme-dim" : "text-theme-text"}`}
                                         >
                                             {task.text}
                                         </span>
@@ -173,7 +173,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                     <div className="mt-4 pt-2 border-t border-theme-highlight flex justify-end shrink-0">
                         <button
                             onClick={clearCompleted}
-                            className="text-[10px] font-mono uppercase tracking-widest text-theme-dim hover:text-theme-primary transition-colors flex items-center gap-1"
+                            className="text-ui-micro font-ui-mono uppercase tracking-ui-widest text-theme-dim hover:text-theme-primary transition-colors flex items-center gap-1"
                             title={t("CLEAR_ALL_TASKS")}
                             aria-label={t("CLEAR_ALL_TASKS")}
                         >

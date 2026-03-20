@@ -144,7 +144,7 @@ const AudioPlayer: React.FC<{
                                 prev === "local" ? "online" : "local",
                             );
                         }}
-                        className={`px-2 py-0.5 text-[9px] font-mono border transition-colors rounded-sm uppercase tracking-wider ${
+                        className={`px-2 py-0.5 text-ui-2xs font-ui-mono border transition-colors rounded-sm uppercase tracking-ui-wider ${
                             !isOnline && audioSource === "local"
                                 ? "border-theme-highlight/30 text-theme-dim/50 cursor-not-allowed"
                                 : "border-theme-highlight/50 text-theme-dim hover:text-theme-primary hover:border-theme-primary cursor-pointer"
@@ -227,7 +227,7 @@ const AudioPlayer: React.FC<{
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     <div className="flex items-center justify-between p-4 border-b border-theme-highlight bg-theme-surface/50">
-                                        <h3 className="font-mono text-sm uppercase text-theme-primary tracking-widest">
+                                        <h3 className="font-ui-mono text-ui-sm uppercase text-theme-primary tracking-ui-widest">
                                             {t("PLAYLIST_COUNT")}
                                         </h3>
                                         <button
@@ -245,7 +245,7 @@ const AudioPlayer: React.FC<{
                                         style={{ scrollbarGutter: "stable" }}
                                     >
                                         {localPlayer.playlist.length === 0 ? (
-                                            <div className="text-center p-8 text-theme-dim font-mono text-xs">
+                                            <div className="text-center p-8 text-theme-dim font-ui-mono text-ui-xs">
                                                 {t("NO_TRACK")}
                                             </div>
                                         ) : (
@@ -277,7 +277,7 @@ const AudioPlayer: React.FC<{
                                                                 }
                                                             >
                                                                 <div
-                                                                    className={`w-8 font-mono text-xs pt-0.5 flex-shrink-0 ${idx === localPlayer.currentIndex ? "text-theme-primary font-bold" : "text-theme-dim"}`}
+                                                                    className={`w-8 font-ui-mono text-ui-xs pt-0.5 flex-shrink-0 ${idx === localPlayer.currentIndex ? "text-theme-primary font-bold" : "text-theme-dim"}`}
                                                                 >
                                                                     {(idx + 1)
                                                                         .toString()
@@ -288,14 +288,14 @@ const AudioPlayer: React.FC<{
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
                                                                     <div
-                                                                        className={`font-mono text-sm truncate ${idx === localPlayer.currentIndex ? "text-theme-primary" : "text-theme-text group-hover:text-theme-primary"}`}
+                                                                        className={`font-ui-mono text-ui-sm truncate ${idx === localPlayer.currentIndex ? "text-theme-primary" : "text-theme-text group-hover:text-theme-primary"}`}
                                                                     >
                                                                         {
                                                                             track.name
                                                                         }
                                                                     </div>
                                                                     {track.artist && (
-                                                                        <div className="font-mono text-xs text-theme-dim truncate mt-0.5">
+                                                                        <div className="font-ui-mono text-ui-xs text-theme-dim truncate mt-0.5">
                                                                             {
                                                                                 track.artist
                                                                             }
@@ -305,7 +305,7 @@ const AudioPlayer: React.FC<{
                                                                 {idx ===
                                                                     localPlayer.currentIndex &&
                                                                     localPlayer.isPlaying && (
-                                                                        <span className="text-xs text-theme-primary animate-pulse ml-2 flex items-center flex-shrink-0">
+                                                                        <span className="text-ui-xs text-theme-primary animate-pulse ml-2 flex items-center flex-shrink-0">
                                                                             <i className="ri-rhythm-line text-base"></i>
                                                                         </span>
                                                                     )}
@@ -334,16 +334,16 @@ const AudioPlayer: React.FC<{
                                     </div>
 
                                     <div className="p-4 border-t border-theme-highlight bg-theme-surface/50 flex justify-end gap-3">
-                                        <div className="text-[10px] text-theme-dim self-center mr-auto">
+                                        <div className="text-ui-micro text-theme-dim self-center mr-auto">
                                             {localPlayer.playlist.length}{" "}
                                             {t("FILES_LOADED")}
-                                            <div className="text-[9px]">
+                                            <div className="text-ui-2xs">
                                                 {t("DUPLICATE_SKIP_HINT")}
                                             </div>
                                         </div>
                                         <button
                                             onClick={localPlayer.clearPlaylist}
-                                            className="text-xs font-mono px-3 py-1 text-red-500/70 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                            className="text-ui-xs font-ui-mono px-3 py-1 text-red-500/70 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
                                             disabled={
                                                 localPlayer.playlist.length ===
                                                 0
@@ -355,7 +355,7 @@ const AudioPlayer: React.FC<{
                                             onClick={() =>
                                                 fileInputRef.current?.click()
                                             }
-                                            className="text-xs font-mono border border-theme-primary text-theme-primary hover:bg-theme-primary hover:text-black px-4 py-1 transition-all uppercase flex items-center gap-1 cursor-pointer"
+                                            className="text-ui-xs font-ui-mono border border-theme-primary text-theme-primary hover:bg-theme-primary hover:text-black px-4 py-1 transition-all uppercase flex items-center gap-1 cursor-pointer"
                                         >
                                             <i className="ri-add-line text-base"></i>
                                             {t("ADD_TRACKS")}

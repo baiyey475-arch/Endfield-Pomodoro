@@ -126,7 +126,7 @@ export function PWAPrompt({ language }: PWAPromptProps) {
         >
             <div className="flex items-center gap-3">
                 <i className="ri-check-line text-theme-success text-lg flex-shrink-0" />
-                <p className="text-theme-text font-mono text-xs font-bold flex-grow">
+                <p className="text-theme-text font-ui-mono text-ui-xs font-bold flex-grow">
                     {t("pwa_updated")}
                 </p>
                 <button

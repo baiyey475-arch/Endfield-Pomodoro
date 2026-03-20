@@ -60,7 +60,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
             {/* 标签文字 */}
             <span
                 className={`
-          text-xs font-mono uppercase tracking-wider truncate flex-1
+          text-ui-xs font-ui-mono uppercase tracking-ui-wider truncate flex-1
           transition-colors duration-150
           ${
               checked

@@ -178,28 +178,28 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                 {/* 顶部信息栏 */}
                 <div className="flex justify-between items-end border-b border-theme-highlight/30 pb-2 mb-2">
                     <div className="flex flex-col overflow-hidden mr-4 flex-1">
-                        <span className="text-[10px] text-theme-dim uppercase tracking-widest">
+                        <span className="text-ui-micro text-theme-dim uppercase tracking-ui-widest">
                             {isLoading ? t("CONNECTING") : t("STATUS")}
                         </span>
                         {currentTrackName ? (
                             <div className="flex flex-col mt-1">
-                                <div className="text-sm font-mono text-theme-primary truncate animate-pulse-fast leading-tight">
+                                <div className="text-ui-sm font-ui-mono text-theme-primary truncate animate-pulse-fast leading-ui-tight">
                                     {isPlaying ? "► " : "❚❚ "}{" "}
                                     {currentTrackName}
                                 </div>
                                 {currentArtist && (
-                                    <div className="text-xs text-theme-dim truncate leading-tight mt-0.5">
+                                    <div className="text-ui-xs text-theme-dim truncate leading-ui-tight mt-0.5">
                                         {currentArtist}
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <div className="text-sm font-mono text-theme-dim uppercase leading-tight mt-1">
+                            <div className="text-ui-sm font-ui-mono text-theme-dim uppercase leading-ui-tight mt-1">
                                 {t("NO_TRACK")}
                             </div>
                         )}
                     </div>
-                    <div className="text-[10px] font-mono text-theme-dim text-right shrink-0">
+                    <div className="text-ui-micro font-ui-mono text-theme-dim text-right shrink-0">
                         {playlistCount > 0
                             ? `${currentIndex + 1} / ${playlistCount}`
                             : "- / -"}
@@ -258,7 +258,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div className="flex items-center gap-2 px-2 bg-black/60 backdrop-blur-sm rounded">
                                     <span
-                                        className="text-[10px] md:text-xs font-mono text-white font-bold"
+                                        className="text-ui-micro md:text-ui-xs font-ui-mono text-white font-bold"
                                         style={{
                                             textShadow:
                                                 "0 1px 2px rgba(0,0,0,0.8)",
@@ -266,10 +266,10 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                                     >
                                         {formatTime(displayTime)}
                                     </span>
-                                    <span className="text-[8px] md:text-[9px] font-mono text-white/70">
+                                    <span className="text-ui-3xs md:text-ui-2xs font-ui-mono text-white/70">
                                         /
                                     </span>
-                                    <span className="text-[8px] md:text-[9px] font-mono text-white/70">
+                                    <span className="text-ui-3xs md:text-ui-2xs font-ui-mono text-white/70">
                                         {formatTime(duration)}
                                     </span>
                                 </div>
