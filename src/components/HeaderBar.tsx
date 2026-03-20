@@ -87,10 +87,10 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
                             aria-label={t("DASHBOARD")}
                         >
                             <span className="md:hidden" aria-hidden="true">
-                                <i className="ri-dashboard-line text-lg font-normal"></i>
+                                <i className="ri-dashboard-line icon-ui-lg font-normal"></i>
                             </span>
                             <span className="hidden md:flex items-center gap-1">
-                                <i className="ri-dashboard-line text-lg leading-none font-normal"></i>
+                                <i className="ri-dashboard-line icon-ui-lg leading-none font-normal"></i>
                                 <span className="leading-ui-none">
                                     {t("DASHBOARD")}
                                 </span>
@@ -109,10 +109,10 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
                             aria-label={t("SYSTEM_CONFIG")}
                         >
                             <span className="md:hidden" aria-hidden="true">
-                                <i className="ri-settings-3-line text-lg font-normal"></i>
+                                <i className="ri-settings-3-line icon-ui-lg font-normal"></i>
                             </span>
                             <span className="hidden md:flex items-center gap-1">
-                                <i className="ri-settings-3-line text-lg leading-none font-normal"></i>
+                                <i className="ri-settings-3-line icon-ui-lg leading-none font-normal"></i>
                                 <span className="leading-ui-none">
                                     {t("SYSTEM_CONFIG")}
                                 </span>

@@ -125,7 +125,7 @@ export function PWAPrompt({ language }: PWAPromptProps) {
             aria-live="polite"
         >
             <div className="flex items-center gap-3">
-                <i className="ri-check-line text-theme-success text-lg flex-shrink-0" />
+                <i className="ri-check-line icon-ui-lg text-theme-success flex-shrink-0" />
                 <p className="text-theme-text font-ui-mono text-ui-xs font-bold flex-grow">
                     {t("pwa_updated")}
                 </p>
@@ -135,7 +135,7 @@ export function PWAPrompt({ language }: PWAPromptProps) {
                     aria-label={t("pwa_close") || "Close"}
                     title={t("pwa_close") || "Close"}
                 >
-                    <i className="ri-close-line text-theme-text/60 group-hover:text-theme-text text-lg" />
+                    <i className="ri-close-line icon-ui-lg text-theme-text/60 group-hover:text-theme-text" />
                 </button>
             </div>
         </div>

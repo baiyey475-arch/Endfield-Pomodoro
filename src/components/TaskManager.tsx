@@ -123,8 +123,8 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                     {tasks.length === 0 ? (
                         <div className="flex h-full min-h-[10rem]">
                             <div className="flex-1 min-h-full flex flex-col items-center justify-center text-theme-dim/50 border-2 border-dashed border-theme-highlight/30 rounded box-border">
-                                <div className="text-4xl mb-2 opacity-50">
-                                    <i className="ri-flashlight-line text-5xl"></i>
+                                <div className="mb-2 opacity-50">
+                                    <i className="ri-flashlight-line icon-ui-display"></i>
                                 </div>
                                 <span className="font-ui-mono text-ui-xs tracking-ui-widest uppercase">
                                     {t("NO_TASKS")}
@@ -146,7 +146,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                                             aria-label={t("TOGGLE_TASK")}
                                         >
                                             {task.completed && (
-                                                <i className="ri-check-line text-xs font-bold"></i>
+                                                <i className="ri-check-line icon-ui-xs font-bold"></i>
                                             )}
                                         </button>
                                         <span
@@ -161,7 +161,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                                         title={t("DELETE_TASK")}
                                         aria-label={t("DELETE_TASK")}
                                     >
-                                        <i className="ri-close-line text-lg"></i>
+                                        <i className="ri-close-line icon-ui-lg"></i>
                                     </button>
                                 </div>
                             ))}

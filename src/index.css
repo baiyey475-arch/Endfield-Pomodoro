@@ -53,6 +53,14 @@
   --text-ui-2xl: 24px;
   --text-ui-display: 48px;
   --text-ui-display-xl: 64px;
+
+  --icon-ui-xs: 12px;
+  --icon-ui-sm: 14px;
+  --icon-ui-md: 16px;
+  --icon-ui-lg: 18px;
+  --icon-ui-xl: 20px;
+  --icon-ui-2xl: 24px;
+  --icon-ui-display: 48px;
 }
 
 html {
@@ -143,6 +151,41 @@ html {
 
 @utility leading-ui-grid {
   line-height: 0.75rem;
+}
+
+@utility icon-ui-xs {
+  font-size: var(--icon-ui-xs);
+  line-height: 1;
+}
+
+@utility icon-ui-sm {
+  font-size: var(--icon-ui-sm);
+  line-height: 1;
+}
+
+@utility icon-ui-md {
+  font-size: var(--icon-ui-md);
+  line-height: 1;
+}
+
+@utility icon-ui-lg {
+  font-size: var(--icon-ui-lg);
+  line-height: 1;
+}
+
+@utility icon-ui-xl {
+  font-size: var(--icon-ui-xl);
+  line-height: 1;
+}
+
+@utility icon-ui-2xl {
+  font-size: var(--icon-ui-2xl);
+  line-height: 1;
+}
+
+@utility icon-ui-display {
+  font-size: var(--icon-ui-display);
+  line-height: 1;
 }
 
 /* 基础样式 */

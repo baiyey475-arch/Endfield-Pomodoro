@@ -236,7 +236,7 @@ const AudioPlayer: React.FC<{
                                             }
                                             className="text-theme-dim hover:text-theme-primary p-1 cursor-pointer"
                                         >
-                                            <i className="ri-close-line text-xl"></i>
+                                            <i className="ri-close-line icon-ui-xl"></i>
                                         </button>
                                     </div>
 
@@ -306,7 +306,7 @@ const AudioPlayer: React.FC<{
                                                                     localPlayer.currentIndex &&
                                                                     localPlayer.isPlaying && (
                                                                         <span className="text-ui-xs text-theme-primary animate-pulse ml-2 flex items-center flex-shrink-0">
-                                                                            <i className="ri-rhythm-line text-base"></i>
+                                                                            <i className="ri-rhythm-line icon-ui-md"></i>
                                                                         </span>
                                                                     )}
                                                             </div>
@@ -324,7 +324,7 @@ const AudioPlayer: React.FC<{
                                                                     "DELETE_TRACK",
                                                                 )}
                                                             >
-                                                                <i className="ri-close-line text-lg"></i>
+                                                                <i className="ri-close-line icon-ui-lg"></i>
                                                             </button>
                                                         </li>
                                                     ),
@@ -357,7 +357,7 @@ const AudioPlayer: React.FC<{
                                             }
                                             className="text-ui-xs font-ui-mono border border-theme-primary text-theme-primary hover:bg-theme-primary hover:text-black px-4 py-1 transition-all uppercase flex items-center gap-1 cursor-pointer"
                                         >
-                                            <i className="ri-add-line text-base"></i>
+                                            <i className="ri-add-line icon-ui-md"></i>
                                             {t("ADD_TRACKS")}
                                         </button>
                                     </div>

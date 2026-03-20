@@ -55,7 +55,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     {selectedOption?.label || value}
                 </span>
                 <i
-                    className={`ri-arrow-down-s-line text-lg transition-transform duration-200 flex-shrink-0 ml-2 ${isOpen ? "rotate-180" : ""}`}
+                    className={`ri-arrow-down-s-line icon-ui-lg transition-transform duration-200 flex-shrink-0 ml-2 ${isOpen ? "rotate-180" : ""}`}
                 ></i>
             </button>
 
@@ -84,7 +84,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                             <div className="flex items-center justify-between">
                                 <span className="truncate">{option.label}</span>
                                 {option.value === value && (
-                                    <i className="ri-check-line text-base"></i>
+                                    <i className="ri-check-line icon-ui-md"></i>
                                 )}
                             </div>
                         </button>

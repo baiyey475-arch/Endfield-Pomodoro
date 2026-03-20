@@ -315,7 +315,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 />
                                 <div className="mt-2 text-ui-sm text-theme-primary font-ui-mono inline-flex items-center gap-1 px-2 py-1 border border-theme-highlight/80 bg-theme-surface/20">
                                     <i
-                                        className="ri-alarm-warning-line text-sm"
+                                        className="ri-alarm-warning-line icon-ui-sm"
                                         aria-hidden="true"
                                     ></i>
                                     <span>{t("PLATFORM_NOTICE")}</span>
@@ -358,7 +358,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                 title={t("RESET_MUSIC_CONFIG")}
                                 aria-label={t("RESET_MUSIC_CONFIG")}
                             >
-                                <i className="ri-refresh-line text-base"></i>
+                                <i className="ri-refresh-line icon-ui-md"></i>
                             </Button>
                             <Button
                                 variant="primary"

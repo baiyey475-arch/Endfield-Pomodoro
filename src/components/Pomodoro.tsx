@@ -352,7 +352,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                             onClick={() => onSessionsUpdate(0)}
                             title={t("RESET_SESSIONS")}
                         >
-                            <i className="ri-refresh-line text-lg"></i>
+                            <i className="ri-refresh-line icon-ui-lg"></i>
                         </Button>
                         <div className="text-right">
                             <span className="text-ui-micro text-theme-dim tracking-ui-widest uppercase mb-1 block">
@@ -494,7 +494,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                         title={t("RESET_TIMER")}
                         aria-label={t("RESET_TIMER")}
                     >
-                        <i className="ri-restart-line text-2xl"></i>
+                        <i className="ri-restart-line icon-ui-2xl"></i>
                     </Button>
                     <Button
                         onClick={handleComplete}
@@ -503,7 +503,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                         title={t("SKIP_TIMER")}
                         aria-label={t("SKIP_TIMER")}
                     >
-                        <i className="ri-skip-forward-line text-2xl"></i>
+                        <i className="ri-skip-forward-line icon-ui-2xl"></i>
                     </Button>
                 </div>
             </div>

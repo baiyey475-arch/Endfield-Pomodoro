@@ -284,7 +284,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                         title={t("PLAYLIST_BUTTON")}
                         aria-label={t("PLAYLIST_BUTTON")}
                     >
-                        <i className="ri-play-list-line text-base"></i>
+                        <i className="ri-play-list-line icon-ui-md"></i>
                     </button>
 
                     {/* 模式切换 */}
@@ -301,11 +301,11 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                         aria-label={t("TOGGLE_MODE")}
                     >
                         {playMode === AudioMode.SEQUENTIAL ? (
-                            <i className="ri-repeat-line text-base"></i>
+                            <i className="ri-repeat-line icon-ui-md"></i>
                         ) : playMode === AudioMode.REPEAT_ONE ? (
-                            <i className="ri-repeat-one-line text-base"></i>
+                            <i className="ri-repeat-one-line icon-ui-md"></i>
                         ) : (
-                            <i className="ri-shuffle-line text-base"></i>
+                            <i className="ri-shuffle-line icon-ui-md"></i>
                         )}
                     </button>
                 </div>
@@ -321,7 +321,7 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     title={t("PREVIOUS_TRACK_TOOLTIP")}
                     aria-label={t("PREVIOUS_TRACK_TOOLTIP")}
                 >
-                    <i className="ri-skip-back-line text-xl"></i>
+                    <i className="ri-skip-back-line icon-ui-xl"></i>
                 </button>
 
                 {/* 播放/暂停 */}
@@ -333,9 +333,9 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     aria-label={t("PLAY_PAUSE")}
                 >
                     {isPlaying ? (
-                        <i className="ri-pause-line text-2xl"></i>
+                        <i className="ri-pause-line icon-ui-2xl"></i>
                     ) : (
-                        <i className="ri-play-fill text-2xl"></i>
+                        <i className="ri-play-fill icon-ui-2xl"></i>
                     )}
                 </button>
 
@@ -347,13 +347,13 @@ const PlayerInterface: React.FC<PlayerInterfaceProps> = ({
                     title={t("NEXT_TRACK")}
                     aria-label={t("NEXT_TRACK")}
                 >
-                    <i className="ri-skip-forward-line text-xl"></i>
+                    <i className="ri-skip-forward-line icon-ui-xl"></i>
                 </button>
 
                 {/* 音量条 */}
                 <div className="flex-1 h-9 flex items-center gap-2 px-2 border border-theme-highlight/30 rounded-sm bg-black/10">
                     <i
-                        className={`${displayVolume === 0 ? "ri-volume-mute-line" : "ri-volume-up-line"} text-theme-dim hover:text-theme-primary text-base shrink-0 cursor-pointer transition-colors`}
+                        className={`${displayVolume === 0 ? "ri-volume-mute-line" : "ri-volume-up-line"} icon-ui-md text-theme-dim hover:text-theme-primary shrink-0 cursor-pointer transition-colors`}
                         role="button"
                         aria-label={
                             displayVolume === 0 ? t("UNMUTE") : t("MUTE")

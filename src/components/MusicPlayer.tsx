@@ -167,7 +167,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
     if (dataError) {
         return (
             <div className="flex flex-col items-center justify-center h-full text-red-500">
-                <i className="ri-error-warning-line text-xl mb-1"></i>
+                <i className="ri-error-warning-line icon-ui-xl mb-1"></i>
                 <div className="text-ui-xs font-ui-mono">
                     {t("CONNECTION_LOST")}
                 </div>
@@ -178,7 +178,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
     if (!player.currentSong) {
         return (
             <div className="flex flex-col items-center justify-center h-full text-theme-dim">
-                <i className="ri-disc-line text-xl mb-1"></i>
+                <i className="ri-disc-line icon-ui-xl mb-1"></i>
                 <div className="text-ui-xs font-ui-mono">{t("NO_TRACK")}</div>
             </div>
         );
