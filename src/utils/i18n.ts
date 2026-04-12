@@ -7,6 +7,8 @@ export const translations = {
         DASHBOARD: "DASHBOARD",
         SYSTEM_CONFIG: "SYSTEM CONFIG",
         SYSTEM_TIME: "SYS.TIME",
+        WELCOME_MESSAGE:
+            "Welcome to Endfield Protocol. Optimize your productivity with our advanced pomodoro timer system.",
 
         // Settings
         WORK_DURATION: "WORK CYCLE (MIN)",
@@ -139,6 +141,8 @@ export const translations = {
         DASHBOARD: "总控台",
         SYSTEM_CONFIG: "系统设置",
         SYSTEM_TIME: "系统时间",
+        WELCOME_MESSAGE:
+            "欢迎使用末端协议-番茄钟。通过我们先进的番茄工作法系统优化您的工作效率。",
 
         // Settings
         WORK_DURATION: "作业周期 (分)",

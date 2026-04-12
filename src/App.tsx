@@ -5,8 +5,7 @@ import FooterStats from "./components/FooterStats";
 import HeaderBar from "./components/HeaderBar";
 import { PWAPrompt } from "./components/PWAPrompt";
 import SettingsPanel from "./components/SettingsPanel";
-import { BackgroundLayer, ForegroundLayer } from "./components/TerminalUI";
-import { MikuDecorations } from "./components/themes";
+import { ParticleBackground, WaveBackground } from "./components/themes";
 import { defaultMusicConfig } from "./config/musicConfig";
 import { THEMES } from "./config/themes";
 import {
@@ -199,18 +198,18 @@ const App: React.FC = () => {
     }, []);
 
     return (
-        <div className="h-[100dvh] bg-theme-base text-theme-text font-ui-sans selection:bg-theme-primary selection:text-theme-base flex flex-col overflow-hidden transition-colors duration-500 relative cursor-default">
-            {/* 背景视觉效果 (Z-0) */}
-            <BackgroundLayer theme={settings.theme} />
+        <div className="h-[100dvh] bg-gradient-to-br from-theme-base via-theme-surface to-theme-highlight text-theme-text font-ui-sans selection:bg-theme-primary selection:text-theme-base flex flex-col overflow-hidden transition-colors duration-500 relative cursor-default">
+            {/* 动态波浪背景 (Z-0) */}
+            <WaveBackground theme={settings.theme} />
 
-            {/* Miku 主题专属装饰元素 (Z-5) - 在背景之上，内容之下 */}
-            <MikuDecorations
-                theme={settings.theme}
-                footerHeight={footerHeight}
-            />
+            {/* 粒子背景效果 (Z-1) */}
+            <ParticleBackground theme={settings.theme} />
 
-            {/* 前景HUD视觉效果 (Z-50, pointer-events-none) - 视觉覆盖层 */}
-            <ForegroundLayer theme={settings.theme} />
+            {/* 装饰性背景元素 */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.1),transparent_70%)]"></div>
+                <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(244,114,182,0.1),transparent_70%)]"></div>
+            </div>
 
             <HeaderBar
                 currentView={currentView}
@@ -222,7 +221,7 @@ const App: React.FC = () => {
             />
 
             <main
-                className="flex-1 pt-24 md:pt-28 px-4 md:px-12 overflow-y-auto overflow-x-hidden relative z-10 flex flex-col custom-scrollbar"
+                className="flex-1 pt-24 md:pt-28 px-4 md:px-12 lg:px-20 overflow-y-auto overflow-x-hidden relative z-10 flex flex-col custom-scrollbar"
                 style={{
                     scrollbarGutter: "stable",
                     paddingBottom:
@@ -232,6 +231,18 @@ const App: React.FC = () => {
                         ),
                 }}
             >
+                {/* 欢迎信息 */}
+                {currentView === View.DASHBOARD && (
+                    <div className="mb-8 text-center">
+                        <h1 className="text-ui-4xl font-bold gradient-text mb-2">
+                            {t("APP_TITLE")}
+                        </h1>
+                        <p className="text-ui-lg text-theme-dim max-w-2xl mx-auto">
+                            {t("WELCOME_MESSAGE")}
+                        </p>
+                    </div>
+                )}
+
                 <div className={currentView === View.SETTINGS ? "" : "hidden"}>
                     <SettingsPanel
                         settings={settings}

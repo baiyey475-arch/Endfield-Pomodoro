@@ -25,3 +25,5 @@ export {
     MikuDecorations,
     MikuForegroundLayer,
 } from "./MikuDecorations";
+export { default as ParticleBackground } from "./ParticleBackground";
+export { default as WaveBackground } from "./WaveBackground";

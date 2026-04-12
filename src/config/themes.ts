@@ -113,4 +113,16 @@ export const THEMES: Record<ThemePreset, Record<string, string>> = {
         "--color-success": "#00E676",
         "--color-error": "#FF5252",
     },
+    [ThemePreset.MINIMAL]: {
+        "--color-base": "#ffffff",
+        "--color-surface": "#f8f9fa",
+        "--color-highlight": "#e9ecef",
+        "--color-primary": "#495057",
+        "--color-secondary": "#6c757d",
+        "--color-accent": "#adb5bd",
+        "--color-text": "#212529",
+        "--color-dim": "#ced4da",
+        "--color-success": "#28a745",
+        "--color-error": "#dc3545",
+    },
 };

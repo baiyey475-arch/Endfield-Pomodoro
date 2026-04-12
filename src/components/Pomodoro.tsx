@@ -36,9 +36,6 @@ const Pomodoro: React.FC<PomodoroProps> = ({
 }) => {
     const t = useTranslation(settings.language);
     const playSound = useSound(settings.soundEnabled, settings.soundVolume);
-    const gradientId = useRef(
-        `progress-gradient-${Math.random().toString(36).substring(2, 11)}`,
-    ).current;
 
     const settingsRef = useRef(settings);
     useEffect(() => {
@@ -329,7 +326,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
 
     return (
         <Panel
-            className="w-full h-full min-h-full p-6 md:p-8"
+            className="w-full h-full min-h-full p-6 md:p-8 bg-theme-surface/70 backdrop-blur-lg"
             title={t("CHRONO_MODULE")}
         >
             <div className="flex flex-col h-full w-full items-center gap-6 relative">
@@ -366,20 +363,45 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                 </div>
 
                 {/* 计时器显示 */}
-                <div className="flex-1 w-full flex items-center justify-center relative py-8 md:py-10 min-h-[22rem] md:min-h-[27rem]">
-                    <div className="relative w-[256px] h-[256px] md:w-[320px] md:h-[320px] flex items-center justify-center shrink-0 group max-w-full max-h-full">
-                        {/* 脉冲背景环（呼吸效果） */}
-                        {isActive && (
-                            <div className="absolute inset-0 rounded-full border-2 border-theme-primary/30 animate-ping-slow"></div>
-                        )}
+                <div className="flex-1 w-full flex items-center justify-center relative py-10 md:py-12 min-h-[22rem] md:min-h-[27rem]">
+                    <div className="relative w-[280px] h-[280px] md:w-[360px] md:h-[360px] flex items-center justify-center shrink-0 group max-w-full max-h-full animate-float">
+                        {/* 装饰性外圈 */}
+                        <div className="absolute inset-0 rounded-full border-2 border-theme-primary/20 animate-spin-slow"></div>
+                        <div className="absolute inset-4 rounded-full border border-theme-accent/20"></div>
 
                         <svg
-                            className="absolute w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(var(--color-primary),0.2)]"
+                            className="absolute w-full h-full transform -rotate-90"
                             viewBox="0 0 256 256"
                         >
+                            {/* 轨道 */}
+                            <circle
+                                className="text-theme-highlight/30"
+                                strokeWidth="3"
+                                stroke="currentColor"
+                                fill="transparent"
+                                r="120"
+                                cx="128"
+                                cy="128"
+                            />
+                            {/* 进度 */}
+                            <circle
+                                className={`transition-all duration-1000 ease-linear`}
+                                strokeWidth="6"
+                                strokeDasharray={2 * Math.PI * 120}
+                                strokeDashoffset={
+                                    2 * Math.PI * 120 * (1 - progress / 100)
+                                }
+                                strokeLinecap="round"
+                                stroke="url(#gradient)"
+                                fill="transparent"
+                                r="120"
+                                cx="128"
+                                cy="128"
+                            />
+                            {/* 渐变定义 */}
                             <defs>
                                 <linearGradient
-                                    id={gradientId}
+                                    id="gradient"
                                     x1="0%"
                                     y1="0%"
                                     x2="100%"
@@ -391,77 +413,22 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                                     />
                                     <stop
                                         offset="100%"
-                                        stopColor="var(--color-secondary)"
+                                        stopColor="var(--color-accent)"
                                     />
                                 </linearGradient>
                             </defs>
-                            {/* 轨道 */}
-                            <circle
-                                className="text-theme-highlight/20"
-                                strokeWidth="2"
-                                stroke="currentColor"
-                                fill="transparent"
-                                r="120"
-                                cx="128"
-                                cy="128"
-                            />
-                            {/* 进度 */}
-                            <circle
-                                className={`${mode === TimerMode.WORK ? "text-theme-primary" : "text-theme-accent"} transition-all duration-1000 ease-linear`}
-                                strokeWidth="4"
-                                strokeDasharray={2 * Math.PI * 120}
-                                strokeDashoffset={
-                                    2 * Math.PI * 120 * (1 - progress / 100)
-                                }
-                                strokeLinecap="round"
-                                stroke="currentColor" // Uses text color which we override via class if needed, or stick to solid
-                                fill="transparent"
-                                r="120"
-                                cx="128"
-                                cy="128"
-                                style={{
-                                    filter: "drop-shadow(0 0 4px var(--color-primary))",
-                                }}
-                            />
-                            {/* 发光尖端 */}
-                            <circle
-                                fill="var(--color-text)"
-                                r="4"
-                                cx="248"
-                                cy="128"
-                                className="transition-all duration-1000 ease-linear"
-                                style={{
-                                    transformOrigin: "128px 128px",
-                                    transform: `rotate(${progress * 3.6}deg)`,
-                                }}
-                            />
                         </svg>
-
-                        {/* 内部装饰元素 */}
-                        <div
-                            className={`absolute inset-8 border border-theme-highlight/20 rounded-full opacity-50 border-dashed ${isActive ? "animate-spin-slow" : ""}`}
-                        ></div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-[90%] h-[1px] bg-theme-highlight/10 absolute rotate-45"></div>
-                            <div className="w-[90%] h-[1px] bg-theme-highlight/10 absolute -rotate-45"></div>
-                        </div>
 
                         {/* 时间文本 */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 select-none">
                             <span
-                                className={`text-ui-display md:text-ui-display-xl font-ui-mono font-bold text-theme-text drop-shadow-2xl tabular-nums transition-transform will-change-transform`}
-                                style={{
-                                    transform: isActive
-                                        ? "scale(1.05)"
-                                        : "scale(1)",
-                                    transformOrigin: "center",
-                                }}
+                                className={`text-ui-display md:text-ui-display-xl font-ui-mono font-bold gradient-text tabular-nums`}
                                 aria-live="polite"
                                 aria-atomic="true"
                             >
                                 {formatTime(timeLeft)}
                             </span>
-                            <span className="text-ui-xs text-theme-dim font-ui-mono mt-2 tracking-ui-signal uppercase animate-pulse">
+                            <span className="text-ui-xs text-theme-dim font-ui-mono mt-3 uppercase tracking-ui-wider">
                                 {t("TIME_REMAINING")}
                             </span>
                         </div>
@@ -469,28 +436,19 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                 </div>
 
                 {/* 控制 */}
-                <div className="w-full grid grid-cols-4 gap-4 shrink-0">
-                    <div
-                        className={`col-span-2 h-[56px] relative ${!isActive ? "group" : ""}`}
+                <div className="w-full grid grid-cols-3 gap-6 shrink-0">
+                    <Button
+                        onClick={toggleTimer}
+                        variant={isActive ? "secondary" : "primary"}
+                        className="col-span-1 h-[60px] text-ui-lg"
+                        title={isActive ? t("PAUSE") : t("INITIALIZE")}
                     >
-                        {!isActive && (
-                            <div className="absolute -inset-[3px] overflow-hidden clip-path-slant z-0 bg-theme-dim/10">
-                                <div className="absolute top-1/2 left-1/2 w-[200%] h-[200%] glow-conic-secondary animate-spin-slow-linear-4s"></div>
-                            </div>
-                        )}
-                        <Button
-                            onClick={toggleTimer}
-                            variant={isActive ? "secondary" : "primary"}
-                            className="w-full h-full text-ui-lg relative z-10"
-                            title={isActive ? t("PAUSE") : t("INITIALIZE")}
-                        >
-                            {isActive ? t("PAUSE") : t("INITIALIZE")}
-                        </Button>
-                    </div>
+                        {isActive ? t("PAUSE") : t("INITIALIZE")}
+                    </Button>
                     <Button
                         onClick={resetTimer}
                         variant="ghost"
-                        className="col-span-1 h-[56px] border border-theme-highlight/30 hover:border-theme-primary"
+                        className="col-span-1 h-[60px] border border-theme-highlight/30 hover:border-theme-primary"
                         title={t("RESET_TIMER")}
                         aria-label={t("RESET_TIMER")}
                     >
@@ -499,7 +457,7 @@ const Pomodoro: React.FC<PomodoroProps> = ({
                     <Button
                         onClick={handleComplete}
                         variant="ghost"
-                        className="col-span-1 h-[56px] border border-theme-highlight/30 hover:border-theme-primary"
+                        className="col-span-1 h-[60px] border border-theme-highlight/30 hover:border-theme-primary"
                         title={t("SKIP_TIMER")}
                         aria-label={t("SKIP_TIMER")}
                     >

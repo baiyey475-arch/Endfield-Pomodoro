@@ -28,6 +28,7 @@ export const ThemePreset = {
     INDUSTRIAL: "INDUSTRIAL",
     AZURE: "AZURE",
     MIKU: "MIKU",
+    MINIMAL: "MINIMAL",
 } as const;
 export type ThemePreset = (typeof ThemePreset)[keyof typeof ThemePreset];
 

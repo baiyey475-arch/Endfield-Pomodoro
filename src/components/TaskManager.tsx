@@ -82,20 +82,17 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
     const isFull = tasks.length >= MAX_TASKS;
 
     return (
-        <Panel className="h-full min-h-[16rem] p-6" title={t("TASK_MODULE")}>
-            <div className="flex flex-col h-full w-full relative">
+        <Panel
+            className="h-full min-h-[16rem] p-6 bg-theme-surface/70 backdrop-blur-lg"
+            title={t("TASK_MODULE")}
+        >
+            <div className="flex flex-col h-full w-full">
                 {/* Header Info with Counter */}
-                <div className="absolute -top-2 right-0 text-ui-micro font-ui-mono tracking-ui-widest text-theme-dim">
-                    {t("CAPACITY")}:{" "}
-                    <span
-                        className={`${isFull ? "text-red-500" : "text-theme-primary"}`}
-                    >
-                        {tasks.length}
-                    </span>
-                    /{MAX_TASKS}
+                <div className="text-ui-micro font-ui-mono text-theme-dim mb-4 text-right">
+                    {t("CAPACITY")}: {tasks.length}/{MAX_TASKS}
                 </div>
 
-                <div className="flex items-stretch gap-2 mb-4 mt-4 w-full shrink-0">
+                <div className="flex items-stretch gap-2 mb-4 w-full shrink-0">
                     <div className="flex-1 min-w-0">
                         <Input
                             value={inputValue}
@@ -119,14 +116,14 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                     </Button>
                 </div>
 
-                <div className="flex-1 min-h-0 overflow-y-auto pr-2 custom-scrollbar relative">
+                <div className="flex-1 min-h-0 overflow-y-auto pr-2 custom-scrollbar">
                     {tasks.length === 0 ? (
                         <div className="flex h-full min-h-[10rem]">
-                            <div className="flex-1 min-h-full flex flex-col items-center justify-center text-theme-dim/50 border-2 border-dashed border-theme-highlight/30 rounded box-border">
+                            <div className="flex-1 min-h-full flex flex-col items-center justify-center text-theme-dim/50 border-2 border-dashed border-theme-highlight/30 rounded">
                                 <div className="mb-2 opacity-50">
                                     <i className="ri-flashlight-line icon-ui-display"></i>
                                 </div>
-                                <span className="font-ui-mono text-ui-xs tracking-ui-widest uppercase">
+                                <span className="font-ui-mono text-ui-xs uppercase">
                                     {t("NO_TASKS")}
                                 </span>
                             </div>
@@ -136,12 +133,12 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                             {tasks.map((task) => (
                                 <div
                                     key={task.id}
-                                    className={`group flex items-center justify-between p-3 border border-theme-highlight/50 bg-black/20 hover:bg-theme-highlight/20 transition-all duration-300 ${task.completed ? "opacity-50" : ""}`}
+                                    className={`flex items-center justify-between p-3 border border-theme-highlight/30 hover:border-theme-primary/50 transition-all duration-300 ${task.completed ? "opacity-50" : ""}`}
                                 >
                                     <div className="flex items-center gap-3 overflow-hidden flex-1 min-w-0">
                                         <button
                                             onClick={() => toggleTask(task.id)}
-                                            className={`w-4 h-4 flex-shrink-0 border flex items-center justify-center transition-colors ${task.completed ? "bg-theme-primary border-theme-primary text-black" : "border-theme-dim hover:border-theme-primary"}`}
+                                            className={`w-4 h-4 flex-shrink-0 border flex items-center justify-center transition-colors ${task.completed ? "bg-theme-primary border-theme-primary text-white" : "border-theme-dim hover:border-theme-primary"}`}
                                             title={t("TOGGLE_TASK")}
                                             aria-label={t("TOGGLE_TASK")}
                                         >
@@ -150,14 +147,14 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                                             )}
                                         </button>
                                         <span
-                                            className={`font-ui-mono text-ui-sm truncate transition-all ${task.completed ? "line-through text-theme-dim" : "text-theme-text"}`}
+                                            className={`text-ui-sm truncate transition-all ${task.completed ? "line-through text-theme-dim" : "text-theme-text"}`}
                                         >
                                             {task.text}
                                         </span>
                                     </div>
                                     <button
                                         onClick={() => deleteTask(task.id)}
-                                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 text-theme-dim hover:text-red-500 transition-all px-2 flex-shrink-0"
+                                        className="text-theme-dim hover:text-red-500 transition-all px-2 flex-shrink-0"
                                         title={t("DELETE_TASK")}
                                         aria-label={t("DELETE_TASK")}
                                     >
@@ -173,11 +170,11 @@ const TaskManager: React.FC<TaskManagerProps> = ({ language }) => {
                     <div className="mt-4 pt-2 border-t border-theme-highlight flex justify-end shrink-0">
                         <button
                             onClick={clearCompleted}
-                            className="text-ui-micro font-ui-mono uppercase tracking-ui-widest text-theme-dim hover:text-theme-primary transition-colors flex items-center gap-1"
+                            className="text-ui-micro font-ui-mono uppercase text-theme-dim hover:text-theme-primary transition-colors flex items-center gap-1"
                             title={t("CLEAR_ALL_TASKS")}
                             aria-label={t("CLEAR_ALL_TASKS")}
                         >
-                            [{t("CLEAR_COMPLETED")}]
+                            {t("CLEAR_COMPLETED")}
                         </button>
                     </div>
                 )}
