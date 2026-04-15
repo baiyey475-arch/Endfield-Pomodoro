@@ -41,24 +41,24 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme }) => {
         // 颜色配置
         const colors = {
             MIKU: [
-                "rgba(57, 197, 187, 0.6)",
-                "rgba(100, 210, 255, 0.4)",
+                "rgba(57, 197, 187, 0.5)",
+                "rgba(100, 210, 255, 0.3)",
                 "rgba(150, 230, 255, 0.2)",
             ],
             AZURE: [
-                "rgba(0, 210, 255, 0.6)",
-                "rgba(100, 180, 255, 0.4)",
+                "rgba(0, 210, 255, 0.5)",
+                "rgba(100, 180, 255, 0.3)",
                 "rgba(150, 200, 255, 0.2)",
             ],
             MINIMAL: [
-                "rgba(100, 150, 200, 0.6)",
-                "rgba(150, 180, 220, 0.4)",
+                "rgba(100, 150, 200, 0.5)",
+                "rgba(150, 180, 220, 0.3)",
                 "rgba(200, 220, 240, 0.2)",
             ],
             default: [
-                "rgba(56, 189, 248, 0.6)",
-                "rgba(244, 114, 182, 0.4)",
-                "rgba(148, 163, 184, 0.2)",
+                "rgba(0, 210, 255, 0.5)",
+                "rgba(95, 255, 220, 0.3)",
+                "rgba(150, 230, 255, 0.2)",
             ],
         };
 
@@ -111,7 +111,7 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ theme }) => {
 
                     if (distance < 100) {
                         ctx.beginPath();
-                        ctx.strokeStyle = `rgba(56, 189, 248, ${0.1 * (1 - distance / 100)})`;
+                        ctx.strokeStyle = `rgba(0, 210, 255, ${0.15 * (1 - distance / 100)})`;
                         ctx.lineWidth = 0.5;
                         ctx.moveTo(particles[a].x, particles[a].y);
                         ctx.lineTo(particles[b].x, particles[b].y);

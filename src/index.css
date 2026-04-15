@@ -39,16 +39,16 @@
 
 /* 主题的基础变量（通过React动态切换） */
 :root {
-  --color-base: #0f172a;
-  --color-surface: #1e293b;
-  --color-highlight: #334155;
-  --color-primary: #38bdf8;
-  --color-secondary: #94a3b8;
-  --color-accent: #f472b6;
-  --color-text: #f8fafc;
-  --color-dim: #64748b;
-  --color-success: #22c55e;
-  --color-error: #ef4444;
+  --color-base: #f8fafc;
+  --color-surface: #edeff0;
+  --color-highlight: #cbced1;
+  --color-primary: #00D2FF;
+  --color-secondary: #64748b;
+  --color-accent: #5fffdc;
+  --color-text: #0f172a;
+  --color-dim: #94a3b8;
+  --color-success: #059669;
+  --color-error: #dc2626;
 
   --text-ui-3xs: 8px;
   --text-ui-2xs: 9px;
@@ -274,11 +274,47 @@ body {
 
 /* 玻璃态效果 */
 .glass-effect {
-  background: rgba(30, 41, 59, 0.7);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* 统计项动态效果 */
+.stat-item {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  transform: translateY(0);
+}
+
+.stat-item:hover {
+  background: rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 210, 255, 0.3);
+}
+
+/* 统计数字动画 */
+.stat-number {
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover .stat-number {
+  transform: scale(1.05);
+}
+
+/* 统计标签动画 */
+.stat-label {
+  transition: all 0.3s ease;
+}
+
+.stat-item:hover .stat-label {
+  color: var(--color-primary);
 }
 
 /* 渐变文本 */

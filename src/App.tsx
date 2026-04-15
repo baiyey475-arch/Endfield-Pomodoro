@@ -207,8 +207,8 @@ const App: React.FC = () => {
 
             {/* 装饰性背景元素 */}
             <div className="absolute inset-0 z-0 overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.1),transparent_70%)]"></div>
-                <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(244,114,182,0.1),transparent_70%)]"></div>
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(0,210,255,0.1),transparent_70%)]"></div>
+                <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_bottom_left,rgba(95,255,220,0.1),transparent_70%)]"></div>
             </div>
 
             <HeaderBar

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "../types";
 import { useTranslation } from "../utils/i18n";
 import { Button } from "./ui";
@@ -20,6 +20,29 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
     version,
     t,
 }) => {
+    const [weather, setWeather] = useState<{
+        temperature: number;
+        condition: string;
+        icon: string;
+    } | null>(null);
+
+    // 模拟天气数据，实际项目中可以使用OpenWeatherMap API
+    useEffect(() => {
+        // 模拟获取天气数据
+        const getWeather = async () => {
+            // 实际项目中，这里应该使用浏览器的地理位置API获取用户位置，然后调用天气API
+            // 由于这是演示，我们使用模拟数据
+            setTimeout(() => {
+                setWeather({
+                    temperature: 22,
+                    condition: "晴",
+                    icon: "☀️",
+                });
+            }, 500);
+        };
+
+        getWeather();
+    }, []);
     return (
         <header className="fixed top-0 left-0 right-0 z-40 select-none border-b border-theme-highlight/30 bg-theme-base/80 backdrop-blur-md shadow-lg">
             <div className="flex items-center justify-between px-4 md:px-6 py-3 md:py-4 max-w-[1920px] mx-auto">
@@ -120,13 +143,32 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
                         </Button>
                     </div>
 
-                    <div className="hidden md:flex flex-col items-end text-ui-micro font-ui-mono text-theme-dim border-l border-theme-highlight/30 pl-6">
-                        <span className="text-theme-primary text-ui-base leading-ui-none tracking-ui-widest">
-                            {now.toLocaleTimeString("en-US", { hour12: false })}
-                        </span>
-                        <span className="opacity-70">
-                            {now.toLocaleDateString()}
-                        </span>
+                    <div className="hidden md:flex items-center gap-6 text-ui-micro font-ui-mono text-theme-dim border-l border-theme-highlight/30 pl-6">
+                        <div className="flex flex-col items-end">
+                            <span className="text-theme-primary text-ui-base leading-ui-none tracking-ui-widest">
+                                {now.toLocaleTimeString("en-US", {
+                                    hour12: false,
+                                })}
+                            </span>
+                            <span className="opacity-70">
+                                {now.toLocaleDateString()}
+                            </span>
+                        </div>
+                        {weather && (
+                            <div className="flex items-center gap-2 border-l border-theme-highlight/30 pl-6">
+                                <span className="text-ui-lg">
+                                    {weather.icon}
+                                </span>
+                                <div className="flex flex-col items-start">
+                                    <span className="text-theme-primary text-ui-base leading-ui-none">
+                                        {weather.temperature}°C
+                                    </span>
+                                    <span className="opacity-70">
+                                        {weather.condition}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

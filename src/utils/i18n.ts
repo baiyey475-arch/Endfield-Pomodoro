@@ -3,12 +3,12 @@ import { Language } from "../types";
 export const translations = {
     [Language.EN]: {
         // App
-        APP_TITLE: "Endfield Protocol",
+        APP_TITLE: "Pomodoro Timer",
         DASHBOARD: "DASHBOARD",
-        SYSTEM_CONFIG: "SYSTEM CONFIG",
-        SYSTEM_TIME: "SYS.TIME",
+        SYSTEM_CONFIG: "SETTINGS",
+        SYSTEM_TIME: "SYSTEM TIME",
         WELCOME_MESSAGE:
-            "Welcome to Endfield Protocol. Optimize your productivity with our advanced pomodoro timer system.",
+            "Welcome to Pomodoro Timer. Optimize your productivity with our advanced pomodoro timer system.",
 
         // Settings
         WORK_DURATION: "WORK CYCLE (MIN)",
@@ -47,14 +47,14 @@ export const translations = {
         PLAYLIST_TITLE: "PLAYLIST",
 
         // Themes
-        THEME_ORIGIN: "PRESET_01: ENDFIELD_PROTOCOL",
-        THEME_ABYSSAL: "PRESET_02: ABYSSAL_ECHO",
-        THEME_NEON: "PRESET_03: NEON_CITY",
-        THEME_MATRIX: "PRESET_04: MATRIX_CODE",
-        THEME_TACTICAL: "PRESET_05: DESERT_OPS",
-        THEME_ROYAL: "PRESET_06: ROYAL_VIOLET",
-        THEME_INDUSTRIAL: "PRESET_07: HEAVY_INDUSTRY (LIGHT)",
-        THEME_AZURE: "PRESET_08: AZURE_ARCHIVE (LIGHT)",
+        THEME_ORIGIN: "PRESET_01: CLASSIC",
+        THEME_ABYSSAL: "PRESET_02: ABYSSAL",
+        THEME_NEON: "PRESET_03: NEON",
+        THEME_MATRIX: "PRESET_04: MATRIX",
+        THEME_TACTICAL: "PRESET_05: TACTICAL",
+        THEME_ROYAL: "PRESET_06: ROYAL",
+        THEME_INDUSTRIAL: "PRESET_07: INDUSTRIAL (LIGHT)",
+        THEME_AZURE: "PRESET_08: AZURE (LIGHT)",
         THEME_MIKU: "PRESET_09: MIKU",
 
         // Pomodoro
@@ -77,12 +77,12 @@ export const translations = {
             "Notification permission denied. Please enable it in browser settings.",
 
         // Task Manager
-        TASK_MODULE: "MISSION PROTOCOLS",
+        TASK_MODULE: "TASKS",
         ADD_TASK_PLACEHOLDER: "Input tasks...",
         ADD_TASK: "ADD",
-        NO_TASKS: "NO ACTIVE OBJECTIVES",
-        TASKS_CLEARED: "ALL OBJECTIVES CLEARED",
-        CLEAR_COMPLETED: "PURGE COMPLETED",
+        NO_TASKS: "NO TASKS",
+        TASKS_CLEARED: "ALL TASKS CLEARED",
+        CLEAR_COMPLETED: "CLEAR COMPLETED",
         CAPACITY: "CAPACITY",
         CAPACITY_REACHED: "CAPACITY REACHED",
 
@@ -137,12 +137,12 @@ export const translations = {
     },
     [Language.CN]: {
         // App
-        APP_TITLE: "末端协议-番茄钟",
+        APP_TITLE: "番茄钟",
         DASHBOARD: "总控台",
         SYSTEM_CONFIG: "系统设置",
         SYSTEM_TIME: "系统时间",
         WELCOME_MESSAGE:
-            "欢迎使用末端协议-番茄钟。通过我们先进的番茄工作法系统优化您的工作效率。",
+            "欢迎使用番茄钟。通过我们先进的番茄工作法系统优化您的工作效率。",
 
         // Settings
         WORK_DURATION: "作业周期 (分)",
@@ -181,14 +181,14 @@ export const translations = {
         PLAYLIST_TITLE: "播放列表",
 
         // Themes
-        THEME_ORIGIN: "预设_01: 末端协议",
-        THEME_ABYSSAL: "预设_02: 深海回响",
-        THEME_NEON: "预设_03: 霓虹都市",
-        THEME_MATRIX: "预设_04: 矩阵代码",
-        THEME_TACTICAL: "预设_05: 荒漠行动",
-        THEME_ROYAL: "预设_06: 皇家紫罗兰",
-        THEME_INDUSTRIAL: "预设_07: 重工灰烬 (亮色)",
-        THEME_AZURE: "预设_08: 蔚蓝档案 (亮色)",
+        THEME_ORIGIN: "预设_01: 经典",
+        THEME_ABYSSAL: "预设_02: 深海",
+        THEME_NEON: "预设_03: 霓虹",
+        THEME_MATRIX: "预设_04: 矩阵",
+        THEME_TACTICAL: "预设_05: 战术",
+        THEME_ROYAL: "预设_06: 皇家",
+        THEME_INDUSTRIAL: "预设_07: 工业 (亮色)",
+        THEME_AZURE: "预设_08: 蔚蓝 (亮色)",
         THEME_MIKU: "预设_09: MIKU",
 
         // Pomodoro
@@ -211,8 +211,8 @@ export const translations = {
             "通知权限已被拒绝，请在浏览器设置中手动允许。",
 
         // Task Manager
-        TASK_MODULE: "任务协议",
-        ADD_TASK_PLACEHOLDER: "输入任务指令...",
+        TASK_MODULE: "任务管理",
+        ADD_TASK_PLACEHOLDER: "输入任务...",
         ADD_TASK: "添加",
         NO_TASKS: "无当前任务",
         TASKS_CLEARED: "任务列表已清空",

@@ -34,27 +34,27 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="lg:col-span-12">
                 <Panel className="p-6" title="系统统计">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="text-center">
-                            <div className="text-ui-3xl font-bold gradient-text mb-2">
+                        <div className="text-center stat-item">
+                            <div className="text-ui-3xl font-bold gradient-text mb-2 stat-number">
                                 {sessionCount}
                             </div>
-                            <div className="text-ui-sm text-theme-dim">
+                            <div className="text-ui-sm text-theme-dim stat-label">
                                 完成的工作周期
                             </div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-ui-3xl font-bold gradient-text mb-2">
+                        <div className="text-center stat-item">
+                            <div className="text-ui-3xl font-bold gradient-text mb-2 stat-number">
                                 {totalWorkTime}
                             </div>
-                            <div className="text-ui-sm text-theme-dim">
+                            <div className="text-ui-sm text-theme-dim stat-label">
                                 累计工作时间 (分钟)
                             </div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-ui-3xl font-bold gradient-text mb-2">
+                        <div className="text-center stat-item">
+                            <div className="text-ui-3xl font-bold gradient-text mb-2 stat-number">
                                 {totalBreakTime}
                             </div>
-                            <div className="text-ui-sm text-theme-dim">
+                            <div className="text-ui-sm text-theme-dim stat-label">
                                 累计休息时间 (分钟)
                             </div>
                         </div>
