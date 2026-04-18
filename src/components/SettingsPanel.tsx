@@ -252,10 +252,16 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                             <Checkbox
                                 checked={settings.notificationsEnabled}
                                 onChange={async (checked) => {
-                                    if (
-                                        !checked ||
-                                        !("Notification" in window)
-                                    ) {
+                                    if (!checked) {
+                                        onSettingsChange((prev) => ({
+                                            ...prev,
+                                            notificationsEnabled: false,
+                                        }));
+                                        return;
+                                    }
+
+                                    if (!"Notification" in window) {
+                                        alert("This browser does not support notifications");
                                         onSettingsChange((prev) => ({
                                             ...prev,
                                             notificationsEnabled: false,
@@ -266,8 +272,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                     let permission = Notification.permission;
                                     if (permission === "default") {
                                         try {
-                                            permission =
-                                                await Notification.requestPermission();
+                                            permission = await Notification.requestPermission();
                                         } catch (err) {
                                             console.error(
                                                 "Failed to request notification permission",
@@ -285,8 +290,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
                                     onSettingsChange((prev) => ({
                                         ...prev,
-                                        notificationsEnabled:
-                                            permission === "granted",
+                                        notificationsEnabled: permission === "granted",
                                     }));
                                 }}
                                 label={t("NOTIFICATIONS_ENABLED")}
